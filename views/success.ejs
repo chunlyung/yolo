@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>주문 완료 - YOLO</title>
+  <link rel="stylesheet" href="/order/success.css" />
+</head>
+<body>
+  <!-- ───── 헤더 ───── -->
+  <header class="site-header">
+    <a href="/" class="logo">YOLO</a>
+  </header>
+
+  <!-- ───── 본문 ───── -->
+  <main class="success-container">
+    <p class="success-title">주문이 완료되었습니다</p>
+    <p class="success-sub">고객님의 소중한 주문이 정상 접수되었습니다.</p>
+
+    <!-- 주문 요약 -->
+    <section class="summary-block">
+      <h2>주문 정보</h2>
+      <div class="info-row"><span>주문 번호</span><strong><%= order.id %></strong></div>
+      <div class="info-row"><span>주문 일시</span><strong><%= new Date(order.created_at).toLocaleString('ko-KR') %></strong></div>
+      <div class="info-row"><span>결제 금액</span><strong><%= order.total_price.toLocaleString() %>원</strong></div>
+    </section>
+
+    <!-- 배송지 -->
+    <section class="summary-block">
+      <h2>배송지</h2>
+      <p class="addr">
+        <%= [order.postcode, order.address, order.address_detail].filter(Boolean).join(' ') %>
+      </p>
+      <% if (order.request_memo?.trim()) { %>
+        <p class="addr"><strong>요청사항:</strong> <%= order.request_memo %></p>
+      <% } %>
+    </section>
+
+    <!-- 상품 목록 -->
+    <section class="summary-block">
+      <h2>주문 상품</h2>
+      <ul class="item-list">
+        <% items.forEach(it => { %>
+          <li class="item">
+            <img src="<%= it.thumb || '/order/aa.jpg' %>" alt="<%= it.name %>">
+            <span class="name"><%= it.name %></span>
+            <span class="color">color: <%= it.color %></span>
+            <span class="qty"><%= it.quantity %>개</span>
+            <span class="price"><%= (it.price * it.quantity).toLocaleString() %>원</span>
+          </li>
+        <% }) %>
+      </ul>
+    </section>
+
+    <!-- 버튼 -->
+    <div class="actions">
+      <a href="/shop-all" class="btn">쇼핑 계속하기</a>
+      <a href="/mypage" class="btn primary">마이페이지로</a>
+    </div>
+  </main>
+</body>
+</html>

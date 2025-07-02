@@ -1,0 +1,556 @@
+
+
+
+
+
+<!DOCTYPE html> 
+<html lang ="ko"> 
+          
+     <head> 
+        <meta charset="utf-8">
+        <meta name="viewport"content="width=device-width,initial-scale=1.0">
+      <title>YOLO 도예공방 </title> 
+      <link href="/forgot.css"rel="stylesheet">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+     </head> 
+    <body> 
+    
+<section class="find-password-section">
+  <div class="find-title">비밀번호 찾기</div>
+  <form method="POST" action="/forgot" class="find-form" id="forgot-form">
+    <label for="name">이름</label>
+    <input type="text" id="name" name="name" placeholder="가입한 이름 입력" required>
+
+    <label for="email">이메일</label>
+    <input type="email" id="email" name="email" placeholder="가입한 이메일 입력" required>
+
+    <button type="submit">이메일 보내기</button>
+  </form>
+</section>
+
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+     <header class="header">
+
+     <div class="header-icons">
+
+
+       <i class="fa-solid fa-search" id="mobileSearchIcon" style="cursor:pointer;"></i>
+       
+      <div id="mobileSearchOverlay" class="search-overlay">
+       <input  type="text"
+        class="search-input-overlay"
+        id="searchInputOverlay"
+        placeholder="검색" />
+        <button id="searchCloseBtn" class="search-close-btn">X</button>
+        </div>
+
+      <span id="logintoggle2"></span>
+      
+      <a href="cart"> <i class="fa-solid fa-cart-shopping"></i></a>
+     </div>
+
+
+
+
+      <button class ="menu-toggle"onclick="toggleMenu()" >☰</button>
+      <button class="close-toggle hidden" onclick="toggleMenu()">X</button>
+     <!--close-toggle과 hidden의 두 클래스를 사용 가능-->
+        <nav class="mobile-menu" id="navMenu"> 
+          
+          <div class="top">
+          <li> <a class="logo-mobile" href="yolo.html">YOLO</a></li>
+          <div id="logintoggle">
+            <li> <a class="login-mobile" href="login.html">Log In</a></li>
+          </div>
+             </div>
+
+
+
+          <div class="search-m">
+             <input type="text" id="search-mobile" placeholder="⌕">
+          </div>
+
+           
+
+
+          <ul class="menuM"> <!--메뉴 항목들(가로 메뉴, 드롭다운 등을 감싸는 태그)-->
+          <li class="dropMobile">  <!--드롭다운 메뉴-->
+            <a  class=dropheader href="#">ABOUT
+              <span class="arrow">&#709;</span>
+            </a> <!--드롭다운 메뉴 제목-->
+            <ul class="submenu">  <!--서브 메뉴--> 
+              <li><a  href ="about-as.html">About us</a></li>
+              <li><a  href ="store.html">Store</a></li>
+              <li><a  href ="contact .html">Contact us</a></li>
+              </ul>
+              </li>
+           
+             <li> <a  href="notice.html">NOTICE</a> </li>
+               <!-- 단일 메뉴-->
+
+        <li class="dropMobile">  <!--드롭다운 메뉴--> <!-- <li>는 리스트 항목 하나.-->
+        <a class=dropheader href="#">SHOP
+          <span class="arrow">&#709;</span>
+        </a> <!--드롭다운 메뉴 제목-->
+        <ul class="submenu"> <!--서브메뉴-->
+          <li><a  href ="shop-all">ALL</a></li>
+          <li><a  href ="#">접시</a></li>
+          <li><a   href ="#">볼</a></li>
+          <li><a   href ="#">컵</a></li>
+          <li><a   href ="#">기타 제품</a></li>
+          <li><a   href ="#">Plates for Pasta</a></li>
+          <li><a  href ="#">By color</a></li>
+         <li><a   href ="#">Only You</a></li>
+         </ul>
+        </li>
+
+        <li class="dropMobile">  <!-- 드롭다운 메뉴 항목을 만듬.-->
+        <a class=dropheader href="#">FAQ/QNA
+          <span class="arrow">&#709;</span>
+        </a><!-- 드롭다운 제목-->
+        <ul class="submenu"><!--하위 메뉴들을 감싸는 리스트.-->
+          <li><a href ="question.html">자주 묻는 질문</a></li>
+          <li><a href ="QNA.html">Q&A</a></li><!--하위 메뉴 항목-->
+        </ul>
+        </li>
+        </ul>
+
+         </nav>
+         
+
+
+
+<div class="logo" style="cursor: pointer;"> 
+        <a href="yolo.html">  YOLO
+     </a></div>
+
+      <nav class="nav-center">
+      <ul class="menu"> <!--메뉴 항목들(가로 메뉴, 드롭다운 등을 감싸는 태그)-->
+          <li class="dropdown">  <!--드롭다운 메뉴-->
+            <a class="about" href="#">ABOUT</a> <!--드롭다운 메뉴 제목-->
+            <ul class="dropdown-menu">  <!--서브 메뉴--> 
+              <li><a  class="about" href ="about-as.html">About us</a></li>
+              <li><a  class="about" href ="store.html">Store</a></li>
+              <li><a  class="about" href ="contact .html">Contact us</a></li>
+              </ul>
+              </li>
+           
+             <li> <a class="about" href="notice.html">NOTICE</a> </li>
+               <!-- 단일 메뉴-->
+
+        <li class="dropdown">  <!--드롭다운 메뉴--> <!-- <li>는 리스트 항목 하나.-->
+        <a class="about" href="#">SHOP</a> <!--드롭다운 메뉴 제목-->
+        <ul class="dropdown-menu"> <!--서브메뉴-->
+          <li><a  class="about" href ="shop-all">ALL</a></li>
+          <li><a  class="about" href ="#">접시</a></li>
+          <li><a  class="about" href ="#">볼</a></li>
+          <li><a  class="about" href ="#">컵</a></li>
+          <li><a  class="about" href ="#">기타 제품</a></li>
+          <li><a  class="about" href ="#">Plates for Pasta</a></li>
+          <li><a  class="about" href ="#">By color</a></li>
+         <li><a  class="about" href ="#">Only You</a></li>
+         </ul>
+        </li>
+
+        <li class="dropdown">  <!-- 드롭다운 메뉴 항목을 만듬.-->
+        <a class="about" href="#">FAQ/QNA</a><!-- 드롭다운 제목-->
+        <ul class="dropdown-menu"><!--하위 메뉴들을 감싸는 리스트.-->
+          <li><a  class="about" href ="question.html">자주 묻는 질문</a></li>
+          <li><a  class="about" href ="QNA.html">Q&A</a></li><!--하위 메뉴 항목-->
+        </ul>
+        </li>
+        </ul>
+      </nav>
+
+         <div class="nav-right">
+         <!--로그인,장바구니-->
+             
+           <button type="button" id="searchToggle" class="search-btn" onclick="toggleSearch(event)">
+            ⌕  </button>
+<input  type="text"
+        class="search-input"
+        id="searchInput"
+        placeholder=" " />
+            <!-- 토글로 나타날 검색 입력창 -->
+
+
+           
+           <div id="login-menu">
+            <a class="auth" href="login.html">Logln</a>
+            </div>
+            
+            <a class="auth"  href="cart">Cart</a>
+            
+        </div>
+          
+     <!--메뉴 토글 버튼(햄버거메뉴) / 모바일 등 좁은 화면에서 메뉴를 열고 닫을때 사용됨.-->
+     <!--oncilick버튼 클릭 시 자바스크립트 함수 toggleMenu()실행-->
+      </ul>
+        </header>
+
+
+
+
+         
+          <span class="insta">
+          <a href="https://instagram.com/yol_o.0?igsh=MWd0OHlya3ZwcW5vbw=="
+         target="_blank">
+         <img src="./insta.png" alt="instagram"
+         style="width: 25px; height: 25px;"></a>
+          </span>
+        </a>
+<section class="footer">
+          <span class="final">
+            <a href="/policy.html" style="text-decoration: none; color:inherit;">
+            이용약관</a>&nbsp;  
+            
+             <a href="/privacy.html" style="text-decoration: none; color:inherit;">
+            개인정보처리방침</a>&nbsp; 
+            
+            <!-- ✅ 사업자정보 확인 팝업 링크 -->
+    <a href="https://www.ftc.go.kr/bizCommPop.do?wrkr_no=7023001816"
+    onclick="window.open(this.href, 'bizInfo', 'width=800,height=700'); return false;"
+    style="text-decoration: none; color: inherit;">사업자정보확인</a>&nbsp;
+          </span>
+          <br>
+          <br>
+          <span class="final2">
+            상호:Yolo | 대표: 정윤재 | 개인정보관리책임자: 정윤재 | 전화: 010.2886.2375 | 이메일: nvjae2018@gmail.com
+          </span>
+          <div class="final2">
+            주소: 서울 강동구 천중로 53길 21 지하 1층 무궁화 놀이터 맞은편 건물 | 사업자등록번호: ? | 통신판매: 제 2021-경기이천-0579호 | 호스팅제공자: (주)식스샵
+          </div>
+          <br>
+          <br>
+          <div class="final2">
+            Copyright 2024. YOLO All rights reserved.
+          </div>
+          <br>
+          <br>
+           
+        </div>
+         </section>
+          
+         
+          
+  <script> 
+
+    document.querySelectorAll('.dropheader').forEach(header => { header.addEventListener('click' ,
+      () => {
+         const parent = header.parentElement;
+
+         parent.classList.toggle('open');
+      });
+    });
+
+
+
+
+ function toggleMenu() {
+     const nav = document.getElementById('navMenu');
+     const openBtn = document.querySelector('.menu-toggle');
+     const closeBtn = document.querySelector('.close-toggle');
+     const icons= document.querySelector('.header-icons');
+
+     
+    
+     nav.classList.toggle('active');
+    
+     const isOpen =nav.classList.contains('active');
+   
+
+if(isOpen) {
+     openBtn.classList.add('hidden');
+     closeBtn.classList.remove('hidden');
+     icons.classList.add('hidden'); // toggle시 오른쪽 상단메뉴 제거
+
+   document.body.classList.add('no-scroll');
+     document.documentElement.classList.add('no-scroll');
+    }
+     //html 태그도 막기
+     else{
+ openBtn.classList.remove('hidden');
+ closeBtn.classList.add('hidden');
+   icons.classList.remove('hidden'); // toggle시 오른쪽 상단메뉴 삽입
+    document.body.classList.remove('no-scroll');
+    document.documentElement.classList.remove('no-scroll');
+     // 토글 나갈시 다시 세로 스크롤 생김
+  }
+
+ }
+
+
+
+ function toggleSearch(event) {
+ 
+     if(event)event.preventDefault();  //submit 동작을 방지
+
+
+
+   const input = document.querySelector('.search-input');
+    const authLinks = document.querySelectorAll('.auth');
+    // querySelectorAll()은  NodeList(배열 비슷한 객체)를 반환하니까 ,
+    // classList.toggle()은 직접 쓸 수 없음 
+    // forEach 나 for문으로 (반복문으로) 처리해야 함. 
+ 
+
+  input.classList.toggle('active'); 
+  input.focus(); // 돋보기를 누르면 커서 깜빡임
+      
+     authLinks.forEach(el => {
+           
+      el.classList.toggle('hidden'); //각각에 hidden 토글 적용
+
+     });
+ }
+ 
+
+
+
+/* --- (dropheader, toggleMenu 등 기존 코드 그대로) --- */
+
+/* ✅ 두 번째로 선언해 버렸던 toggleSearch() 삭제 후 아래 하나만 남깁니다 */
+function toggleSearch(e){
+  if(e) e.preventDefault();          // form submit 방지
+
+  const input      = document.getElementById('searchInput');
+  const authLinks  = document.querySelectorAll('.auth');
+
+  // 입력창 열고/닫기
+  input.classList.toggle('show');
+
+  // Login / Cart 토글
+  authLinks.forEach(a => a.classList.toggle('hidden'));
+
+  if (input.classList.contains('show')) {
+    input.focus();
+  } else {
+    input.value = '';                // 닫힐 때 내용 비우기(선택)
+  }
+}
+
+/* Enter 키로 검색 페이지 이동 */
+document.getElementById('searchInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter'){
+    const keyword = e.target.value.trim();
+    if (!keyword){
+      alert('검색어를 입력하세요');
+      return;
+    }
+    location.href = `/search?keyword=${encodeURIComponent(keyword)}`;
+  }
+});
+
+document.getElementById('mobileSearchIcon').addEventListener('click', e => {
+  const overlay = document.getElementById('mobileSearchOverlay');
+  overlay.classList.add('active');
+  document.getElementById('searchInputOverlay').focus();
+});
+
+document.getElementById('searchInputOverlay').addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    const keyword = e.target.value.trim();
+    if (!keyword) {
+      alert('검색어를 입력하세요');
+      return;
+    }
+    location.href = `/search?keyword=${encodeURIComponent(keyword)}`;
+  }
+});
+
+
+// 모바일 메뉴 검색창: Enter로 검색 페이지 이동
+document.getElementById('search-mobile').addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    const keyword = e.target.value.trim();
+    if (!keyword) {
+      alert('검색어를 입력하세요');
+      return;
+    }
+    location.href = `/search?keyword=${encodeURIComponent(keyword)}`;
+  }
+});
+
+
+
+
+
+
+
+document.getElementById('searchCloseBtn').addEventListener('click', () => {
+  const overlay = document.getElementById('mobileSearchOverlay');
+  overlay.classList.remove('active'); // 또는 .classList.remove('active') → 네 CSS 기준에 맞춰
+  document.getElementById('searchInputOverlay').value = '';
+});
+
+
+
+
+
+
+
+
+
+
+
+/* --- 로그인 유지 fetch 부분 그대로 --- */
+
+//로그인유지
+
+    fetch('/auth/status')
+    .then(res => res.json())
+    .then(data => {
+      console.log('auth/status 응답:',data);
+      const banner = document.querySelector('#login-menu');
+      if (!banner) return;
+     console.warn('배너가 없음');
+      if (data.loggedIn) {
+        banner.innerHTML = `
+    
+          <a href="/mypage"class="auth">My page</a>
+        `;
+      }
+    });
+     fetch('/auth/status')
+    .then(res => res.json())
+    .then(data => {
+      console.log('auth/status 응답:',data);
+      const banner = document.querySelector('#logintoggle');
+      if (!banner) return;
+     console.warn('배너가 없음');
+      if (data.loggedIn) {
+        banner.innerHTML = `
+    
+          <a href="/mypage"class="login-mobile">My page</a>
+        `;
+      }
+    });
+
+ 
+   fetch('/auth/status')
+    .then(res => res.json())
+    .then(data => {
+      console.log('auth/status 응답:',data);
+      const banner = document.querySelector('#logintoggle2');
+      if (!banner) return;
+     console.warn('배너가 없음');
+      if (data.loggedIn) {
+        banner.innerHTML = `
+    
+          <a href="/mypage"class="fa-solid fa-user"></a>
+        `;
+      }
+    else{
+      banner.innerHTML=` <a href="/login.html"class="fa-solid fa-user"></a>`;
+    }
+
+    });
+    document.getElementById('forgot-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const name = document.getElementById('name').value;
+  const email = document.getElementById('email').value;
+
+  const res = await fetch('/forgot', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ name, email })
+  });
+
+  const result = await res.text();
+  alert(result);
+});
+
+
+
+
+</script>
+
+
+<style>
+#notice-body {
+
+  all: initial !important;
+  position:  relative !important;
+  top: 100px !important;
+  font-family: 'Gowun Batang', serif !important;
+  max-width: 1000px !important;
+  margin: 120px auto 80px !important;
+  padding: 0 20px !important;
+  text-align: center !important;
+  color: #333 !important;
+  box-sizing: border-box !important;
+}
+
+.notice-title {
+  font-size: 16px !important;
+  font-weight: bold !important;
+  letter-spacing: 1px !important;
+  margin-bottom: 3rem !important;
+  position: relative !important;
+}
+
+.notice-title::after {
+  content: "";
+  display: block;
+  width: 280px !important;
+  height: 1px !important;
+  background-color: #aaa !important;
+  margin: 30px auto 0 auto !important;
+}
+
+.notice-text {
+  font-size: 0.9rem !important;
+  margin-top: 1rem !important;
+  color: #666 !important;
+  line-height: 1.7 !important;
+}
+
+/* ✅ 모바일 대응 */
+@media (max-width: 768px) {
+  .notice-title {
+    font-size: 12px !important;
+  }
+  .notice-text {
+    font-size: 10px !important;
+  }
+  .logo a{
+  color: black !important;
+  text-decoration: none !important;
+  font-size: 30px !important;
+}
+.header{
+  padding:0.3rem 2rem;
+}
+.bg-img{
+  padding-top:0;
+}
+.final{
+   font-size: 9px;
+   text-align: center;
+   margin-top: 15px;
+
+}
+.final2{
+    font-size: 9px;
+    text-align: center;
+   
+}
+}
+
+.logo a{
+  color: black !important;
+  text-decoration: none !important;
+  font-size: 30px !important;
+}
+
+
+
+</style>
+
+     </body>  
+
+</html>
+

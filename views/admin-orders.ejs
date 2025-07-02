@@ -1,0 +1,46 @@
+<!DOCTYPE html><html lang="ko"><head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0" />
+<title>주문 관리</title>
+<link rel="stylesheet" href="/css/admin.css" />
+</head><body class="admin-page">
+<header class="admin-header">
+  <h1 class="brand">YOLO</h1>
+  <div class="admin-info">
+    <span><%= admin.name %>님</span>
+    <form method="post" action="/admin/logout"><button>로그아웃</button></form>
+  </div>
+</header>
+
+<main>
+  <!-- 검색/필터 -->
+  <form class="search-form" method="get" action="/admin/orders">
+    <input name="q" placeholder="주문번호·아이디·이름" value="<%= q %>" />
+    <select name="status">
+      <option value="">전체 상태</option>
+      <% ['결제완료','상품준비','배송중','배송완료','취소요청','취소완료'].forEach(s => { %>
+        <option value="<%= s %>" <%= status===s?'selected':'' %>><%= s %></option>
+      <% }) %>
+    </select>
+    <button>검색</button>
+  </form>
+
+  <table class="user-table">
+    <thead><tr>
+      <th>주문번호</th><th>회원</th><th>금액</th><th>상태</th><th>주문일</th><th></th>
+    </tr></thead>
+    <tbody>
+      <% orders.forEach(o => { %>
+        <tr>
+          <td><%= o.id %></td>
+          <td><%= o.userid %> (<%= o.name %>)</td>
+          <td><%= o.total_price.toLocaleString() %>원</td>
+          <td><%= o.status %></td>
+          <td><%= new Date(o.created_at).toLocaleString('ko-KR') %></td>
+          <td><a href="/admin/orders/<%= o.id %>">상세</a></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</main>
+</body></html>

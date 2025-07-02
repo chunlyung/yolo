@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title><%= user.userid %> 정보 수정</title>
+  <link rel="stylesheet" href="/css/admin.css" />
+</head>
+<body class="admin-page">
+
+  <header class="admin-header">
+    <h1 class="brand">YOLO</h1>
+    <div class="admin-info">
+      <span><%= admin.name %>님</span>
+      <form method="post" action="/admin/logout"><button>로그아웃</button></form>
+    </div>
+  </header>
+
+  <main class="edit-card">
+    <h2>회원 정보 수정</h2>
+    <form method="post" action="">
+      <label>ID
+        <input type="text" value="<%= user.userid %>" readonly />
+      </label>
+
+      <label>이름
+        <input type="text" name="name" value="<%= user.name %>" />
+        <% if (errors?.name) { %><span class="err"><%= errors.name %></span><% } %>
+      </label>
+
+      <label>전화번호
+        <input type="text" name="fullPhone" value="<%= user.fullPhone %>" placeholder="010-1234-5678" />
+        <% if (errors?.fullPhone) { %><span class="err"><%= errors.fullPhone %></span><% } %>
+      </label>
+
+      <label>이메일
+        <input type="email" name="email" value="<%= user.email %>" />
+        <% if (errors?.email) { %><span class="err"><%= errors.email %></span><% } %>
+      </label>
+
+      <div class="btn-group">
+        <button class="primary">저장</button>
+        <a class="btn" href="/admin/users/<%= encodeURIComponent(user.userid) %>">취소</a>
+      </div>
+    </form>
+  </main>
+</body>
+</html>

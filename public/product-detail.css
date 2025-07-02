@@ -1,0 +1,1315 @@
+@import url('https://fonts.googleapis.com/css2?family=Diphylleia&family=Gowun+Batang&family=Nanum+Brush+Script&family=Nanum+Myeongjo&display=swap');
+
+
+body {
+    font-family: "Gowun Batang", serif; /*글꼴 지정*/
+    font-weight: 400;   /*굵기 (400은 기본굵기)*/
+    font-style: normal;    /*기본 글꼴 형태*/
+        text-align: center;    /*텍스트 가운데 정렬*/
+       
+        padding-top: 60px;                   /*위쪽에 여백 60px.*/
+        
+                                         /* 고정된 헤더 때문에 본문이 가려지
+                                            는걸 방지하려고 위에 여백을 줘. 
+                                   헤더 높이가 80px이면 본문도 그만큼 아래로 밀어줘야 돼*/ 
+          overflow-x: hidden;        /*수평 스크롤(가로 스크롤)이 생기지 않게 강제로 막음*/
+          font-size: clamp(14px, 1.5vw, 18px);
+          
+      }
+* {
+  margin: 0; /*바깥 여백 제거*/
+  padding: 0; /*안쪽 여백 제거*/
+  box-sizing: border-box; /*너비 계산 시 padding, border포함*/
+  
+}
+html{
+    overflow-x: hidden;                /*레이아웃이 화면보다 더 넓어질 때 발생하는 
+                                        가로 스크롤을 방지할 때 씀*/
+}
+.header{
+     display: flex;
+      justify-content: space-between;
+       align-items: center;
+       flex-wrap: wrap;
+        padding: 1rem 2rem;
+    position: fixed; 
+    top:0;       
+    width: 100%; 
+     background-color: white; 
+     z-index: 1000; 
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border-bottom: 17px solid white;/*파란선 대신 여기에*/
+              
+}    
+ .logo{
+  margin-left: 4rem;
+ max-width: 100%;
+ height: auto;
+ min-width: 10px;
+ flex-shrink: 0;
+ }
+   a.about{
+    color:black !important;  /*!important는 이 속성을 무조건 적용하라는 의미 우선순위 높음*/
+    text-decoration: none !important;  /*밑줄 제거 */
+   transition: color 0.3s ;   /*마우스 올릴 때 색상이 0.3초간 부드럽게 바뀜*/
+    border: 1px solid white;
+   
+}
+a.about:hover{   /*hover: 마우스 올렸을 때만 적용되는 스타일*/
+    color: brown !important;  /*마우스 올렷을 때 텍스트 색상 브라운 */
+    
+}
+.dropdown-menu{
+    display: none;  /*기본적으로는 안 보이게 숨김, 나중에 js나 hover로 display:block으로 바꿔야 보임*/
+    position: absolute;  /*기준이 되는 부모 요소 기준으로 위치 고정*/
+    top: 100%;  /*부모의 높이만큼 아래로 내려서 바로 밑에 붙게.*/
+    left: 0;   /*왼쪽 정렬*/
+    background-color: white;  /*배경 흰색*/
+    border: 1px solid#ccc;  /*테두리*/
+    padding: 10px 0 ;  /*상하 여백 10px 좌우 0*/
+    min-width: 150px;  /*최소 너비 150px*/
+    z-index: 999;  /*다른 요소들보다 위에 표시 (숫자가 클수록 위에 올라옴)*/
+}
+.nav-center  {
+   display: flex;
+  flex: 1;
+  justify-content: center;
+  flex-wrap: wrap;
+  
+
+}
+.header.nav-center{
+  overflow:visible;
+}
+.header.nav-right{
+  overflow: visible;
+}
+.nav-right  {
+  display: flex;
+  
+   font-size: 1rem;
+   gap:2rem;
+  margin-left: auto;
+  transform: translateX(-50px);
+  /*왼쪽으로 이동 (값은 조절 가능)*/
+  flex-shrink: 0;
+}
+/*translateX는 login/cart만 살짝 왼쪽으로 당기고*/
+/*다른 메뉴엔 영향 안줌, margin-left :auto 덕분에 오른쪽 정렬도 유지됨*/
+/* 이미지 요소*/
+
+
+.tel{
+    margin-bottom: 30px;
+
+}
+.tel2{
+    font-size: 14px;
+    margin-top: 30px;
+}
+.insta{
+    justify-content: center;
+    position: relative;
+    bottom:5px;
+    left: 49vw;
+  }
+
+.final{
+   font-size: 11px;
+   text-align: center;
+   margin-top: 10px;
+
+}
+.final2{
+    font-size: 11px;
+    text-align: center;
+   
+}
+/* 이미지나 컨테이너가 넘치지 않도록*/
+img{
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+ul{
+    list-style: none;
+}  /* 리스트 옆 동그라미 삭제 */
+ul.menu{ /*.menu와 같을 수 있지만 미래를 위해 더 정확하게 css를 줌*/
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: none; /* 가로 정렬*/ /*ul과li가 모바일에도 영향을 받아서 일단 none해둠 해상도에따라 메뉴표시*/
+    justify-content: center; /* 가운데 정렬*/
+     gap:70px;
+     /* 항목 간 간격 조정 가능*/
+}  /* 지우면 개망*/
+.menu > li{ /*.menu 클래스가 있는 요소의 직속자식 <li>태그에만 스타일 적용*/
+    position: relative;
+}  /* 지우면 드롭다운 메뉴 이상한 대로 감*/
+.menu a{
+    text-decoration: none;
+    padding: 10px;
+    
+    color: black; /* 드롭 메뉴 색 변경*/
+
+}    /*드롭간의 여백 없어지고 메뉴쏠림*/
+.dropdown:hover .dropdown-menu{
+    display: block;
+    
+}   /*드롭다운 보이게 함*/
+.menu-toggle {
+  display: none; /*기본적으로 숨김 (모바일에서만 보이게 할 예정)*/
+  font-size: 24px; /*아이콘 크기 키움 */
+ }
+.menu-toggle:hover{
+     background-color: white;
+   }
+.mobile-menu{
+  display: none;
+}
+.search-btn{
+  
+  font-size: 20px;
+  border: none;
+  cursor: pointer;
+  transform: translateX(30px);
+  background: none;
+ 
+}
+.search-btn:hover{
+   color: brown !important; 
+}
+.search-input{
+   width: 0;
+   opacity: 0;
+   border-radius: 1px;
+   transition: width 0.3s ease, opacity 0.3s ease;
+   border:none;
+   border-bottom: 1px solid #000;
+  background: transparent;
+  outline: none;/*입력창에서 테두리 제거*/
+  
+}
+.search-input.active{
+  width: 130px;
+  opacity: 1;
+  
+ 
+}
+.auth.hidden{
+  
+  display: none;
+
+}
+.auth{
+   
+  color:black !important;  /*!important는 이 속성을 무조건 적용하라는 의미 우선순위 높음*/
+    text-decoration: none !important;  /*밑줄 제거 */
+   transition: color 0.3s ;   /*마우스 올릴 때 색상이 0.3초간 부드럽게 바뀜*/
+    border: 1px solid white;
+   font-size: auto;
+
+}
+.auth:hover{
+   color: brown !important; 
+}
+.hidden{
+  display: none !important;
+}
+.header-icons{
+  display: none;
+}
+
+
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  color:#1a1a1a;
+  line-height:1.6;
+}
+
+/* ---------------- 헤더 ---------------- */
+/* ---------------- 상품 상세 ---------------- */
+.product-detail {
+  max-width: 1200px;
+
+  padding: 0 24px;
+}
+.product-main {
+  display: flex;
+  gap: 64px;
+  align-items: flex-start;
+}
+
+.product-images {
+  flex: 1;
+}
+.primary-image {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  border: 1px solid #e5e5e5;
+  
+}
+.thumb-list {
+  display: flex;
+  gap: 12px;
+  margin-top: 12px;
+}
+.thumb-list img {
+  width: 72px;
+  height: 72px;
+  object-fit: cover;
+  border: 1px solid #e5e5e5;
+  cursor: pointer;
+}
+
+.product-info {
+  flex: 1;
+  max-width: 480px;
+  padding-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  text-align: left;
+}
+.product-name {
+  font-size: 20px;
+  font-weight: 400;
+  margin-bottom: 4px;
+}
+.price {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.size-info dt {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.size-info dd {
+  font-size: 14px;
+  color: #444;
+  margin-bottom: 2px;
+}
+
+.shipping{
+  display: flex;
+  align-items: flex-start;
+  gap:30px;
+  margin-top: 10px;
+  font-size: 13px;
+}
+
+
+.shipping .label{
+  white-space: nowrap;
+  min-width: 60px;
+  font-weight: bold;
+  margin-top: 2px;
+
+}
+
+.shipping .labelcontent p{
+  line-height: 1.6;
+  margin: 0;
+}
+
+
+.notice {
+  font-size: 13px;
+  font-weight: 500;
+  margin: 12px 0 8px;
+  line-height: 1.6;
+}
+
+.shipping dt {
+  font-weight: 400;
+  margin-top: 10px;
+  margin-bottom: 2px;
+  font-size: 13px;
+}
+.shipping dd {
+  font-size: 14px;
+  color: #444;
+  margin-bottom: 2px;
+}
+
+.option-select {
+  margin: 12px 0;
+}
+.option-select label {
+  display: block;
+  font-weight: 400;
+  margin-bottom: 6px;
+  font-size: 14px;
+}
+.option-select select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  border-radius: 4px;
+}
+
+
+.cta-buttons {
+  display: flex;
+  gap: 8px;
+  margin: 16px 0 12px;
+}
+.buy-btn,
+.cart-btn {
+  flex: 1;
+  padding: 12px 0;
+  font-size: 14px;
+  border: 1px solid #1a1a1a;
+  background: #fff;
+  cursor: pointer;
+}
+.buy-btn:hover,
+.cart-btn:hover {
+  background: #1a1a1a;
+  color: #fff;
+  transition: 0.3s;
+}
+
+.naver-pay {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 160px;
+  height: 48px;
+  background: #03c75a;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  border-radius: 2px;
+  font-size: 14px;
+}
+.naver-pay img {
+  height: 20px;
+  margin-right: 4px;
+}
+
+
+.mainImg{
+  display: flex;
+ margin: 40px auto;
+  margin-bottom: 60px;
+  width: 100%;
+  max-width: 600px;
+}
+.divider{
+  width: 600px;
+  margin: 20px auto;
+  height: 1px;
+  color: #000;
+}
+
+.caution .divider{
+  width: 100%;
+   margin: 20px auto;
+}
+
+.checklist .divider{
+  width: 80%;
+   margin: 20px auto;
+}
+
+
+.notice-section .divider{
+  width: 100%;
+   margin: 20px auto;
+}
+
+.color-info-section .divider{
+  width: 100%;
+   margin: 20px auto;
+}
+
+
+
+
+
+
+
+.product-detail-info{
+  display: grid;
+  grid-template-columns: repeat(2,1fr);
+  gap: 20px;
+  padding: 20px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.detail-item img{
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto 10px;
+}
+
+.detail-item p {
+  font-size: 14px;
+  color: #333;
+  line-height: 1.4;
+}
+
+
+.notice-title p{
+  font-weight: bold;
+}
+
+
+
+.notice-section{
+  text-align: left;
+  padding: 0 20px;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.notice-section h6{
+  text-align: center;
+}
+
+.notice-section .notice-title {
+  margin-top: 40px;
+  font-size: 17px;
+  color:black;
+}
+
+.notice-section .notice-title2 {
+  color:black;
+}
+
+.notice-section .notice-title3{
+  color:#3b3b3b;
+}
+
+.caution{
+  text-align: left;
+  padding: 0 20px;
+  max-width: 720px;
+  margin: 0 auto;
+  
+}
+
+.caution h6{
+  text-align: center;
+}
+
+.caution p{
+  font-size:13px !important;
+  font-weight: bold !important;
+}
+
+.checklist p{
+  font-size: 13px !important;
+  font-weight: bold !important;
+}
+
+.product-detail-info p{
+  font-size: 12px !important;
+  font-weight: bold !important;
+
+}
+
+.libia{
+  font-size: 15px !important;
+  font-weight: bold !important;
+}
+
+
+.color-info-section {
+  padding: 40px 20px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.color-info-section h2 {
+  text-align: center;
+  margin-bottom: 24px;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.color-info-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+}
+
+.color-info-table th,
+.color-info-table td {
+  border: 1px solid #ccc;
+  padding: 12px 8px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.color-info-table th {
+  background-color: #f7f7f7;
+  font-weight: 600;
+}
+
+.color-info-table td:first-child {
+  text-align: left;
+  padding-left: 12px;
+  font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .color-info-section h2 {
+    font-size: 20px;
+  }
+
+  .color-info-table {
+    font-size: 13px;
+  }
+
+  .color-info-table th,
+  .color-info-table td {
+    padding: 10px 6px;
+  }
+}
+
+
+.color-info-note {
+  text-align: left;
+  margin-top: 24px;
+  font-size: 11px;
+  font-weight: bold;
+  color: #444;
+  line-height: 1.6;
+  padding: 0 10px;
+}
+
+.color-info-note p {
+  margin: 6px 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+@media (max-width: 600px) {
+ 
+  .product-detail {
+    margin-top: 120px;
+    padding: 0 16px;
+  }
+  .product-name {
+    font-size: 18px;
+  }
+  .price {
+    font-size: 16px;
+  }
+  .thumb-list img {
+    width: 56px;
+    height: 56px;
+  }
+}
+.site-header{
+  position:fixed;top:0;left:0;width:100%;
+  background:#fff;border-bottom:1px solid #e5e5e5;z-index:1000;
+}
+.header-inner{
+  max-width:1200px;margin:0 auto;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:18px 24px;
+}
+.logo-kr{
+  font-family:'Nanum Pen Script',cursive;
+  font-size:36px;letter-spacing:6px;display:block;
+}
+.logo-tagline{font-size:11px;display:block;margin-top:4px;}
+
+.main-nav ul{display:flex;gap:40px;list-style:none;}
+.main-nav a{
+  font-size:14px;text-decoration:none;color:#1a1a1a;position:relative;
+}
+.main-nav a::after{
+  content:'';position:absolute;bottom:-4px;left:0;height:1px;width:0;
+  background:#1a1a1a;transition:width .3s;
+}
+.main-nav a:hover::after{width:100%;}
+
+.header-right{display:flex;align-items:center;gap:24px;}
+.search-btn{background:none;border:none;font-size:16px;cursor:pointer;}
+.mypage-link,.cart-link{font-size:14px;text-decoration:none;color:#1a1a1a;}
+.cart-count{margin-left:2px;}
+
+/* ---------------- 상품 상세 ---------------- */
+.product-detail{max-width:1100px;margin:90px auto 0;padding:0 24px;}
+.product-main{display:flex;gap:64px;}
+
+.product-images{flex:1;}
+.primary-image{
+  width:100%;height:auto;object-fit:cover;border:1px solid #e5e5e5;
+}
+.thumb-list{display:flex;gap:12px;margin-top:12px; justify-content: center;}
+.thumb-list img{
+  width:72px;height:72px;object-fit:cover;
+  border:1px solid #e5e5e5;cursor:pointer;
+}
+
+.product-info{flex:1;max-width:480px;}
+.product-name{font-size:15px;font-weight:500;margin-bottom:8px;}
+.price   {font-size:13px;font-weight:500;margin-bottom:24px;}
+
+.size-info dt{font-size:13px;font-weight:300;margin-bottom:4px;}
+.size-info dd{font-size:13px;color:#555;margin-bottom:4px;}
+
+.notice{font-size:12px;margin:16px 0;}
+
+.shipping dt{font-weight:600;margin:12px 0 4px;}
+.shipping dd{font-size:14px;color:#555;}
+
+.option-select{margin:24px 0 12px;}
+.option-select label{display:block;font-weight:600;margin-bottom:8px;}
+.option-select select{
+  width:100%;padding:12px;border:1px solid #ccc;
+  font-size:14px;border-radius:4px;appearance:none;
+}
+
+.order-summary{display:flex;flex-direction:column;gap:6px;font-size:14px;}
+.order-summary div{display:flex;justify-content:space-between;}
+
+
+.cta-buttons{display:flex;gap:12px;margin:24px 0;}
+.buy-btn,.cart-btn{
+  flex:1;padding:14px 0;border:1px solid #1a1a1a;font-size:14px;
+  background:#fff;cursor:pointer;
+}
+.buy-btn:hover,.cart-btn:hover{background:#1a1a1a;color:#fff;transition:.3s;}
+
+.naver-pay{
+  display:flex;align-items:center;justify-content:center;
+  width:160px;height:48px;margin-bottom:16px;
+  background:#03C75A;color:#fff;border:none;cursor:pointer;border-radius:2px;
+  font-size:14px;
+}
+.naver-pay img{height:20px;margin-right:4px;}
+
+/* ---------------- 브랜드 스토리 ---------------- */
+.brand-story{
+  margin:80px auto 160px;text-align:center;max-width:900px;
+  padding-top:40px;border-top:1px solid black;
+}
+.storyLogo{
+ font-weight: 200;
+  
+  font-size:50px;margin:40px 0;
+  
+}
+.brand-story p{margin-top: 10px; color: gray;  font-size:12px;margin-bottom:8px; font-weight: 400;}
+
+.middle{margin-bottom: 10px; font-size: 12px;}
+
+/* ---------------- 반응형 ---------------- */
+@media (max-width:1024px){
+  .product-main{flex-direction:column; gap:32px;}
+  .product-info{max-width:100%;}
+}
+@media (max-width:600px){
+  .header-inner{flex-direction:column;gap:12px;}
+  .main-nav ul{gap:24px;}
+  .logo-kr{font-size:28px;}
+  .product-detail{margin-top:160px;}
+  .thumb-list img{width:56px;height:56px;}
+  .brand-story h2{font-size:24px;}
+}
+/* 태블릿~모바일: 2열 */
+@media screen and (max-width: 1024px) {
+  .product-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+/* ===================== */
+/* ✅ 반응형 대응 CSS 추가 */
+/* ===================== */
+@media (min-width:1025px) {  /*데스크탑*/
+
+    .menu-toggle{
+ display: none; /*메뉴 토글버튼(햄버거버튼)을 화면이 좁을 때 보이게 함*/
+    }  /*원래는 display: none으로 숨겨져 있다가 모바일화면에서는 block으로 보여짐*/
+    ul.menu{
+       display: flex;
+       flex-direction: row;
+       justify-content: center;
+       align-items: center;
+       gap: 70px;
+     list-style: none;
+    }
+   .nav-center {
+     margin-top: 1rem;
+   }
+   .nav-right {
+    margin-top: 1rem;
+   
+   }
+  .column {
+    width: 90%;
+  }
+  .insta {
+     display: flex;
+     flex-direction: row;
+     justify-content: center;
+     align-items: center;
+     text-align: center;
+    transform: translateX(-50%);
+  }
+.middle,.menu a {
+    font-size: 14px;
+  
+  }
+.dropdown-menu {
+  font-size: 20px;
+ /*글자 흐림을 사이즈를 늘려서 없앰*/
+}
+
+
+  
+}
+
+@media (max-width:1024px) {  /*태블릿*/
+
+    .menu-toggle{
+ display: none; /*메뉴 토글버튼(햄버거버튼)을 화면이 좁을 때 보이게 함*/
+    }  /*원래는 display: none으로 숨겨져 있다가 모바일화면에서는 block으로 보여짐*/
+    ul.menu{
+       display: flex;
+       flex-direction: row;
+       justify-content: center;
+       align-items: center;
+       gap: 70px;
+     list-style: none;
+    }
+   .nav-center {
+     margin-top: 1rem;
+
+   }
+
+   .nav-right{
+    margin-top: 1rem;
+   }
+
+   
+  .column {
+    width: 90%;
+  }
+  .insta {
+     display: flex;
+     flex-direction: row;
+     justify-content: center;
+     align-items: center;
+     text-align: center;
+    transform: translateX(-50%);
+  }
+
+.middle,.menu a {
+    font-size: 14px;
+  }
+
+.logo{
+  flex-shrink: 0; /*화면이 줄어도 크기 줄어들지 않게*/
+  margin: 0 auto;
+  text-align: center;
+}
+.dropdown-menu {
+  font-size: 20px;
+
+}
+
+.head{
+   
+    transform: translateX(-1.5%);
+}
+  
+}
+
+@media (max-width:768px) { /*모바일*/
+
+ .close-toggle{
+   /*display을 줘도 .hidden의 important때문에 보이지 않음*/
+    top:2rem;
+    z-index: 1001;
+    position: absolute;
+    cursor:pointer;
+    background-color: transparent;
+    border: none;
+    right:1rem;
+  
+ }
+    .menu-toggle{
+      display: block;
+      position: absolute;
+      left: 1rem;
+      top: 1.3rem;  
+      cursor: pointer; 
+      background-color: transparent;/*기본 배경 (없애고 시작*/
+      border: none;
+      transition:background-color 0.3s ease; /*부드럽게 변하게*/
+
+       }
+   .menu-toggle:hover{
+     background-color: white;
+   }
+.mobile-menu{
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  min-height: 100vh;
+  width: 90%;
+  height: 100%;
+  background-color: white;
+  transform: translateX(-100%);
+  z-index: 999;
+  padding: 2rem;
+  box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+  flex-direction: column;  
+}
+.mobile-menu.active {
+   transform: translateX(0);
+   display: flex;
+   background-color:rgb(241, 241, 241);
+   font-size: 1.2em;
+    transition: transform 0.3s ease;
+    overflow-y: auto;  /*드롭항목 길어짐에 따라 스크롤이 생김.*/
+    max-height: 100vh;
+}
+.mobile-menu.active.hidden{
+  display: block !important;
+} /*important 쓰니까 생김*/
+
+
+.mobile-menu.active.header-icons{
+  display: none !important;
+}
+
+
+
+
+.mobile-menu.active a {
+ text-decoration: none;
+ color:black;
+}
+.mobile-menu input[type="text"]{
+  padding:0.8rem auto;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  font-size: 1.7rem;
+  width: 100%;
+}
+.mobile-menu.active .top { /*띄어쓰기 중요*/
+  display: flex;
+   justify-content:space-between ;
+  align-items: center;
+  font-size: 1.5rem;
+  list-style: none;
+}
+.mobile-menu.active ul > li{
+      margin-top: 1.5rem;
+      font-size: 0.9rem;  /*검색창 하단메뉴 크기 조절*/
+}
+.mobile-menu.active ul{
+  list-style: none;
+  margin-left: -0.5rem;
+  text-align: left;
+}
+.mobile-menu.active .top .login-mobile{
+  font-size: 1rem;
+}
+.menuM {
+  list-style: none;
+}
+.menuM li{
+  margin-bottom: 1.2rem;
+}
+
+.dropheader{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+
+.arrow{
+  transition: transform 0.3s ease;
+  font-size: 1.5rem;
+}
+
+.dropMobile.open .arrow{
+  transform: rotate(180deg);
+}
+
+
+.submenu{
+ 
+  display: none;
+  padding-left: 1rem;
+  margin-top: 0.5rem;
+}
+
+.dropMobile.open .submenu{
+  display: block;
+}
+
+
+
+.submenu li{
+  margin-bottom: 0.8rem;
+}
+
+.submenu li a {
+  font-size: 0.9rem;
+  color:#444;
+  text-decoration: none;
+}
+
+
+  .header-icons{
+    position: absolute;
+    top:1.5rem;
+    right: 1rem;
+    display: flex;
+    gap: 1.2rem;
+    font-size: 1.2rem;
+    z-index: 1000;
+  }
+
+  .header-icons a{
+    color: #000;
+    text-decoration: none;
+  }
+
+
+.header-icons a:hover{
+  color: brown !important;
+}
+.menu-toggle:hover{
+  color: brown !important;
+}
+
+
+body.no-scroll,
+html.no-scroll{
+  overflow:hidden;
+  height: 100%;
+}
+
+
+
+
+   .nav-center ,.nav-right{
+    display: none;
+   }  
+        .logo{
+          text-align: center;
+          display: block;
+          margin: 0 auto;
+        }
+
+        .info-block{
+          flex-direction: column;
+          align-items: center;
+          text-align: center;
+     
+
+        }
+
+        .dropdown-menu {
+  font-size: 20px;}
+
+
+.product-detail{
+  margin-top: 60px;
+}
+
+
+.product-detail-info{
+  display: grid;
+  grid-template-columns: repeat(2,1fr);
+  gap: 20px;
+  padding: 20px;
+  text-align: center;
+}
+
+
+
+
+
+#search-mobile{
+  font-size:20px ;
+  height: 30px !important;
+  box-sizing: border-box;
+  padding: 17px 10px;
+}
+
+
+
+
+}
+
+@media (max-width:1200px) { /*아슬한 겹침 방지하는 부분*/
+  .nav-right{
+    transform :translateX(-10px);  /*덜 왼쪽으로 이동*/
+    gap: 1rem; /*간격 축소*/
+  }
+  
+  .nav-center{
+    gap:2rem; /*중앙 메뉴 간격도 줄임*/
+  }
+
+  .logo{
+    max-width: 120px;/*로고 사이즈도 약간 줄임*/
+  }
+
+  
+  
+}
+
+.cart-list      { list-style:none; padding:0; margin:1px 0; }
+.cart-row       { display:flex; align-items:center; gap:12px; margin:0 0 12px; }
+.row-title      { font-weight: 400; white-space: nowrap; flex:1}
+.qty-box        { display:flex; border:1px solid #ccc; }
+.qty-box button { width:28px; height:28px; border:none; background:#eee; cursor:pointer; }
+.qty-box span   { font-size:14px;display:inline-block; width:36px; line-height:28px; text-align: center;}
+.row-price      { font-size:14px;  width:90px; text-align:right; }
+.remove         { margin-left: 20px;   border:none; background:none; font-size:18px; cursor:pointer; }
+.cart-row + hr  { border:none; border-top:1px solid #ddd; margin:12px 0; }
+.row-head {display:flex; justify-content: space-between; align-items: center; font-size: 14px;}
+.row-body{ display: flex; justify-content: space-between; align-items: center;
+ margin: 6px 0;}
+
+.divider-option{
+  display: none;
+}
+@media (max-width: 768px) {
+
+     
+  /* ▸ 컬러 선택 직후 고정 가로선 */
+  .divider-top{
+    display: block;
+    width: 120%;
+    height: 1px;
+    margin: 24px auto;
+    background: #ccc;
+    border: 0;
+  }
+   .cart-divider{
+    display: block;
+    width: 120%;
+    height: 1px;
+    margin: 24px auto 12px;
+    background: #ccc;
+    border: 0;
+  }
+
+
+ /* ▸ 주문 수량 · 총 상품 금액 — 양 끝 정렬 */
+  .order-summary{
+    display: block;          /* flex → block(1줄씩) */
+    width: 100%;
+    margin:  auto 0;
+    font-size: 14px; 
+  }
+  .order-summary > div{
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+  }
+
+.order-summary .qty-value, 
+.order-summary .total-value{
+  margin-right: -20px;
+}
+ 
+  /* CTA(구매 / 장바구니) 버튼 2개를 같은 크기로 가로 배치 */
+  .cta-buttons {
+    display: flex;      /* 가로 플렉스 */
+    gap: 20px;          /* 버튼 사이 여백 */
+    width: 100%;
+    margin: 32px auto 0;
+  }
+  .cta-buttons .buy-btn,
+  .cta-buttons .cart-btn {
+    flex: 1 1 50%;      /* **포인트**: 두 버튼을 정확히 1:1 비율로 */
+    padding: 16px 0;
+    font-size: 15px;
+    text-align: center;
+    box-sizing: border-box;
+
+
+
+  }
+
+.color-info-note {
+  font-size: 9px;
+}
+
+.color-info-table{
+  font-size: 9px;
+  
+}
+
+.final{
+  font-size: 9px;
+}
+.final2{
+  font-size: 9px;
+}
+.notice-section .notice-title {
+  margin-top: 40px;
+  font-size: 10px;
+  color:black;
+}
+
+.notice-section .notice-title2 {
+  color:black;
+  font-size: 9px;
+}
+
+.notice-section .notice-title3{
+  color:#3b3b3b;
+  font-size: 9px;
+}
+
+.middle{
+  font-size: 12px;
+}
+.product-detail-info p{
+  font-size: 9px !important;
+  font-weight: bold !important;
+
+}
+.checklist p{
+  font-size: 9px !important;
+  font-weight: bold !important;
+}
+.caution p{
+  font-size:9px !important;
+  font-weight: bold !important;
+}
+
+.product-detail-info h5{
+  font-size: 9px;
+
+
+}
+
+.brand-story p{
+  font-size: 11px;
+}
+
+.brand-story h6{
+  font-size: 11px;
+}
+
+
+
+}
+/* =======================
+   🔄 720 px 기준 오버라이드
+   (파일 끝에 추가)
+   ======================= */
+
+/* ① 모바일·작은 태블릿 : 719px 이하 ─ 1단 세로 */
+@media (max-width: 719px){
+  /* 상품 메인 세로배치 */
+  .product-main      { flex-direction: column; gap: 32px; }
+  .product-info      { max-width: 100%; }
+
+  /* 풀메뉴 숨기고 햄버거만 표시 */
+  .menu-toggle       { display:block; }
+  ul.menu,
+  .nav-center,
+  .nav-right         { display:none; }
+}
+
+/* ② 데스크탑 : 720px 이상 ─ 2단 가로 */
+@media (min-width: 640px){
+  /* 상품 메인 2단 배치 */
+  .product-main      { flex-direction: row; gap: 64px; }
+
+  /* 풀메뉴 표시, 햄버거 숨김 */
+  .menu-toggle       { display:none; }
+  ul.menu            { display:flex; }
+
+  /* 필요하면 desktop-only 스타일을 여기서 추가 */
+}
+
+
+
+.header-icons{
+ align-items: center;
+}
+.search-input {
+  width: 0;
+  opacity: 0;
+  transition: width 0.3s ease, opacity 0.3s ease;
+  border: none;
+  border-bottom: 1px solid #666;
+  background: transparent;
+  outline: none;
+  padding: 6px 8px;
+}
+.search-input.show {
+  width: 130px;
+  opacity: 1;
+}
+.search-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 60px;
+  background-color: white;
+  z-index: 9999;
+  padding: 10px 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+.search-overlay.active {
+  display: flex;
+  align-items: center;
+}
+.search-input-overlay {
+  flex: 1;
+  width: 100%;
+  font-size: 1rem;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+#mobileSearchIcon{
+ margin-top: 3px;
+}
+
+#mobileSearchIcon:hover{
+ color:brown
+}
+.search-close-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  margin-left: 10px;
+  color: #333;
+}
+
+
+

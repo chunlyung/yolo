@@ -1,0 +1,173 @@
+@import url('https://fonts.googleapis.com/css2?family=Diphylleia&family=Gowun+Batang&family=Nanum+Brush+Script&family=Nanum+Myeongjo&display=swap');
+
+
+
+/* ===== 색상 변수 ===== */
+:root {
+  --primary: #1b2240;   /* 깊은 남색 */
+  --gray-bg: #f4f4f4;
+  --text:    #222;
+  --border:  #ddd;
+}
+
+/* ===== 기본 리셋 ===== */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+font-family: "Gowun Batang", serif;
+    font-style: normal;    /*기본 글꼴 형태*/
+   color: var(--text);
+  line-height: 1.4;
+}
+a { color: inherit; text-decoration: none; }
+
+/* ===== 상단 영역 ===== */
+.page-header {
+  padding: 24px 0 8px;
+  border-bottom: 1px solid var(--border);
+}
+.brand { font-size: 30px; padding-left: 16px; }
+
+/* ===== 메인 컨테이너 ===== */
+.order-page {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 24px 16px 120px; /* 하단 고정바 높이만큼 패딩 */
+}
+
+/* ===== 섹션 타이틀 ===== */
+.section-title {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 24px 0 12px;
+  position: relative;
+}
+.section-title::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  width: 100%;
+  height: 2px;
+  background: var(--gray-bg);
+}
+
+/* ===== 주문 상품 ===== */
+.product-item {
+  display: grid;
+  grid-template-columns: 64px 1fr auto;
+  gap: 16px;
+  padding: 12px 0;
+  border-top: 1px solid var(--border);
+}
+.product-item:first-of-type { border-top: none; }
+.product-thumb {
+  width: 64px; height: 64px;
+  object-fit: cover;
+  border: 1px solid var(--border);
+}
+.product-info   { margin-left: 7px;display: flex; flex-direction: column; gap: 2px; font-size: 14px; }
+.product-name   { font-weight: 500;font-size: 16px; color: rgb(5, 5, 5);}
+.product-option { font-size: 13px; color: #666; }
+.product-qty-price { font-size: 16px; color:black; }
+
+/* ===== 주문자 ===== */
+.collapse-toggle {
+  background: none; border: none; color: #666; cursor: pointer;
+  font: inherit;  padding: 4px 0;
+}
+
+/* ===== 배송지 ===== */
+.address-choice  { display: flex; gap: 24px; margin: 8px 0 12px; font-size: 14px; }
+.address-info p  { font-size: 14px; margin-bottom: 2px; }
+.request         { margin-top: 12px; }
+.request textarea{
+  width: 100%; min-height: 60px; padding: 8px;
+  border: 1px solid var(--border); border-radius: 4px; font: inherit;
+}
+.islands-note   { font-size: 12px; color: #666; margin-top: 12px; }
+
+/* ===== 결제 정보 ===== */
+.points {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 14px; margin-bottom: 4px;
+}
+.btn-outline {
+  padding: 4px 12px; font-size: 12px; cursor: pointer;
+  background: #fff; border: 1px solid var(--text); border-radius: 4px;
+}
+.points-note   { font-size: 12px; color: #d22; margin-bottom: 16px; }
+
+.summary {
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.summary-row {
+  display: flex; justify-content: space-between; padding: 12px 0;
+  font-size: 14px;
+
+}
+.summary-row.total {
+  font-weight: 700;
+}
+.summary-row.total span{
+    font-size: 17px; font-weight: bold;
+}
+
+.summary-row.total strong { font-size: 20px; 
+color: blue; }
+
+.tooltip { font-size: 11px; color: #888; cursor: default; }
+
+/* ===== 결제 방법 ===== */
+.section-title{
+    font-size: 17px;
+}
+
+.method-list {
+  list-style: none;
+  display: grid; grid-template-columns: repeat(2, 1fr);
+  gap: 8px; font-size: 15px; margin-bottom: 60px;
+}
+.method-list li { display: flex; align-items: center; gap: 6px; }
+
+/* ===== 하단 고정 결제 버튼 ===== */
+.pay-bar {
+  position: fixed; left: 0; right: 0; bottom: 0;
+  background: #fff; border-top: 1px solid var(--border);
+  padding: 16px; z-index: 100;
+}
+.btn-pay {
+  width: 100%; padding: 14px 0; text-align: center;
+  font-size: 16px; font-weight: 700; color: #fff;
+  background: var(--primary); border: none; border-radius: 6px;
+  cursor: pointer;
+}
+
+.product-sum-row{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 15px;
+    margin-top: 8px;
+    color: #222;
+    font-weight: 500;
+    padding: 0 2px;
+}
+
+.product-sum-row .label{
+    color: #000;;
+}
+
+.product-sum-row .amont{
+    color:#0066cc;
+    font-weight: 600;
+}
+
+
+
+/* ===== 태블릿 이상 ===== */
+@media (min-width: 768px) {
+  .order-page { max-width: 960px; }
+  .product-thumb { width: 80px; height: 80px; }
+  .section-title { font-size: 18px; }
+}

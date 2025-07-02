@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang ="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+    content="width=device-width,initial-scale=1.0">
+    <title>마이 페이지</title>
+  <link href="/mypage.css" rel="stylesheet">
+ <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js">
+</script>
+<script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+
+
+</head>
+
+<body> 
+  <main class="mypage-container">
+    <!-- 왼쪽 주문 내역 -->
+    <section class="mypage-left">
+      <p2 class="section-title">주문 내역</p2>  
+      <section id="order-history">
+        <% if (orders.length === 0) { %>
+          <p class="empty-order-msg">주문내역이 없습니다.</p>
+        <% } else { %>
+          <% orders.forEach(o => { %>
+            <article class="order-card">
+              <div class="order-head">
+                <div class="order-meta">
+                  <p>주문번호:<%= o.id %></p>
+                  <span class="order-status"><%= o.status %></span> 
+                  <%= new Date(o.created_at).toLocaleString('ko-KR') %>
+                </div>
+                <span class="order-toggle" data-id="<%= o.id %>">⌄</span>
+              </div>
+              <div class="order-body">
+                <img class="order-thumb" src="<%= o.thumb %>" />
+                <div class="order-info">
+                  <div class="name"><%= o.name %></div>
+                  <div class="color">color: <%= o.color %></div>
+                  <div class="qty">수량: <%= o.qty %></div>
+                </div>
+                <div class="summary-wrap">
+                <div class="order-summary">
+                 <p>총 결제 <%= o.total_price.toLocaleString() %>원</p>
+                </div>
+
+               <div class="order-details hidden" id="detail-<%= o.id %>">
+  <ul>
+    <li><strong>상품명:</strong> <%= o.name %></li>
+    <li><strong>색상:</strong> <%= o.color %></li>
+    <li><strong>수량:</strong> <%= o.qty %></li>
+    <li><strong>결제금액:</strong> <%= o.total_price.toLocaleString() %>원</li>
+    <li><strong>요청사항:</strong> <%= o.request_memo || '-' %></li>
+    <li><strong>배송지:</strong> (<%= o.postcode %>) <%= o.address %> <%= o.address_detail %></li>
+  </ul>
+</div>
+
+
+              <% if (o.status === '결제완료') { %>
+                <form method="post" action="/order/cancel/<%= o.id %>" onsubmit="return confirm('정말 취소하시겠습니까?');">
+                  <button class="cancel-btn" type="submit">주문 취소</button>
+                </form>
+                </div>
+              <% } %>
+                
+            </article>
+          <% }) %>
+        <% } %>
+      </section>
+    </section>
+
+    <!-- 오른쪽 회원 정보 -->
+    <section class="mypage-right">
+      <div class="profile-header">
+        <p>회원 정보</p>
+      </div>
+      <button class="logout-btn" onclick="location.href='/logout'">로그아웃</button>
+     
+      <form id="profileForm" method="post" action="/mypage/update">
+        <label>아이디
+          <input type="text" id="userid" name="userid" value="<%= user.userid %>" readonly />
+        </label>
+        <label>이메일
+          <input type="email" id="email" name="email" value="<%= user.email %>" required />
+        </label>
+        <label>이름
+          <input type="text" id="user_name" name="user_name" value="<%= user.name %>" required />
+        </label>
+        <label>휴대폰 번호
+          <div class="phone-group">
+            <% const phone = user.fullPhone ? user.fullPhone.split('-') : ['', '', '']; %>
+            <input type="text" id="phone1" name="phone1" maxlength="3" required value="<%= phone[0] %>" /> -
+            <input type="text" id="phone2" name="phone2" maxlength="4" required value="<%= phone[1] %>" /> -
+            <input type="text" id="phone3" name="phone3" maxlength="4" required value="<%= phone[2] %>" />
+          </div>
+        </label>
+        <label>우편번호
+          <input type="text" id="postcode" name="postcode" value="<%= user.postcode %>" readonly />
+        </label>
+        <label>주소
+          <input type="text" id="address" name="address" value="<%= user.address %>" readonly />
+        </label>
+        <label>상세주소
+          <input type="text" id="address_detail" name="address_detail" value="<%= user.address_detail %>" required />
+        </label>
+       <!-- 수신 동의 + 회원탈퇴 버튼 라인 -->
+<div class="consent-withdraw-row">
+  <label class="consent-label">
+    <input type="checkbox" id="agree_sms" name="agree_sms" <%= user.agree_sms ? 'checked' : '' %> />
+    이메일 및 문자 수신 동의
+  </label>
+
+  <button type="button" id="withdraw-btn" class="withdraw-btn">회원탈퇴</button>
+</div>
+
+        <div class="submit-wrapper">
+          <button type="submit">변경 사항 저장하기</button>
+        </div>
+      </form>
+    </section>
+  </main>
+
+
+
+
+
+ <header class="header">
+
+     <div class="header-icons">
+   
+       <i class="fa-solid fa-search" id="mobileSearchIcon" style="cursor:pointer;"></i>
+       
+      <div id="mobileSearchOverlay" class="search-overlay">
+       <input  type="text"
+        class="search-input-overlay"
+        id="searchInputOverlay"
+        placeholder="검색" />
+        <button id="searchCloseBtn" class="search-close-btn">X</button>
+        </div>
+
+      <span id="logintoggle2"></span>
+      
+      <a href="/cart"> <i class="fa-solid fa-cart-shopping"></i></a>
+     </div>
+
+
+      <button class ="menu-toggle"onclick="toggleMenu()" >☰</button>
+      <button class="close-toggle hidden" onclick="toggleMenu()">X</button>
+     <!--close-toggle과 hidden의 두 클래스를 사용 가능-->
+        <nav class="mobile-menu" id="navMenu">
+         
+          <div class="top">
+             <li> <a class="logo-mobile" href="yolo.html">YOLO</a></li>
+          <div id="logintoggle">
+            <li> <a class="login-mobile" href="login.html">Log In</a></li>
+          </div>
+             </div>
+          <div class="search-m">
+             <input type="text" id="search-mobile" placeholder="⌕">
+          </div>
+
+           
+
+
+          <ul class="menuM"> <!--메뉴 항목들(가로 메뉴, 드롭다운 등을 감싸는 태그)-->
+          <li class="dropMobile">  <!--드롭다운 메뉴-->
+            <a  class=dropheader href="#">ABOUT
+              <span class="arrow">&#709;</span>
+            </a> <!--드롭다운 메뉴 제목-->
+            <ul class="submenu">  <!--서브 메뉴-->
+              <li><a  href ="about-as.html">About us</a></li>
+              <li><a  href ="store.html">Store</a></li>
+              <li><a  href ="contact .html">Contact us</a></li>
+              </ul>
+              </li>
+           
+             <li> <a  href="notice.html">NOTICE</a> </li>
+               <!-- 단일 메뉴-->
+
+        <li class="dropMobile">  <!--드롭다운 메뉴--> <!-- <li>는 리스트 항목 하나.-->
+        <a class=dropheader href="#">SHOP
+          <span class="arrow">&#709;</span>
+        </a> <!--드롭다운 메뉴 제목-->
+        <ul class="submenu"> <!--서브메뉴-->
+    <li><a  href ="/shop-all">ALL</a></li>
+          <li><a  href ="/shop/plate">접시</a></li>
+          <li><a   href ="/shop/bowl">볼</a></li>
+          <li><a   href ="/shop/cup">컵</a></li>
+          <li><a   href ="/shop/N">기타 제품</a></li>
+          <li><a   href ="#">Plates for Pasta</a></li>
+          <li><a  href ="#">By color</a></li>
+         <li><a   href ="#">Only You</a></li>
+         </ul>
+        </li>
+
+        <li class="dropMobile">  <!-- 드롭다운 메뉴 항목을 만듬.-->
+        <a class=dropheader href="#">FAQ/QNA
+          <span class="arrow">&#709;</span>
+        </a><!-- 드롭다운 제목-->
+        <ul class="submenu"><!--하위 메뉴들을 감싸는 리스트.-->
+          <li><a href ="question.html">자주 묻는 질문</a></li>
+          <li><a href ="QNA.html">Q&A</a></li><!--하위 메뉴 항목-->
+        </ul>
+        </li>
+        </ul>
+
+
+
+
+
+
+
+         </nav>
+        
+<div class="logo" style="cursor: pointer;"> 
+        <a href="yolo.html">  YOLO
+     </a></div>
+      <nav class="nav-center">
+      <ul class="menu"> <!--메뉴 항목들(가로 메뉴, 드롭다운 등을 감싸는 태그)-->
+          <li class="dropdown">  <!--드롭다운 메뉴-->
+            <a class="about" href="#">ABOUT</a> <!--드롭다운 메뉴 제목-->
+            <ul class="dropdown-menu">  <!--서브 메뉴-->
+              <li><a  class="about" href ="about-as.html">About us</a></li>
+              <li><a  class="about" href ="store.html">Store</a></li>
+              <li><a  class="about" href ="contact .html">Contact us</a></li>
+              </ul>
+              </li>
+           
+             <li> <a class="about" href="notice.html">NOTICE</a> </li>
+               <!-- 단일 메뉴-->
+
+        <li class="dropdown">  <!--드롭다운 메뉴--> <!-- <li>는 리스트 항목 하나.-->
+        <a class="about" href="#">SHOP</a> <!--드롭다운 메뉴 제목-->
+        <ul class="dropdown-menu"> <!--서브메뉴-->
+         <li><a  class="about" href ="shop-all">ALL</a></li>
+          <li><a  class="about" href ="/shop/plate">접시</a></li>
+          <li><a  class="about" href ="/shop/bowl">볼</a></li>
+          <li><a  class="about" href ="/shop/cup">컵</a></li>
+          <li><a  class="about" href ="/shop/N">기타 제품</a></li>
+          <li><a  class="about" href ="#">Plates for Pasta</a></li>
+          <li><a  class="about" href ="#">By color</a></li>
+         <li><a  class="about" href ="#">Only You</a></li>
+         </ul>
+        </li>
+
+        <li class="dropdown">  <!-- 드롭다운 메뉴 항목을 만듬.-->
+        <a class="about" href="#">FAQ/QNA</a><!-- 드롭다운 제목-->
+        <ul class="dropdown-menu"><!--하위 메뉴들을 감싸는 리스트.-->
+          <li><a  class="about" href ="question.html">자주 묻는 질문</a></li>
+          <li><a  class="about" href ="QNA.html">Q&A</a></li><!--하위 메뉴 항목-->
+        </ul>
+        </li>
+        </ul>
+      </nav>
+
+         <div class="nav-right">
+         <!--로그인,장바구니-->
+             
+        
+           <button type="button" id="searchToggle" class="search-btn" onclick="toggleSearch(event)">
+            ⌕  </button>
+<input  type="text"
+        class="search-input"
+        id="searchInput"
+        placeholder=" " />
+            <!-- 토글로 나타날 검색 입력창 -->
+
+       
+            <a class="auth" href="mypage">My page</a>
+            <a class="auth" href="cart">Cart</a>
+           
+        </div>
+         
+     <!--메뉴 토글 버튼(햄버거메뉴) / 모바일 등 좁은 화면에서 메뉴를 열고 닫을때 사용됨.-->
+     <!--oncilick버튼 클릭 시 자바스크립트 함수 toggleMenu()실행-->
+      </ul>
+        </header>
+
+
+
+
+
+ <span class="insta">
+          <a href="https://instagram.com/yol_o.0?igsh=MWd0OHlya3ZwcW5vbw=="
+         target="_blank">
+         <img src="./insta.png" alt="instagram"
+         style="width: 25px; height: 25px;"></a>
+          </span>
+        </a>
+
+         <section class="footer">
+          <span class="final">
+            <a href="/policy.html" style="text-decoration: none; color:inherit;">
+            이용약관</a>&nbsp;  
+            
+             <a href="/privacy.html" style="text-decoration: none; color:inherit;">
+            개인정보처리방침</a>&nbsp; 
+            
+            <!-- ✅ 사업자정보 확인 팝업 링크 -->
+    <a href="https://www.ftc.go.kr/bizCommPop.do?wrkr_no=7023001816"
+    onclick="window.open(this.href, 'bizInfo', 'width=800,height=700'); return false;"
+    style="text-decoration: none; color: inherit;">사업자정보확인</a>&nbsp;
+          </span>
+          <br>
+          <br>
+          <span class="final2">
+            상호:Yolo | 대표: 정윤재 | 개인정보관리책임자: 정윤재 | 전화: 010.2886.2375 | 이메일: nvjae2018@gmail.com
+          </span>
+          <div class="final2">
+            주소: 서울 강동구 천중로 53길 21 지하 1층 무궁화 놀이터 맞은편 건물 | 사업자등록번호: ? | 통신판매: 제 2021-경기이천-0579호 | 호스팅제공자: (주)식스샵
+          </div>
+          <br>
+          <br>
+          <div class="final2">
+            Copyright 2024. YOLO All rights reserved.
+          </div>
+          <br>
+          <br>
+           
+        </div>
+         </section>
+          
+<script>
+
+    document.querySelectorAll('.dropheader').forEach(header => { header.addEventListener('click' ,
+      () => {
+         const parent = header.parentElement;
+
+         parent.classList.toggle('open');
+      });
+    });
+
+
+
+document.addEventListener('DOMContentLoaded', async () => {
+  try {
+    const res = await fetch('/mypage/userinfo',{
+      method : 'GET',
+      credentials:'include'
+    });
+    const user = await res.json();
+
+    // 각 input에 값 삽입
+    document.getElementById('userid').value = user.userid || '';
+    document.getElementById('email').value = user.email || '';
+    document.getElementById('user_name').value = user.name || '';
+
+    // 휴대폰 번호 나누기
+    if (user.fullPhone) {
+      const parts = user.fullPhone.split('-');
+      document.getElementById('phone1').value = parts[0] || '';
+      document.getElementById('phone2').value = parts[1] || '';
+      document.getElementById('phone3').value = parts[2] || '';
+    }
+
+    document.getElementById('postcode').value = user.postcode || '';
+    document.getElementById('address').value = user.address || '';
+    document.getElementById('address_detail').value = user.address_detail || '';
+
+    // 수신 동의 체크박스
+    if (user.agree_sms) {
+      document.getElementById('agree_sms').checked = true;
+    }
+   
+
+  } catch (err) {
+    console.error('회원 정보 불러오기 실패:', err);
+  }
+});
+
+ 
+// 변경 사항 저장하기
+document.addEventListener('DOMContentLoaded',()=>{
+
+
+document.getElementById('profileForm').addEventListener('submit' , async(e) => {
+   e.preventDefault();
+
+const user_name =document.getElementById('user_name').value.trim();
+
+// 3칸을 하나로 합쳐 db에 저장
+
+const fullPhone = [phone1.value ,  phone2.value , phone3.value ].join('-');
+
+const body = {
+   
+    email   : email.value ,
+    user_name    : user_name,
+    fullPhone : fullPhone ,
+
+    address_detail :
+    address_detail.value,
+    agree_sms : agree_sms.checked
+   
+
+}
+
+
+console.log('user_name값:',user_name);
+
+try {
+  const res = await fetch('/mypage/update', {
+    method:'POST',
+    headers : {'Content-Type': 'application/json'},
+    credentials:'include',
+    body : JSON.stringify(body)
+  });
+   const result = await res.json();
+
+
+   if (result.success){
+          alert('변경 사항이 저장되었습니다.');
+
+   } else{
+    alert('저장 실패: ' + result.message);
+   }
+  }  catch(err) {
+    console.error('프로필 업데이트 실패', err);
+    alert('프로필 업데이트 실패' + err.message);
+  }
+})
+});
+
+document.querySelector('.logout-btn').addEventListener('click',async()=>{
+  try{
+    const res = await fetch('/logout');
+
+     if (res.redirected){
+       window.location.href = res.url;
+     }
+  } catch(err){
+    alert('로그아웃 실패:'+ err.message);
+  }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ function toggleMenu() {
+     const nav = document.getElementById('navMenu');
+     const openBtn = document.querySelector('.menu-toggle');
+     const closeBtn = document.querySelector('.close-toggle');
+     const icons= document.querySelector('.header-icons');
+
+     nav.classList.toggle('active');
+   
+     const isOpen =nav.classList.contains('active');
+   
+if(isOpen) {
+     openBtn.classList.add('hidden');
+     closeBtn.classList.remove('hidden');
+     icons.classList.add('hidden'); // toggle시 오른쪽 상단메뉴 제거
+
+   document.body.classList.add('no-scroll');
+     document.documentElement.classList.add('no-scroll');
+    }
+     //html 태그도 막기
+     else{
+ openBtn.classList.remove('hidden');
+ closeBtn.classList.add('hidden');
+   icons.classList.remove('hidden'); // toggle시 오른쪽 상단메뉴 삽입
+    document.body.classList.remove('no-scroll');
+    document.documentElement.classList.remove('no-scroll');
+     // 토글 나갈시 다시 세로 스크롤 생김
+  }
+
+ }
+
+
+ function toggleSearch(event) {
+ 
+     if(event)event.preventDefault();  //submit 동작을 방지
+
+   const input = document.querySelector('.search-input');
+    const authLinks = document.querySelectorAll('.auth');
+    // querySelectorAll()은  NodeList(배열 비슷한 객체)를 반환하니까 ,
+    // classList.toggle()은 직접 쓸 수 없음
+    // forEach 나 for문으로 (반복문으로) 처리해야 함.
+ 
+  input.classList.toggle('active');
+  input.focus(); // 돋보기를 누르면 커서 깜빡임
+     
+     authLinks.forEach(el => {
+           
+      el.classList.toggle('hidden'); //각각에 hidden 토글 적용
+
+     });
+ }
+
+
+ 
+/* ✅ 두 번째로 선언해 버렸던 toggleSearch() 삭제 후 아래 하나만 남깁니다 */
+function toggleSearch(e){
+  if(e) e.preventDefault();          // form submit 방지
+
+  const input      = document.getElementById('searchInput');
+  const authLinks  = document.querySelectorAll('.auth');
+
+  // 입력창 열고/닫기
+  input.classList.toggle('show');
+
+  // Login / Cart 토글
+  authLinks.forEach(a => a.classList.toggle('hidden'));
+
+  if (input.classList.contains('show')) {
+    input.focus();
+  } else {
+    input.value = '';                // 닫힐 때 내용 비우기(선택)
+  }
+}
+
+/* Enter 키로 검색 페이지 이동 */
+document.getElementById('searchInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter'){
+    const keyword = e.target.value.trim();
+    if (!keyword){
+      alert('검색어를 입력하세요');
+      return;
+    }
+    location.href = `/search?keyword=${encodeURIComponent(keyword)}`;
+  }
+});
+
+document.getElementById('mobileSearchIcon').addEventListener('click', e => {
+  const overlay = document.getElementById('mobileSearchOverlay');
+  overlay.classList.add('active');
+  document.getElementById('searchInputOverlay').focus();
+});
+
+document.getElementById('searchInputOverlay').addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    const keyword = e.target.value.trim();
+    if (!keyword) {
+      alert('검색어를 입력하세요');
+      return;
+    }
+    location.href = `/search?keyword=${encodeURIComponent(keyword)}`;
+  }
+});
+
+
+// 모바일 메뉴 검색창: Enter로 검색 페이지 이동
+document.getElementById('search-mobile').addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    const keyword = e.target.value.trim();
+    if (!keyword) {
+      alert('검색어를 입력하세요');
+      return;
+    }
+    location.href = `/search?keyword=${encodeURIComponent(keyword)}`;
+  }
+});
+
+
+
+
+
+document.getElementById('searchCloseBtn').addEventListener('click', () => {
+  const overlay = document.getElementById('mobileSearchOverlay');
+  overlay.classList.remove('active'); // 또는 .classList.remove('active') → 네 CSS 기준에 맞춰
+  document.getElementById('searchInputOverlay').value = '';
+});
+
+
+
+
+
+const path = window.location.pathname;
+
+  const isLoginPage =
+    path.includes('login.html') ||
+    path === '/login' ||
+    path === '/login.html';
+
+  // 로그인 페이지가 아닐 때만 실행
+  if (!isLoginPage) {
+    fetch('/auth/status')
+      .then(res => res.json())
+      .then(data => {
+        if (data.loggedIn) {
+          const banner = document.querySelector('#login-banner');
+          if (banner) {
+            banner.textContent = `${data.user.name}님 안녕하세요!`;
+          }
+        } else {
+          location.href = '/login.html';
+        }
+      });
+  }
+
+
+
+
+
+
+
+// ── 주문 내역 불러오기 ───────────────────────────
+(async () => {
+  try {
+    const res = await fetch('/order/history', { credentials: 'include' });
+    if (!res.ok) {
+      console.warn('[order/history] status', res.status);   // 401? 500? 404?
+      return;                       // 더 진행하지 않음
+    }
+    const orders = await res.json();
+    if (!orders.length) return;     // 주문 없으면 그대로
+
+    document.querySelector('.empty-order-msg').remove();
+    const wrap = document.getElementById('order-history');
+    orders.forEach(o => wrap.appendChild(makeCard(o)));
+
+  } catch (err) {
+    console.error('주문 내역 불러오기 실패', err);
+  }
+})();
+
+// 주문 상세 템플릿 생성
+function makeCard(o){
+  const el = document.createElement('article');
+  el.className = 'order-card';
+  el.innerHTML = `
+    <div class="order-head">
+      <div class="order-meta">
+        주문번호: <b>${o.id}</b> ·
+        <span class="order-status">${o.status}</span> ·
+        ${dayjs(o.created_at).format('YYYY.MM.DD HH:mm')}
+      </div>
+      <span class="order-toggle" data-id="${o.id}">⌄</span>
+    </div>
+    <div class="order-body">
+      <img class="order-thumb" src="${o.thumb}" />
+      <div class="order-info">
+        <div class="name">${o.name}</div>
+        <div class="color">color: ${o.color}</div>
+        <div class="qty">수량: ${o.qty}</div>
+      </div>
+      <div class="order-summary">
+        상품금액 ${o.items_total.toLocaleString()}원<br>
+        총 결제 ${o.total_price.toLocaleString()}원
+      </div>
+    </div>
+    <div class="order-details hidden" id="detail-${o.id}">
+      <!-- 이 안에 상세 아이템 JS로 채움 -->
+    </div>`;
+ 
+  // ✅ 상태가 주문완료인 경우에만 취소 버튼 생성
+  if (o.status === '결제완료') {
+    const btnWrap = document.createElement('div');
+    btnWrap.className = 'order-actions';
+
+    const cancelBtn = document.createElement('button');
+    cancelBtn.className = 'cancel-btn';
+    cancelBtn.textContent = '주문 취소';
+    cancelBtn.dataset.id = o.id; // ✅ 핵심: 여기에 주문 ID를 심음
+
+    btnWrap.appendChild(cancelBtn);
+    el.appendChild(btnWrap);
+  }
+
+  return el;
+}
+
+
+document.addEventListener('click', async e => {
+  const btn = e.target.closest('.order-toggle');
+  if (!btn) return;
+
+  const card = btn.closest('.order-card');
+  const orderId = btn.dataset.id;
+  const detail = document.getElementById(`detail-${orderId}`);
+
+  if (detail.classList.contains('hidden')) {
+    try {
+      const res = await fetch(`/order/info/${orderId}`);
+      const order = await res.json();
+      console.log('order값',order);
+      detail.innerHTML = `
+        <ul style="padding:0 10px">
+          ${order.items.map(item => `
+            <li style="margin-bottom:10px; display:flex; align-items:center; gap:10px">
+              <img src="${item.thumb}" width="40" height="40" />
+              <span>${item.name} (${item.color}) - ${item.quantity}개 / ${(item.price * item.quantity).toLocaleString()}원</span>
+            </li>`).join('')}
+        </ul>
+        <p>배송지: (${order.postcode}) ${order.address} ${order.address_detail}</p>
+        <p>요청사항: ${order.request_memo || '-'}</p>
+          ${
+    order.tracking_number
+      ? `<p>송장번호: ${order.tracking_number}</p>
+         <a href="https://www.ilogen.com/m/personal/trace/${order.tracking_number}" target="_blank" class="btn-tracking">배송조회</a>`
+      : `<p>송장번호: </p>`
+  }
+`;
+      
+    } catch(err) {
+      detail.innerHTML = `<p>상세 정보를 불러올 수 없습니다.</p>`;
+    }
+  }
+  detail.classList.toggle('hidden');
+  card.classList.toggle('open');
+});
+
+
+ fetch('/auth/status')
+    .then(res => res.json())
+    .then(data => {
+      console.log('auth/status 응답:',data);
+      const banner = document.querySelector('#logintoggle');
+      if (!banner) return;
+     console.warn('배너가 없음');
+      if (data.loggedIn) {
+        banner.innerHTML = `
+    
+          <a href="/mypage"class="login-mobile">My page</a>
+        `;
+      }
+    });
+
+
+
+
+
+   fetch('/auth/status')
+    .then(res => res.json())
+    .then(data => {
+      console.log('auth/status 응답:',data);
+      const banner = document.querySelector('#logintoggle2');
+      if (!banner) return;
+     console.warn('배너가 없음');
+      if (data.loggedIn) {
+        banner.innerHTML = `
+    
+          <a href="/mypage"class="fa-solid fa-user"></a>
+        `;
+      }
+    else{
+      banner.innerHTML=` <a href="/login.html"class="fa-solid fa-user"></a>`;
+    }
+
+    });
+document.getElementById('withdraw-btn').addEventListener('click', async () => {
+  if (!confirm('정말 탈퇴하시겠습니까? 탈퇴 후 복구는 불가능합니다.')) return;
+
+  const res = await fetch('/mypage/withdraw', { method: 'POST' });
+  const data = await res.json();
+
+  if (data.success) {
+    alert('회원 탈퇴가 완료되었습니다.');
+    window.location.href = '/yolo.html';
+  } else {
+    alert('탈퇴 중 오류가 발생했습니다.');
+  }
+});
+
+
+
+
+
+
+</script>
+<style>
+
+.logo a{
+  color: black !important;
+  text-decoration: none !important;
+  font-size: 30px !important;
+}
+
+  @media (max-width:768px) {
+.logo a{
+  color: black !important;
+  text-decoration: none !important;
+  font-size: 30px !important;
+}
+.header{
+  padding:0.3rem 2rem;
+}
+.bg-img{
+  padding-top:0;
+}
+.final{
+   font-size: 9px;
+   text-align: center;
+   margin-top: 15px;
+
+}
+.final2{
+    font-size: 9px;
+    text-align: center;
+   
+}
+
+  }
+/* 수신 동의 + 탈퇴 버튼 묶는 wrapper */
+.consent-withdraw-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+/* 수신동의 label */
+.consent-label {
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* 탈퇴 버튼 */
+.withdraw-btn {
+  padding: 8px 14px;
+  background-color:white;
+  color: gray;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 15px;
+  margin-left: auto;
+}
+
+/* 반응형: 모바일에서 수직 정렬 */
+@media (max-width: 600px) {
+  .consent-withdraw-row {
+ flex-wrap: nowrap;
+ justify-content: space-between;
+  }
+
+  .withdraw-btn {
+    margin-left: 0;
+    margin-top: 10px;
+  }
+}
+.btn-tracking {
+  display: inline-block;
+  margin-top: 5px;
+  padding: 6px 12px;
+  background-color: #333;
+  color: white;
+  text-decoration: none;
+  font-size: 13px;
+  border-radius: 4px;
+}
+.btn-tracking:hover {
+  background-color: #555;
+}
+</style>
+
+
+
+
+
+</body>
+</html>
+

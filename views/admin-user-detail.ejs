@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title><%= user.userid %> 상세 정보</title>
+  <link rel="stylesheet" href="/css/admin.css" />
+</head>
+<body class="admin-page">
+
+  <header class="admin-header">
+    <h1 class="brand">YOLO</h1>
+    <div class="admin-info">
+      <span><%= admin.name %>님</span>
+      <form method="post" action="/admin/logout"><button>로그아웃</button></form>
+    </div>
+  </header>
+
+  <main class="detail-card">
+    <h2>회원 상세 정보</h2>
+    <dl>
+      <dt>ID</dt>          <dd><%= user.userid %></dd>
+      <dt>이름</dt>        <dd><%= user.name %></dd>
+      <dt>이메일</dt>      <dd><%= user.email %></dd>
+      <dt>전화번호</dt>     <dd><%= user.fullPhone %></dd>
+      <dt>가입일</dt>      <dd><%= new Date(user.created_at).toLocaleString('ko-KR') %></dd>
+      <dt>최근 로그인</dt>  <dd><%= user.last_login
+                                   ? new Date(user.last_login).toLocaleString('ko-KR')
+                                   : '-' %></dd>
+      <dt>상태</dt>        <dd><%= user.is_active ? '정상' : '탈퇴' %></dd>
+    </dl>
+
+    <div class="btn-group">
+      <a class="btn" href="/admin/users">목록</a>
+      <a class="btn" href="/admin/users/<%= encodeURIComponent(user.userid) %>/edit">수정</a>
+    </div>
+  </main>
+</body>
+</html>

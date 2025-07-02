@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>상품 관리</title>
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+  <h1>📦 상품 관리</h1>
+  <a href="/products" target="_blank" class="btn-view-shop">상품 전체 보기</a>
+
+  <!-- ── 신규 등록 ─────────────────────────────── -->
+  <form class="product-form" action="/admin/products" method="post" enctype="multipart/form-data">
+    <fieldset>
+      <legend>신규 상품 등록</legend>
+      <input type="text" name="name" placeholder="상품명" required>
+      <input type="text" name="option" placeholder="옵션명(색·사이즈)" required>
+      <input type="number" name="price" placeholder="가격" required>
+      <input type="number" name="stock" placeholder="재고" required>
+      <input type="text" name="color" placeholder="대표 색상">
+      <input type="file" name="thumb" accept="image/*">
+      <input type="text" name="hover_img1" placeholder="Hover 이미지1 URL">
+      <input type="text" name="hover_img2" placeholder="Hover 이미지2 URL">
+      <textarea name="size_info" placeholder="사이즈 정보" rows="3"></textarea>
+      <textarea name="description_html" placeholder="상세 설명 HTML" rows="5"></textarea>
+      <input type="text" name="detail_subtitle" placeholder="하단 소제목 (예: 론다 M + 베이직 소서)">
+      <input type="text" name="detail_img1" placeholder="상세 이미지1 URL">
+      <input type="text" name="detail_img2" placeholder="상세 이미지2 URL">
+      <input type="text" name="detail_img3" placeholder="상세 이미지3 URL">
+      <input type="text" name="detail_img4" placeholder="상세 이미지4 URL">
+      <input type="text" name="detail_img5" placeholder="상세 이미지5 URL">
+      <input type="text" name="detail_img6" placeholder="상세 이미지6 URL">
+      <input type="text" name="detail_img7" placeholder="상세 이미지7 URL">
+      <input type="text" name="detail_img8" placeholder="상세 이미지8 URL">
+
+      <input type="text" name="hover_img_list" placeholder="목록 Hover 이미지 URL">
+      <h4>색상 설명 블록</h4>
+      <% for (let i = 1; i <= 2; i++) { %>
+        <input type="text" name="color_title<%= i %>" placeholder="색상 제목 <%= i %>">
+        <input type="text" name="color_img<%= i %>" placeholder="색상 이미지 URL <%= i %>">
+        <textarea name="color_desc<%= i %>" rows="3" placeholder="색상 설명 <%= i %>"></textarea>
+      <% } %>
+      <button type="submit">등록</button>
+    </fieldset>
+  </form>
+
+  <!-- ── 목록/수정/삭제 ─────────────────────────── -->
+  <table class="product-table">
+    <thead>
+      <tr>
+        <th>ID</th><th>썸네일</th><th>상품명</th><th>옵션</th><th>가격</th>
+        <th>재고</th><th>색상</th><th>수정</th><th>삭제</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% products.forEach(p => { %>
+        <tr>
+          <td><%= p.id %></td>
+          <td>
+            <% if (p.thumb) { %>
+              <img src="<%= p.thumb %>" width="60">
+            <% } %>
+          </td>
+          <form action="/admin/products/<%= p.id %>/update" method="post" enctype="multipart/form-data">
+            <td><input type="text" name="name" value="<%= p.name %>" required></td>
+            <td><input type="text" name="option" value="<%= p.option %>" required></td>
+            <td><input type="number" name="price" value="<%= p.price %>" required></td>
+            <td><input type="number" name="stock" value="<%= p.stock %>" required></td>
+            <td><input type="text" name="color" value="<%= p.color %>"></td>
+            <td colspan="2">
+              <input type="text" name="hover_img1" placeholder="hover1" value="<%= p.hover_img1 || '' %>">
+              <input type="text" name="hover_img2" placeholder="hover2" value="<%= p.hover_img2 || '' %>">
+              <textarea name="size_info" rows="2" placeholder="사이즈 정보"><%= p.size_info || '' %></textarea>
+              <textarea name="description_html" rows="2" placeholder="상세 HTML"><%= p.description_html || '' %></textarea>
+              <input type="text" name="detail_subtitle" placeholder="하단소제목" value="<%= p.detail_subtitle || '' %>">
+              <input type="text" name="detail_img1" placeholder="이미지1" value="<%= p.detail_img1 || '' %>">
+              <input type="text" name="detail_img2" placeholder="이미지2" value="<%= p.detail_img2 || '' %>">
+              <input type="text" name="detail_img3" placeholder="이미지3" value="<%= p.detail_img3 || '' %>">
+              <input type="text" name="detail_img4" placeholder="이미지4" value="<%= p.detail_img4 || '' %>">
+              <input type="text" name="detail_img5" placeholder="이미지5" value="<%= p.detail_img5 || '' %>">
+              <input type="text" name="detail_img6" placeholder="이미지6" value="<%= p.detail_img6 || '' %>">
+              <input type="text" name="detail_img7" placeholder="이미지7" value="<%= p.detail_img7 || '' %>">
+              <input type="text" name="detail_img8" placeholder="이미지8" value="<%= p.detail_img8 || '' %>">
+
+              <input type="text" name="hover_img_list" placeholder="목록 Hover 이미지 URL" value="<%= p.hover_img_list || '' %>">
+              <h4>색상 설명 블록</h4>
+              <% for (let i = 1; i <= 2; i++) { %>
+                <input type="text" name="color_title<%= i %>" placeholder="색상 제목 <%= i %>" value="<%= (p && p['color_title' + i]) || '' %>">
+                <input type="text" name="color_img<%= i %>" placeholder="색상 이미지 URL <%= i %>" value="<%= (p && p['color_img' + i]) || '' %>">
+                <textarea name="color_desc<%= i %>" rows="3" placeholder="색상 설명 <%= i %>"><%= (p && p['color_desc' + i]) || '' %></textarea>
+              <% } %>
+              <input type="file" name="thumb" accept="image/*">
+              <button type="submit">💾</button>
+            </td>
+          </form>
+          <td>
+            <form action="/admin/products/<%= p.id %>/delete" method="post" onsubmit="return confirm('정말 삭제하시겠습니까?');">
+              <button type="submit">🗑️</button>
+            </form>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</body>
+</html>

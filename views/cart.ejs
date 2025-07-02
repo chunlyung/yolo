@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang ="ko"> 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+    content="width=device-width,initial-scale=1.0">
+    <title>장바구니</title>
+  <link href="./cart.css" rel="stylesheet">
+ <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+</head>
+
+<body>
+
+
+
+ <main class="cart-page">
+  <!-- 제목 -->
+  <h1 class="cart-title">
+    장바구니 <span id="cart-count">(0)</span>
+  </h1>
+
+  <!-- 비어 있을 때 -->
+  <section id="cart-empty" class="cart-empty">
+    장바구니가 비어 있습니다
+  </section>
+
+  <!-- 상품이 하나라도 있으면 form이 표시됨 -->
+  <div id="cart-form" class="cart-form hidden">
+    <!-- 헤더 행 -->
+    <div class="cart-header">
+      <label class="col-info">
+        <input type="checkbox" id="select-all"/>
+        <span>상품 정보</span>
+      </label>
+      <span class="col-qty">수&nbsp;량</span>
+      <span class="col-price">가&nbsp;격</span>
+      <span class="col-shipping">배송비</span>
+    </div>
+    <!-- 리스트가 여기에 JS로 삽입됨 -->
+    <ul id="cart-items"></ul>
+    <!-- 합계 영역 -->
+ <div class="cart-summary">
+  <div class="summary-row">
+    <span class="label">상품 합계</span>
+    <span id="summary-subtotal" class="value">0원</span>
+  </div>
+  <div class="summary-row">
+    <span class="label">배송비</span>
+    <span id="summary-shipping" class="value">0원</span>
+  </div>
+
+  <hr class="summary-divider" />
+
+  <div class="summary-row total">
+    <span class="label">합계</span>
+    <span id="summary-total" class="value">0원</span>
+  </div>
+</div>
+<!-- ────────────────────────────────────────── -->
+  </div>
+    <!-- 액션 버튼 -->
+    <div class="cart-actions">
+        <button type="button" id="order-btn" class="btn-checkout" onclick="location.href='/purchase'">
+        구매하기
+      </button></a>
+      </form>
+    </div>
+
+  <!-- 장바구니 JS (상품 목록·합계·삭제·수량변경 처리) -->
+  
+</main>
+
+
+
+
+<br><br><br><br><br><br><br><br>
+<br><br><br><br><br><br><br><br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ <header class="header">
+
+     <div class="header-icons">
+      
+       <i class="fa-solid fa-search" id="mobileSearchIcon" style="cursor:pointer;"></i>
+       
+      <div id="mobileSearchOverlay" class="search-overlay">
+       <input  type="text"
+        class="search-input-overlay"
+        id="searchInputOverlay"
+        placeholder="검색" />
+        <button id="searchCloseBtn" class="search-close-btn">X</button>
+        </div>
+
+      <span id="logintoggle2"></span>
+      
+      <a href="cart"> <i class="fa-solid fa-cart-shopping"></i></a>
+     </div>
+
+
+
+
+
+      <button class ="menu-toggle"onclick="toggleMenu()" >☰</button>
+      <button class="close-toggle hidden" onclick="toggleMenu()">X</button>
+     <!--close-toggle과 hidden의 두 클래스를 사용 가능-->
+        <nav class="mobile-menu" id="navMenu"> 
+          
+          <div class="top">
+           <li> <a class="logo-mobile" href="yolo.html">YOLO</a></li>
+          <div id="logintoggle">
+            <li> <a class="login-mobile" href="login.html">Log In</a></li>
+          </div>
+             </div>
+
+          <div class="search-m">
+             <input type="text" id="search-mobile" placeholder="⌕">
+          </div>
+
+           
+
+
+          <ul class="menuM"> <!--메뉴 항목들(가로 메뉴, 드롭다운 등을 감싸는 태그)-->
+          <li class="dropMobile">  <!--드롭다운 메뉴-->
+            <a  class=dropheader href="#">ABOUT
+              <span class="arrow">&#709;</span>
+            </a> <!--드롭다운 메뉴 제목-->
+            <ul class="submenu">  <!--서브 메뉴--> 
+              <li><a  href ="about-as.html">About us</a></li>
+              <li><a  href ="store.html">Store</a></li>
+              <li><a  href ="contact .html">Contact us</a></li>
+              </ul>
+              </li>
+           
+             <li> <a  href="notice.html">NOTICE</a> </li>
+               <!-- 단일 메뉴-->
+
+        <li class="dropMobile">  <!--드롭다운 메뉴--> <!-- <li>는 리스트 항목 하나.-->
+        <a class=dropheader href="#">SHOP
+          <span class="arrow">&#709;</span>
+        </a> <!--드롭다운 메뉴 제목-->
+        <ul class="submenu"> <!--서브메뉴-->
+      <li><a  href ="/shop-all">ALL</a></li>
+          <li><a  href ="/shop/plate">접시</a></li>
+          <li><a   href ="/shop/bowl">볼</a></li>
+          <li><a   href ="/shop/cup">컵</a></li>
+          <li><a   href ="/shop/N">기타 제품</a></li>
+          <li><a   href ="#">Plates for Pasta</a></li>
+          <li><a  href ="#">By color</a></li>
+         <li><a   href ="#">Only You</a></li>
+         </ul>
+        </li>
+
+        <li class="dropMobile">  <!-- 드롭다운 메뉴 항목을 만듬.-->
+        <a class=dropheader href="#">FAQ/QNA
+          <span class="arrow">&#709;</span>
+        </a><!-- 드롭다운 제목-->
+        <ul class="submenu"><!--하위 메뉴들을 감싸는 리스트.-->
+          <li><a href ="question.html">자주 묻는 질문</a></li>
+          <li><a href ="QNA.html">Q&A</a></li><!--하위 메뉴 항목-->
+        </ul>
+        </li>
+        </ul>
+
+
+
+
+
+
+
+         </nav>
+        
+<div class="logo" style="cursor: pointer;"> 
+        <a href="yolo.html">  YOLO
+     </a></div>
+      <nav class="nav-center">
+      <ul class="menu"> <!--메뉴 항목들(가로 메뉴, 드롭다운 등을 감싸는 태그)-->
+          <li class="dropdown">  <!--드롭다운 메뉴-->
+            <a class="about" href="#">ABOUT</a> <!--드롭다운 메뉴 제목-->
+            <ul class="dropdown-menu">  <!--서브 메뉴--> 
+              <li><a  class="about" href ="about-as.html">About us</a></li>
+              <li><a  class="about" href ="store.html">Store</a></li>
+              <li><a  class="about" href ="contact .html">Contact us</a></li>
+              </ul>
+              </li>
+           
+             <li> <a class="about" href="notice.html">NOTICE</a> </li>
+               <!-- 단일 메뉴-->
+
+        <li class="dropdown">  <!--드롭다운 메뉴--> <!-- <li>는 리스트 항목 하나.-->
+        <a class="about" href="#">SHOP</a> <!--드롭다운 메뉴 제목-->
+        <ul class="dropdown-menu"> <!--서브메뉴-->
+            <li><a  class="about" href ="shop-all">ALL</a></li>
+          <li><a  class="about" href ="/shop/plate">접시</a></li>
+          <li><a  class="about" href ="/shop/bowl">볼</a></li>
+          <li><a  class="about" href ="/shop/cup">컵</a></li>
+          <li><a  class="about" href ="/shop/N">기타 제품</a></li>
+          <li><a  class="about" href ="#">Plates for Pasta</a></li>
+          <li><a  class="about" href ="#">By color</a></li>
+         <li><a  class="about" href ="#">Only You</a></li>
+         </ul>
+        </li>
+
+        <li class="dropdown">  <!-- 드롭다운 메뉴 항목을 만듬.-->
+        <a class="about" href="#">FAQ/QNA</a><!-- 드롭다운 제목-->
+        <ul class="dropdown-menu"><!--하위 메뉴들을 감싸는 리스트.-->
+          <li><a  class="about" href ="question.html">자주 묻는 질문</a></li>
+          <li><a  class="about" href ="QNA.html">Q&A</a></li><!--하위 메뉴 항목-->
+        </ul>
+        </li>
+        </ul>
+      </nav>
+
+         <div class="nav-right">
+         <!--로그인,장바구니-->
+        
+           <button type="button" id="searchToggle" class="search-btn" onclick="toggleSearch(event)">
+            ⌕  </button>
+<input  type="text"
+        class="search-input"
+        id="searchInput"
+        placeholder=" " />
+            <!-- 토글로 나타날 검색 입력창 -->
+
+
+
+       
+            
+
+   <div id="login-menu">
+            <a class="auth" href="login.html">Logln</a>
+            </div>
+
+            <a class="auth" href="cart">Cart</a>
+            
+        </div>
+          
+     <!--메뉴 토글 버튼(햄버거메뉴) / 모바일 등 좁은 화면에서 메뉴를 열고 닫을때 사용됨.-->
+     <!--oncilick버튼 클릭 시 자바스크립트 함수 toggleMenu()실행-->
+      </ul>
+        </header>
+
+
+
+
+
+ <span class="insta">
+          <a href="https://instagram.com/yol_o.0?igsh=MWd0OHlya3ZwcW5vbw=="
+         target="_blank">
+         <img src="./insta.png" alt="instagram"
+         style="width: 25px; height: 25px;"></a>
+          </span>
+        </a>
+
+       
+          <section class="footer">
+          <span class="final">
+            <a href="/policy.html" style="text-decoration: none; color:inherit;">
+            이용약관</a>&nbsp;  
+            
+             <a href="/privacy.html" style="text-decoration: none; color:inherit;">
+            개인정보처리방침</a>&nbsp; 
+            
+            <!-- ✅ 사업자정보 확인 팝업 링크 -->
+    <a href="https://www.ftc.go.kr/bizCommPop.do?wrkr_no=7023001816"
+    onclick="window.open(this.href, 'bizInfo', 'width=800,height=700'); return false;"
+    style="text-decoration: none; color: inherit;">사업자정보확인</a>&nbsp;
+          </span>
+          <br>
+          <br>
+          <span class="final2">
+            상호:Yolo | 대표: 정윤재 | 개인정보관리책임자: 정윤재 | 전화: 010.2886.2375 | 이메일: nvjae2018@gmail.com
+          </span>
+          <div class="final2">
+            주소: 서울 강동구 천중로 53길 21 지하 1층 무궁화 놀이터 맞은편 건물 | 사업자등록번호: ? | 통신판매: 제 2021-경기이천-0579호 | 호스팅제공자: (주)식스샵
+          </div>
+          <br>
+          <br>
+          <div class="final2">
+            Copyright 2024. YOLO All rights reserved.
+          </div>
+          <br>
+          <br>
+           
+        </div>
+         </section>
+          
+
+
+<script>
+
+
+
+    document.querySelectorAll('.dropheader').forEach(header => { header.addEventListener('click' ,
+      () => {
+         const parent = header.parentElement;
+
+         parent.classList.toggle('open');
+      });
+    });
+
+ function toggleMenu() {
+     const nav = document.getElementById('navMenu');
+     const openBtn = document.querySelector('.menu-toggle');
+     const closeBtn = document.querySelector('.close-toggle');
+     const icons= document.querySelector('.header-icons');
+
+     
+    
+     nav.classList.toggle('active');
+    
+     const isOpen =nav.classList.contains('active');
+   
+
+if(isOpen) {
+     openBtn.classList.add('hidden');
+     closeBtn.classList.remove('hidden');
+     icons.classList.add('hidden'); // toggle시 오른쪽 상단메뉴 제거
+
+   document.body.classList.add('no-scroll');
+     document.documentElement.classList.add('no-scroll');
+    }
+     //html 태그도 막기
+     else{
+ openBtn.classList.remove('hidden');
+ closeBtn.classList.add('hidden');
+   icons.classList.remove('hidden'); // toggle시 오른쪽 상단메뉴 삽입
+    document.body.classList.remove('no-scroll');
+    document.documentElement.classList.remove('no-scroll');
+     // 토글 나갈시 다시 세로 스크롤 생김
+  }
+
+ }
+
+
+
+ function toggleSearch(event) {
+ 
+     if(event)event.preventDefault();  //submit 동작을 방지
+
+
+
+   const input = document.querySelector('.search-input');
+    const authLinks = document.querySelectorAll('.auth');
+    // querySelectorAll()은  NodeList(배열 비슷한 객체)를 반환하니까 ,
+    // classList.toggle()은 직접 쓸 수 없음 
+    // forEach 나 for문으로 (반복문으로) 처리해야 함. 
+ 
+
+  input.classList.toggle('active'); 
+  input.focus(); // 돋보기를 누르면 커서 깜빡임
+      
+     authLinks.forEach(el => {
+           
+      el.classList.toggle('hidden'); //각각에 hidden 토글 적용
+
+     });
+ }
+ 
+
+/* ✅ 두 번째로 선언해 버렸던 toggleSearch() 삭제 후 아래 하나만 남깁니다 */
+function toggleSearch(e){
+  if(e) e.preventDefault();          // form submit 방지
+
+  const input      = document.getElementById('searchInput');
+  const authLinks  = document.querySelectorAll('.auth');
+
+  // 입력창 열고/닫기
+  input.classList.toggle('show');
+
+  // Login / Cart 토글
+  authLinks.forEach(a => a.classList.toggle('hidden'));
+
+  if (input.classList.contains('show')) {
+    input.focus();
+  } else {
+    input.value = '';                // 닫힐 때 내용 비우기(선택)
+  }
+}
+
+/* Enter 키로 검색 페이지 이동 */
+document.getElementById('searchInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter'){
+    const keyword = e.target.value.trim();
+    if (!keyword){
+      alert('검색어를 입력하세요');
+      return;
+    }
+    location.href = `/search?keyword=${encodeURIComponent(keyword)}`;
+  }
+});
+
+document.getElementById('mobileSearchIcon').addEventListener('click', e => {
+  const overlay = document.getElementById('mobileSearchOverlay');
+  overlay.classList.add('active');
+  document.getElementById('searchInputOverlay').focus();
+});
+
+document.getElementById('searchInputOverlay').addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    const keyword = e.target.value.trim();
+    if (!keyword) {
+      alert('검색어를 입력하세요');
+      return;
+    }
+    location.href = `/search?keyword=${encodeURIComponent(keyword)}`;
+  }
+});
+
+
+// 모바일 메뉴 검색창: Enter로 검색 페이지 이동
+document.getElementById('search-mobile').addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    const keyword = e.target.value.trim();
+    if (!keyword) {
+      alert('검색어를 입력하세요');
+      return;
+    }
+    location.href = `/search?keyword=${encodeURIComponent(keyword)}`;
+  }
+});
+
+
+
+
+
+document.getElementById('searchCloseBtn').addEventListener('click', () => {
+  const overlay = document.getElementById('mobileSearchOverlay');
+  overlay.classList.remove('active'); // 또는 .classList.remove('active') → 네 CSS 기준에 맞춰
+  document.getElementById('searchInputOverlay').value = '';
+});
+
+
+
+
+
+ 
+fetch('/cart/data')
+  .then(res => res.json())
+  .then(cart => {
+    const count    = document.getElementById('cart-count');
+    const emptySec = document.getElementById('cart-empty');
+    const form     = document.getElementById('cart-form');
+    const list     = document.getElementById('cart-items');
+
+    // 수량·가격 합계용 참조
+    const subTotalEl   = document.getElementById('summary-subtotal');
+    const shippingEl   = document.getElementById('summary-shipping');
+    const totalEl      = document.getElementById('summary-total');
+
+    // 비어 있으면…
+    if (!cart || cart.length === 0) {
+      count.textContent = '(0)';
+      emptySec.classList.remove('hidden');
+      form.classList.add('hidden');
+      return;
+    }
+
+    // 채워질 때
+    emptySec.classList.add('hidden');
+    form.classList.remove('hidden');
+    count.textContent = `(${cart.length})`;
+
+    // 리스트 렌더링
+    list.innerHTML = cart.map(item => `
+      <li class="cart-item">
+        <div class="item-info">
+          <input type="checkbox" class="item-check" checked>
+          <img src="${item.thumb || '/aa.jpg'}" alt="">
+          <div>
+            <p>${item.name}</p>
+            <p>Color: ${item.color}</p>
+           <button type ="button" class="btn-remove"
+           data-id="${item.id}" data-color="${item.color}">
+           삭제하기</button>
+          </div>
+        </div>
+
+        <div class="col-qty qty-control"
+      data-id="${item.id}" data-color="${item.color}"
+      data-unit="${item.price}">
+   <button type="button" class="btn-minus">−</button>
+   <input type="number" class="qty-input"
+          value="${item.quantity}" min="1">
+   <button type="button" class="btn-plus">＋</button>
+ </div>
+        <span class="col-price">
+          ${(item.price * item.quantity).toLocaleString()}원
+        </span>
+        <span class="col-shipping">
+          3,000원
+          <span class="shipping-note">(70,000원 이상 구매 시 무료)</span)
+        </span>
+        <input type="checkbox" class="item-check" checked>
+      </li>
+    `).join('');
+    // ✅ 전체 선택 체크박스 기능
+const selectAll = document.getElementById('select-all');
+
+selectAll.addEventListener('change', e => {
+  const checked = e.target.checked;
+  document.querySelectorAll('.item-check').forEach(box => {
+    box.checked = checked;
+  });
+  recalcSummary();
+});
+
+// ✅ 개별 체크박스 클릭 시 합계 다시 계산
+list.addEventListener('change', e => {
+  if (e.target.classList.contains('item-check')) {
+    recalcSummary();
+  }
+});
+
+
+    recalcSummary();
+
+// ── 수량 버튼 / 인풋 실시간 처리 ─────────────────────
+list.addEventListener('click', e => {
+  if (e.target.matches('.btn-plus, .btn-minus')) {
+    const control = e.target.closest('.qty-control');
+    const input   = control.querySelector('.qty-input');
+    let qty       = +input.value;
+
+    if (e.target.classList.contains('btn-plus'))  qty++;
+    else if (qty > 1)                             qty--;
+
+    input.value = qty;
+    handleQtyChange(control, qty);
+  }
+});
+
+list.addEventListener('change', e => {
+  if (e.target.matches('.qty-input')) {
+    const control = e.target.closest('.qty-control');
+    const qty     = Math.max(1, +e.target.value);
+    e.target.value = qty;         // 최소 1 보정
+    handleQtyChange(control, qty);
+  }
+});
+
+list.addEventListener('click', e => {
+  if (e.target.classList.contains('btn-remove')) {
+    const { id, color } = e.target.dataset;
+
+    fetch('/cart/remove', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id, color })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.ok) {
+        // 1. 해당 상품행 삭제
+        e.target.closest('.cart-item').remove();
+
+        // 2. 합계 재계산
+        recalcSummary();
+
+        // 3. 남은 항목 확인 → 0개면 UI 전환
+        const rows = document.querySelectorAll('.cart-item');
+        if (rows.length === 0) {
+          document.getElementById('cart-count').textContent = '(0)';
+          document.getElementById('cart-empty').classList.remove('hidden');
+          document.getElementById('cart-form').classList.add('hidden');
+        } else {
+          document.getElementById('cart-count').textContent = `(${rows.length})`;
+        }
+      }
+    });
+  }
+});
+
+function handleQtyChange(control, qty){
+  const unit   = +control.dataset.unit;          // 단가
+  const id     = control.dataset.id;
+  const color  = control.dataset.color;
+  const row    = control.closest('.cart-item');
+
+  // 1) 행 가격 즉시 갱신
+  row.querySelector('.col-price').textContent =
+        (unit * qty).toLocaleString() + '원';
+
+  // 2) 합계 다시 계산
+  recalcSummary();
+
+  // 3) 서버에도 반영 (JSON 전송)
+  fetch('/cart/update',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({ id:Number(id), color, quantity: qty })
+  });
+}
+
+
+
+
+
+
+function recalcSummary(){
+  const rows = document.querySelectorAll('.cart-item');
+  let sub = 0;
+  rows.forEach(r=>{
+    const price = +r.querySelector('.col-price')
+                    .textContent.replace(/[^0-9]/g,'');
+    sub += price;
+  });
+
+  const shipping = sub >= 70000 ? 0 : 3000;
+  subTotalEl.textContent = sub.toLocaleString() + '원';
+  shippingEl.textContent = shipping === 0 ? '무료' : shipping.toLocaleString() +'원';
+  totalEl.textContent    = (sub+shipping).toLocaleString()+'원';
+     document.querySelectorAll('.cart-item .col-shipping').forEach(el =>{
+      el.innerHTML = shipping === 0 ? `무료` : `3,000원 <span class="shipping-note">(70,000원 이상 구매 시 무료)</span>`;
+     });
+}
+
+    
+    // 합계(예시: 배송비는 고정 3000원)
+    
+    const shipping =  subTotal >= 70000 ? 0 : 3000;
+    subTotalEl.textContent = `${subTotal.toLocaleString()}원`;
+    shippingEl.textContent = shipping === 0 ? '무료' :`${shipping.toLocaleString()}원`;
+    totalEl.textContent    = `${(subTotal+shipping).toLocaleString()}원`;
+
+    
+function recalcSummary(){
+  const rows = document.querySelectorAll('.cart-item');
+  let sub = 0;
+
+  rows.forEach(row => {
+    const check = row.querySelector('.item-check');
+    if (!check || !check.checked) return;
+
+    const price = +row.querySelector('.col-price')
+                        .textContent.replace(/[^0-9]/g, '');
+    sub += price;
+  });
+
+  const shipping = sub >= 70000 ? 0 : 3000;
+
+  subTotalEl.textContent = sub.toLocaleString() + '원';
+  shippingEl.textContent = shipping === 0 ? '무료' : shipping.toLocaleString() + '원';
+  totalEl.textContent = (sub + shipping).toLocaleString() + '원';
+
+  // 상품 행 안 배송비 칼럼 안내문구 동시 적용
+  document.querySelectorAll('.cart-item .col-shipping').forEach(el => {
+    el.innerHTML = shipping === 0
+      ? '무료'
+      : '3,000원 <span class="shipping-note">(70,000원 이상 구매 시 무료)</span>';
+  });
+}
+
+
+  });
+
+
+  document.getElementById('order-btn').addEventListener('click', async () => {
+  // 선택된 상품들만 수집
+  const items = Array.from(document.querySelectorAll('.cart-item'))
+    .filter(item => item.querySelector('.item-check')?.checked)
+    .map(item => {
+      const id = +item.querySelector('.btn-remove').dataset.id;
+      const color = item.querySelector('.btn-remove').dataset.color;
+      const qty = +item.querySelector('.qty-input').value;
+      return { id, color, quantity: qty };
+    });
+
+  // 선택 상품이 없을 경우
+  if (items.length === 0) {
+    alert('선택된 상품이 없습니다.');
+    return;
+  }
+
+  // 총 가격 계산
+  const total = items.reduce((sum, item) => {
+    const unit = +document
+      .querySelector(`.qty-control[data-id="${item.id}"][data-color="${item.color}"]`)
+      .dataset.unit;
+    return sum + unit * item.quantity;
+  }, 0);
+
+  const shipping = total >= 70000 ? 0 : 3000;
+  const total_price = total + shipping;
+
+  // POST로 구매 페이지로 이동 (세션 또는 서버 처리 전제)
+  const res = await fetch('/purchase', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ cart: items, total_price })
+  });
+
+  const result = await res.json();
+  if (result.ok && result.orderId) {
+    location.href = `/purchase?orderId=${result.orderId}`;
+  } else {
+    alert('구매 페이지로 이동 실패');
+  }
+});
+
+
+const path = window.location.pathname;
+
+  const isLoginPage =
+    path.includes('login.html') ||
+    path === '/login' ||
+    path === '/login.html';
+
+  // 로그인 페이지가 아닐 때만 실행
+  if (!isLoginPage) {
+    fetch('/auth/status')
+      .then(res => res.json())
+      .then(data => {
+        if (data.loggedIn) {
+          const banner = document.querySelector('#login-banner');
+          if (banner) {
+            banner.textContent = `${data.user.name}님 안녕하세요!`;
+          }
+        } else {
+          location.href = '/login.html';
+        }
+      });
+  }
+
+
+
+
+
+  //로그인유지
+
+    fetch('/auth/status')
+    .then(res => res.json())
+    .then(data => {
+      console.log('auth/status 응답:',data);
+      const banner = document.querySelector('#login-menu');
+      if (!banner) return;
+     console.warn('배너가 없음');
+      if (data.loggedIn) {
+        banner.innerHTML = `
+      
+          <a href="/mypage"class="auth">My page</a>
+
+        `;
+      }
+    });
+
+  fetch('/auth/status')
+    .then(res => res.json())
+    .then(data => {
+      console.log('auth/status 응답:',data);
+      const banner = document.querySelector('#logintoggle');
+      if (!banner) return;
+     console.warn('배너가 없음');
+      if (data.loggedIn) {
+        banner.innerHTML = `
+    
+          <a href="/mypage"class="login-mobile">My page</a>
+        `;
+      }
+    });
+
+
+
+
+
+   fetch('/auth/status')
+    .then(res => res.json())
+    .then(data => {
+      console.log('auth/status 응답:',data);
+      const banner = document.querySelector('#logintoggle2');
+      if (!banner) return;
+     console.warn('배너가 없음');
+      if (data.loggedIn) {
+        banner.innerHTML = `
+    
+          <a href="/mypage"class="fa-solid fa-user"></a>
+        `;
+      }
+    else{
+      banner.innerHTML=` <a href="/login.html"class="fa-solid fa-user"></a>`;
+    }
+
+    });
+
+
+
+
+</script>
+
+<style>
+
+.logo a{
+  color: black !important;
+  text-decoration: none !important;
+  font-size: 30px !important;
+}
+
+  @media (max-width:768px) {
+.logo a{
+  color: black !important;
+  text-decoration: none !important;
+  font-size: 30px !important;
+}
+.header{
+  padding:0.3rem 2rem;
+}
+.bg-img{
+  padding-top:0;
+}
+.final{
+   font-size: 9px;
+   text-align: center;
+   margin-top: 15px;
+
+}
+.final2{
+    font-size: 9px;
+    text-align: center;
+   
+}
+
+  }
+
+</style>
+
+
+
+
+
+
+
+</body>
+</html>
+

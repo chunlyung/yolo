@@ -1,0 +1,28 @@
+/* === 회원 테이블 === *//* === 공통 === */@import url('https://fonts.googleapis.com/css2?family=Diphylleia&family=Gowun+Batang&family=Nanum+Brush+Script&family=Nanum+Myeongjo&display=swap');
+body{
+        font-family: "Gowun Batang", serif; /*글꼴 지정*/
+
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 30px;
+  font-size: 0.95rem;
+}
+thead {
+  background-color: #f0f0f0;
+}
+th, td {
+  padding: 12px;
+  border: 1px solid #ccc;
+  text-align: center;
+}
+tbody tr:hover {
+  background-color: #f9f9f9;
+}
+button{
+  border: navajowhite;
+  color: black;
+  cursor: pointer;
+  background-color: white;
+}

@@ -1,0 +1,92 @@
+/* === 공통 === */@import url('https://fonts.googleapis.com/css2?family=Diphylleia&family=Gowun+Batang&family=Nanum+Brush+Script&family=Nanum+Myeongjo&display=swap');
+
+html,body{
+margin: 0;
+  padding: 0;
+height: 100%;}
+
+body {
+  background-color: #cdddeb;
+ 
+  color: #333;
+      font-family: "Gowun Batang", serif; /*글꼴 지정*/
+       background-image:url("/abcd.jpg");  /*배경 이미지 지정*/
+        background-size:cover;                  /*이미지를 영역에 꽉 차게 늘려줌*/
+        background-position: top center;        /*배경 이미지를 상단 중앙에 정렬*/
+        background-repeat: no-repeat;  
+  min-height: 100vh;
+}
+
+
+
+h1 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+a {
+  text-decoration: none;
+  color: black;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* === 헤더 === */
+header {
+  background-color: #cdddeb;
+  color: rgb(66, 48, 48);
+  padding: 20px;
+  text-align: center;
+}
+
+header p {
+  margin: 10px 0;
+  font-size: 1rem;
+}
+
+header form {
+  margin-top: 10px;
+}
+
+header button {
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  background-color: #246174;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+header button:hover {
+  background-color: #c82333;
+}
+
+/* === 메인 콘텐츠 === */
+main {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 20px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+main ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+main li {
+  margin: 12px 0;
+  font-size: 1.1rem;
+}
+
+main li::before {
+  content: "• ";
+  color: black;
+  font-weight: bold;
+}

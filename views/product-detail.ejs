@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang ="ko"> 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+    content="width=device-width,initial-scale=1.0">
+    <title>상세정보</title>
+  <link href="/product-detail.css" rel="stylesheet">
+ <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+</head>
+
+<body>
+
+
+   
+
+<main class="product-detail">
+    <section class="product-main">
+      <!-- 왼쪽 큰 이미지 + 썸네일 -->
+      <div class="product-images">
+        <img src="<%= product.thumb %>" alt="<%= product.name %>" class="primary-image"
+        id="mainImage">
+        <div class="thumb-list">
+                <% if (product.hover_img1) { %>
+          <img src="<%= product.hover_img1 %>" alt="hover1" class="hover_img">
+        <% } %>
+        <% if (product.hover_img2) { %>
+          <img src="<%= product.hover_img2 %>" alt="hover2" class="hover_img">
+        <% } %>
+        </div>
+      </div>
+
+      <!-- 우측 상품 정보 -->
+      <div class="product-info">
+        <h2 class="product-name"><%= product.name %></h2>
+        <p class="price"><%= product.price.toLocaleString() %>원</p>
+
+        <dl class="size-info">
+          <dt>SIZE</dt>
+           <% if (product.size_info) { %>
+          <% product.size_info.split('\n').forEach(line => { %>
+            <dd><%= line %></dd>
+          <% }) %>
+        <% } %>
+        </dl>
+
+        <p class="notice">구매 전 상세페이지 하단의 디테일, 체크리스트 필수 참고 부탁드립니다. :)</p>
+
+        <div class="shipping">
+          <span class="label">배송비</span>
+          <div class="labelcontent">
+            <p>3,000원 (70,000원 이상 구매 시 무료)</p>
+            <p>제주 3,000원, 제주 외 도서 산간 5,000원 추가</p>
+          </div>
+         </div>
+
+        <div class="option-select">
+          <label for="color-select">Color</label>
+          <select id="color-select">
+            <option value ="" selected disabled>선택하세요.</option>
+
+            <% options.forEach(o => { %>
+            <option value="<%= o.color %>"data-thumb ="<%= o.thumb  %>" data-price="<%= o.price %>"> 
+               <%= o.color %> - <%= o.price.toLocaleString() %>원</option>
+              <% }) %>
+          </select>
+        </div> 
+        
+         <hr class="divider-top">
+
+         <hr class="divider-option">
+         
+         <ul id ="cart-list" class="cart-list"></ul>
+             
+        <div class="order-summary">
+          <div class="quantity">
+             <span>주문 수량</span>
+            <span class="qty-value">0개</span>
+          </div>
+          <div class="total-price">
+            <span>총 상품 금액</span>
+            <span class="total-value">0원</span>
+          </div>
+        </div>
+
+
+
+
+       
+
+          <form id="add-to-cart-form">
+    <!-- 상품 ID -->
+    <input type="hidden" name="id" value="<%= product.id %>">
+
+    <!-- 상품명: h2에서 가져옴 -->
+    <input type="hidden" name="name" value="<%= product.name %>">
+
+    <!-- 가격은 선택된 옵션에 따라 JS에서 설정 -->
+    <input type="hidden" name="price" id="hidden-price" value="<%= product.price %>">
+
+    <!-- 수량은 기본 1로 시작, 추후 JS로 조작 가능 -->
+    <input type="hidden" name="quantity" id="hidden-qty" value="1">
+
+    <!-- 선택된 옵션 -->
+    <input type="hidden" name="color" id="hidden-color" value="">
+    
+    <input type="hidden" name="thumb" id="hidden-thumb"  value="">
+
+         <div class="cta-buttons">
+    <button type="button" id="add-to-cart-btn" class="cart-btn">장바구니에 담기</button>
+
+          <button class="buy-btn">구매하기</button>
+          </div>
+
+          </form>
+        
+
+        <!-- 옵션 드롭다운 바로 뒤에 고정 가로선 -->
+
+
+
+
+        <button class="naver-pay">
+          <img src="naver-pay-logo.png" alt="Naver Pay 로고"> pay 구매
+        </button>
+      </div>
+    </section>
+<br><br><br><br><br><br><br><br>
+    <!-- 브랜드 스토리 (스크롤 내리면 보이는 구간) -->
+    <section class="brand-story">
+      <div class="storyLogo">YOLO</div>
+      <h6>욜로 도자기는 흙이 지닌 자연스러움과 손으로 빚는 따뜻한 감성을 담아내고 있습니다.</h6>
+      <br>
+      <p>색상과 크기는 공정마다 조금씩 다르게 완성되며, 이는 수공예 도자기만의 고유한 특징입니다.</p>
+      <p>(모든 제품은 랜덤으로 발송되며, 직접 보고 고르고 싶은 분들께서는 작업실에 방문해 주셔도 좋습니다.)</p>
+      <p>| 구매 전 상품정보 페이지 하단의 check list / notice를 필수 확인해 주세요. |</p>
+<br><br><br>
+
+
+
+<% for (let i = 1; i <= 2; i++) { %>
+  <% const title = product[`color_title${i}`]; %>
+  <% const img = product[`color_img${i}`]; %>
+  <% const desc = product[`color_desc${i}`]; %>
+  <% if (title || img || desc) { %>
+    <div class="color-block">
+      <% if (title) { %><h3 class="middle"><%= title %></h3><% } %>
+      <% if (img) { %><img src="<%= img %>" class="mainImg"><% } %>
+      <% if (desc) { %><p class="color-desc"><%= desc %></p><% } %>
+    </div>
+  <% } %>
+<% } %>
+
+
+ <br>
+    
+    
+    <p>모든 제품은 손으로 하나하나 빚고 가마에서 구워지는 수작업 과정을 거치기 때문에 ,</p>
+    <p>다음과 같은 특징들이 있을 수 있습니다. 하단의 사진 확인 부탁드립니다.</p>
+
+  <br><br><br>
+
+  <br><br><br><br>
+    <% if (product.description_html) { %>
+      <%- product.description_html %> <!-- HTML 포함된 본문 (Libia 섹션) -->
+    <% } %>
+ 
+    
+
+  <br><br><br><br><br><br>
+
+  <p>유약의 특성상 색상 변화, 흐름, 맺힘 많이 나타납니다. 하단의 사진 및 설명 확인 부탁드립니다.</p>
+  <!-- <img src="./nutt1.jpg" class="mainImg">-->
+   <!-- <img src="./nutt2.jpg"class="mainImg">-->
+    <!-- <img src="./nutt3.jpg"class="mainImg"> -->
+
+
+<br><br><br><br><br><br><br>
+  
+<% if (product.detail_subtitle) { %>
+<h6 class="middle"><%= product.detail_subtitle %></h6>
+ <hr class="divider">
+ <% } %>
+
+
+  <% if (product.detail_img1) { %>
+      <img src="<%= product.detail_img1 %>" class="mainImg">
+    <% } %>
+
+    <% if (product.detail_img2) { %>
+      <img src="<%= product.detail_img2 %>" class="mainImg">
+    <% } %>
+
+    <% if (product.detail_img3) { %>
+      <img src="<%= product.detail_img3 %>" class="mainImg">
+    <% } %>
+
+    <% if (product.detail_img4) { %>
+      <img src="<%= product.detail_img4 %>" class="mainImg">
+    <% } %>
+
+    <% if (product.detail_img5) { %>
+      <img src="<%= product.detail_img5 %>" class="mainImg">
+    <% } %>
+
+ <% if (product.detail_img6) { %>
+      <img src="<%= product.detail_img6 %>" class="mainImg">
+    <% } %>
+
+    <% if (product.detail_img7) { %>
+      <img src="<%= product.detail_img7 %>" class="mainImg">
+    <% } %>
+
+    <% if (product.detail_img8) { %>
+      <img src="<%= product.detail_img8 %>" class="mainImg">
+    <% } %>
+
+
+
+  <br><br><br><br>
+
+ <div class="caution">
+  <h6 class="middle">CAUTION</h6>
+  <hr class="divider">
+  <p>-금속 제품(커트러리 등)과의 충격은 표면에 상처를 남기거나 금속 자국이 생길 수 있습니다.</P>
+  <p>-전자레인지 사용은 권장하지 않습니다. 파손의 위험이 있으며, 오븐이나 직화에서도 사용이 불가합니다.</P>
+  <p>-무광 제품은 음식물에 의해 색이 물들 수 있습니다. 사용 후에는 바로 세척해주세요.</P>
+  <p>-착색되었을 경우, 베이킹소다로 세척한 후 햇볕에 말려주시면 효과적입니다.</P>
+  <p>*무광 유약 제품(특히 컵 등)*은 재질 특성상 *거미줄처럼 얇은 균열(빙렬)*이 생길 수 있습니다.</P>
+  <p>이는 자연스러운 현상이지만, 눈에 띄지 않는 미세한 틈을 통해 차나 커피가 스며들 수 있습니다.</P>
+  <p>-식기세척기 사용이 가능합니다. 단, 세척 중 다른 식기와의 충돌에 주의해주세요.</P>
+ </div>
+
+<br><br><br><br><br><br>
+<div class="checklist">
+  <h6 class="middle">CHECK LIST</h6>
+  <hr class="divider">
+<p>욜로 도자기에서는 아래와 같은 현상이 나타날 수 있습니다.</p>
+<p>모든 제품은 손으로 하나하나 빚고 가마에서 구워지는 수작업 과정을 거치기 때문에,</p>
+<p>다음과 같은 특징들이 있을 수 있습니다.</p>
+<p>-유약의 흐름</p>
+<p>-표면의 고르지 않은 질감</p>
+<p>-크기의 미세한 차이</p>
+<p>-무광 유약 제품의 경우 거미줄 처럼 얇은 빙렬(균열)등</p>
+<p>이러한 부분은 수공예 도자기 고유의 자연스러운 특성으로, 제품하자로</p>
+<p>간주되지 않으며 이로 인한 교환 및 반품은 어려운 점 양해 부탁드립니다.</p>
+</div>
+
+<section class="product-detail-info">
+
+  <div class="detail-item">
+<img src="/size.jpg" >
+<h5>크기 차이</h5><p>: 수공 도자기의 특성상 곡면 차이가 발생합니다.</p></div>
+
+
+<div class="detail-item">
+<img src="/uak.jpg">
+<h5>유약의흐름,맺힘</h5> <p>: 시유과정에서 발생하는 자연스러운 현상입니다.</p></div>
+
+
+
+<div class="detail-item">
+<img src="/gub.jpg" >
+<h5>바닥 굽 유약/상처</h5>
+<p>바닥면은 가마와 직접 닿는 부분으로,굽의 여부에 의해 닦임 정도가</p>
+<p>다르게 보입니다. 또한 뜯김/돌자국 등 미세한 상처가 보입니다.</p></div>
+
+
+  <div class="detail-item">
+<img src="/zurm.jpg" >
+<h5>검은 점(철분)</h5><p>: 흙에 함유된 성분으로 인해 크고 작은 점, 요철이 생길 수 있습니다.</p></div>
+
+
+<div class="detail-item">
+  <img src="/zipg.jpg" >
+ <h5>시유 집게 자국</h5> <p>: 시유과정에서 발생하는 자연스러운 현상입니다.</p>
+</div>
+
+
+<div class="detail-item">
+<img src="/caution_10.png" >
+<h5>욜로 각인</h5>
+<p>욜로 그릇에는 " " 이 새겨져 있으며,</p>
+<p>유약 발림 여부에 의해 선명도가 다르게 보입니다.</p></div>
+</section>
+<br><br><br><br><br><br>
+
+<div class="notice-section">
+<h6 class="middle">NOTICE</h6>
+  <hr class="divider">
+  <p class="notice-title">배송안내</p>
+  <p class="notice-title2">배송방법 : 택배(로젠택배)</p>
+  <p class="notice-title2">배송기간 : 평균적으로 3~5일 이내에 출고 (영업일 기준)</p>
+  <p class="notice-title2">배송료 : 기본 3,000원 / 7만 원 이상 무료배송 (제주 및 도서산간 지역은 3000~5000원의 추가 배송료 발생)</p>
+  <p class="notice-title3">-당일출고 및 배송일 지정은 불가합니다.</p>
+  <p class="notice-title3">-파손 및 오배송의 우려가 있으니 여유롭게 주문 부탁드립니다.</p>
+  <p class="notice-title3">-수작업의 특성상 재고 부족, 기타 사유로 인해 배송이 지연될 경우 유선이나 문자로 연락드립니다.</p>
+  <p class="notice-title">교환 및 반품 안내</p>
+  <p class="notice-title2">배송 중 파손  : 수령후 24시간 이내에 사진과 함께 고객센터로 연락 부탁드립니다. (네이버 교환 요청 X)</p>
+  <p class="notice-title2">단순 변심으로 인한 교환/반품 :공지 게시판(NOTICE)의 '교환 및 반품 접수 방법'을 확인 후 진행 부탁드립니다.</p>
+  <p class="notice-title3">-교환 및 반품은 처음 포장 상태 그대로 7일 이내에 발송해 주셔야 합니다.(부주의한 포장으로 파손 될 경우 환불 불가)</p>
+  <p class="notice-title3">-제품 하자 및 오배송의 경우에도 수령후 7일 이내 연락 전에 대해서만 가능합니다.</p>
+  <p class="notice-title3">-단순 변심으로 인한 교환/반품은 왕복 택배비를 부담하셔야 합니다. (최초 배송비 포함 총 6,000원)</p>
+  <p class="notice-title3">-사전 연락 없이 상품을 반품하시면 교환 및 환불 처리가 되지 않고 고객님께 착불로 반송됩니다.</p>
+  <p class="notice-title">교환 및 반품이 불가한 경우</p>
+  <p class="notice-title2">-수작업 제품의 특성상 발생하는 특징(상품페이지 하단의 CHECK LIST에 명시한 사유)에 해당하는 경우에는 </p>
+  <p class="notice-title2">무상 교환 및 반품이 어렵습니다.</p>
+  <p class="notice-title3">-상품에 사용 흔적이 있거나 고객님의 부주의로 상품 가치가 허락한 경우에는 교환 및 반품이 어렵습니다.</p>
+  <p class="notice-title">고객센터</p>
+  <p class="notice-title3">카카오톡 플러스 친구 ID: yolo</p>
+  <p class="notice-title3">홈페이지 QNA 게시판</p>
+  <p class="notice-title3">-상담시간 11:00 ~ 18:00</p>
+ <p class="notice-title3"> -전화상담도 진행하고 있습니다.</p>
+ </div>
+
+
+    </section>
+  </main>
+
+
+
+  
+
+<section class="color-info-section">
+  <h5>COLOR INFORMATION</h5>
+  <hr class="divider">
+  <table class="color-info-table">
+    <thead>
+      <tr>
+        <th>색상명</th>
+        <th>광도</th>
+        <th>착색<br>(커피, 음식 등)</th>
+        <th>스크래처<br>(칼, 스테인리스 숟가락 마찰)</th>
+        <th>식기세척기<br>(온도 조절사항 확인)</th>
+        <th>오븐/전자레인지/직화</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Candy Pink</td>
+        <td>(반)무광 (Semi-Matte)</td>
+        <td>○</td>
+        <td>○</td>
+        <td>○</td>
+        <td>X</td>
+      </tr>
+      <tr>
+        <td>Girasol Yellow</td>
+        <td>(반)무광 (Semi-Matte)</td>
+        <td>○</td>
+        <td>○</td>
+        <td>○</td>
+        <td>X</td>
+      </tr>
+      <tr>
+        <td>Summit White</td>
+        <td>(반)무광 (Semi-Matte)</td>
+        <td>○</td>
+        <td>○</td>
+        <td>○</td>
+        <td>X</td>
+      </tr>
+      <tr>
+        
+    </tbody>
+  </table>
+  <div class="color-info-note">
+  <p>○ = 착색 스크래치 있음, 식세기 가능 / △ = 사용자별 환경이나 흠집에 따라 상이함 / ✕ = 착색 없음, 오븐 직화 불가, 전자레인지 추천하지 않음</p><br>
+  <p>-(반)무광(Semi-Matte)은 무광과 반무광의 중간 광도의 부드러운 질감을 지닌 유약입니다. 착색, 마모, 스크래치가 되시지 않음은 각 유약 제품의 표면특성에 따라 차이가 있을 수 있습니다.</p>
+  <p>-식기세척기 사용 가능합니다. 사용 시 충돌에 주의해 주세요.</p>
+</div>
+</section>
+
+
+
+
+
+
+
+
+
+<br><br><br>
+<br><br><br> 
+
+   
+</main>
+
+
+ <header class="header">
+
+     <div class="header-icons">
+      
+       <i class="fa-solid fa-search" id="mobileSearchIcon" style="cursor:pointer;"></i>
+       
+      <div id="mobileSearchOverlay" class="search-overlay">
+       <input  type="text"
+        class="search-input-overlay"
+        id="searchInputOverlay"
+        placeholder="검색" />
+        <button id="searchCloseBtn" class="search-close-btn">X</button>
+        </div>
+
+      <span id="logintoggle2"></span>
+      
+      <a href="/cart"> <i class="fa-solid fa-cart-shopping"></i></a>
+     </div>
+
+
+
+      <button class ="menu-toggle"onclick="toggleMenu()" >☰</button>
+      <button class="close-toggle hidden" onclick="toggleMenu()">X</button>
+     <!--close-toggle과 hidden의 두 클래스를 사용 가능-->
+        <nav class="mobile-menu" id="navMenu"> 
+          
+          <div class="top">
+          <li> <a class="logo-mobile" href="/yolo.html">YOLO</a></li>
+          <div id="logintoggle">
+            <li> <a class="login-mobile" href="/login.html">Log In</a></li>
+          </div>
+             </div>
+          <div class="search-m">
+             <input type="text" id="search-mobile" placeholder="⌕">
+          </div>
+
+           
+
+
+          <ul class="menuM"> <!--메뉴 항목들(가로 메뉴, 드롭다운 등을 감싸는 태그)-->
+          <li class="dropMobile">  <!--드롭다운 메뉴-->
+            <a  class=dropheader href="#">ABOUT
+              <span class="arrow">&#709;</span>
+            </a> <!--드롭다운 메뉴 제목-->
+            <ul class="submenu">  <!--서브 메뉴--> 
+              <li><a  href ="/about-as.html">About us</a></li>
+              <li><a  href ="/store.html">Store</a></li>
+              <li><a  href ="/contact .html">Contact us</a></li>
+              </ul>
+              </li>
+           
+             <li> <a  href="/notice.html">NOTICE</a> </li>
+               <!-- 단일 메뉴-->
+
+        <li class="dropMobile">  <!--드롭다운 메뉴--> <!-- <li>는 리스트 항목 하나.-->
+        <a class=dropheader href="#">SHOP
+          <span class="arrow">&#709;</span>
+        </a> <!--드롭다운 메뉴 제목-->
+        <ul class="submenu"> <!--서브메뉴-->
+         <li><a  href ="/shop-all">ALL</a></li>
+          <li><a  href ="/shop/plate">접시</a></li>
+          <li><a   href ="/shop/bowl">볼</a></li>
+          <li><a   href ="/shop/cup">컵</a></li>
+          <li><a   href ="/shop/N">기타 제품</a></li>
+          <li><a   href ="#">Plates for Pasta</a></li>
+          <li><a  href ="#">By color</a></li>
+         <li><a   href ="#">Only You</a></li>
+         </ul>
+        </li>
+
+        <li class="dropMobile">  <!-- 드롭다운 메뉴 항목을 만듬.-->
+        <a class=dropheader href="#">FAQ/QNA
+          <span class="arrow">&#709;</span>
+        </a><!-- 드롭다운 제목-->
+        <ul class="submenu"><!--하위 메뉴들을 감싸는 리스트.-->
+          <li><a href ="/question.html">자주 묻는 질문</a></li>
+          <li><a href ="/QNA.html">Q&A</a></li><!--하위 메뉴 항목-->
+        </ul>
+        </li>
+        </ul>
+
+
+
+
+
+
+
+         </nav>
+         
+<div class="logo" style="cursor: pointer;"> 
+        <a href="/yolo.html">  YOLO
+     </a></div>
+       
+      <nav class="nav-center">
+      <ul class="menu"> <!--메뉴 항목들(가로 메뉴, 드롭다운 등을 감싸는 태그)-->
+          <li class="dropdown">  <!--드롭다운 메뉴-->
+            <a class="about" href="#">ABOUT</a> <!--드롭다운 메뉴 제목-->
+            <ul class="dropdown-menu">  <!--서브 메뉴--> 
+              <li><a  class="about" href ="/about-as.html">About us</a></li>
+              <li><a  class="about" href ="/store.html">Store</a></li>
+              <li><a  class="about" href ="/contact .html">Contact us</a></li>
+              </ul>
+              </li>
+           
+             <li> <a class="about" href="/notice.html">NOTICE</a> </li>
+               <!-- 단일 메뉴-->
+
+        <li class="dropdown">  <!--드롭다운 메뉴--> <!-- <li>는 리스트 항목 하나.-->
+        <a class="about" href="#">SHOP</a> <!--드롭다운 메뉴 제목-->
+        <ul class="dropdown-menu"> <!--서브메뉴-->
+          <li><a  class="about" href ="/shop-all">ALL</a></li>
+          <li><a  class="about" href ="/shop/plate">접시</a></li>
+          <li><a  class="about" href ="/shop/bowl">볼</a></li>
+          <li><a  class="about" href ="/shop/cup">컵</a></li>
+          <li><a  class="about" href ="/shop/N">기타 제품</a></li>
+          <li><a  class="about" href ="#">Plates for Pasta</a></li>
+          <li><a  class="about" href ="#">By color</a></li>
+         <li><a  class="about" href ="#">Only You</a></li>
+         </ul>
+        </li>
+
+        <li class="dropdown">  <!-- 드롭다운 메뉴 항목을 만듬.-->
+        <a class="about" href="#">FAQ/QNA</a><!-- 드롭다운 제목-->
+        <ul class="dropdown-menu"><!--하위 메뉴들을 감싸는 리스트.-->
+          <li><a  class="about" href ="/question.html">자주 묻는 질문</a></li>
+          <li><a  class="about" href ="/QNA.html">Q&A</a></li><!--하위 메뉴 항목-->
+        </ul>
+        </li>
+        </ul>
+      </nav>
+
+         <div class="nav-right">
+         <!--로그인,장바구니-->
+           <button type="button" id="searchToggle" class="search-btn" onclick="toggleSearch(event)">
+            ⌕  </button>
+<input  type="text"
+        class="search-input"
+        id="searchInput"
+        placeholder=" " />
+            <!-- 토글로 나타날 검색 입력창 -->
+
+       
+           <div id="login-menu">
+            <a class="auth" href="/login.html">Logln</a>
+            </div>
+
+            <a class="auth" href="/cart">Cart</a>
+            
+        </div>
+          
+     <!--메뉴 토글 버튼(햄버거메뉴) / 모바일 등 좁은 화면에서 메뉴를 열고 닫을때 사용됨.-->
+     <!--oncilick버튼 클릭 시 자바스크립트 함수 toggleMenu()실행-->
+      </ul>
+        </header>
+
+
+
+
+
+ <span class="insta">
+          <a href="https://instagram.com/yol_o.0?igsh=MWd0OHlya3ZwcW5vbw=="
+         target="_blank">
+         <img src="/insta.png" alt="instagram"
+         style="width: 25px; height: 25px;"></a>
+          </span>
+        </a>
+
+         <section class="footer">
+          <span class="final">
+            <a href="/policy.html" style="text-decoration: none; color:inherit;">
+            이용약관</a>&nbsp;  
+            
+             <a href="/privacy.html" style="text-decoration: none; color:inherit;">
+            개인정보처리방침</a>&nbsp; 
+            
+            <!-- ✅ 사업자정보 확인 팝업 링크 -->
+    <a href="https://www.ftc.go.kr/bizCommPop.do?wrkr_no=7023001816"
+    onclick="window.open(this.href, 'bizInfo', 'width=800,height=700'); return false;"
+    style="text-decoration: none; color: inherit;">사업자정보확인</a>&nbsp;
+          </span>
+          <br>
+          <br>
+          <span class="final2">
+            상호:Yolo | 대표: 정윤재 | 개인정보관리책임자: 정윤재 | 전화: 010.2886.2375 | 이메일: nvjae2018@gmail.com
+          </span>
+          <div class="final2">
+            주소: 서울 강동구 천중로 53길 21 지하 1층 무궁화 놀이터 맞은편 건물 | 사업자등록번호: ? | 통신판매: 제 2021-경기이천-0579호 | 호스팅제공자: (주)식스샵
+          </div>
+          <br>
+          <br>
+          <div class="final2">
+            Copyright 2024. YOLO All rights reserved.
+          </div>
+          <br>
+          <br>
+           
+        </div>
+         </section>
+          
+<script>
+
+    document.addEventListener("DOMContentLoaded", function(){
+        const mainImage = document.getElementById("mainImage");
+
+       const hover_img = document.querySelectorAll(".hover_img");
+
+        hover_img.forEach(hover_img => {
+
+          hover_img.addEventListener("click",function(){
+            const newSrc= this.getAttribute("src");
+
+            mainImage.setAttribute("src",newSrc);
+          });
+        });
+     });
+  
+
+
+
+    document.querySelectorAll('.dropheader').forEach(header => { header.addEventListener('click' ,
+      () => {
+         const parent = header.parentElement;
+
+         parent.classList.toggle('open');
+      });
+    });
+
+ function toggleMenu() {
+     const nav = document.getElementById('navMenu');
+     const openBtn = document.querySelector('.menu-toggle');
+     const closeBtn = document.querySelector('.close-toggle');
+     const icons= document.querySelector('.header-icons');
+
+     
+    
+     nav.classList.toggle('active');
+    
+     const isOpen =nav.classList.contains('active');
+   
+
+if(isOpen) {
+     openBtn.classList.add('hidden');
+     closeBtn.classList.remove('hidden');
+     icons.classList.add('hidden'); // toggle시 오른쪽 상단메뉴 제거
+
+   document.body.classList.add('no-scroll');
+     document.documentElement.classList.add('no-scroll');
+    }
+     //html 태그도 막기
+     else{
+ openBtn.classList.remove('hidden');
+ closeBtn.classList.add('hidden');
+   icons.classList.remove('hidden'); // toggle시 오른쪽 상단메뉴 삽입
+    document.body.classList.remove('no-scroll');
+    document.documentElement.classList.remove('no-scroll');
+     // 토글 나갈시 다시 세로 스크롤 생김
+  }
+
+ }
+
+
+
+ function toggleSearch(event) {
+ 
+     if(event)event.preventDefault();  //submit 동작을 방지
+
+
+
+   const input = document.querySelector('.search-input');
+    const authLinks = document.querySelectorAll('.auth');
+    // querySelectorAll()은  NodeList(배열 비슷한 객체)를 반환하니까 ,
+    // classList.toggle()은 직접 쓸 수 없음 
+    // forEach 나 for문으로 (반복문으로) 처리해야 함. 
+ 
+
+  input.classList.toggle('active'); 
+  input.focus(); // 돋보기를 누르면 커서 깜빡임
+      
+     authLinks.forEach(el => {
+           
+      el.classList.toggle('hidden'); //각각에 hidden 토글 적용
+
+     });
+
+ }
+
+ 
+/* ✅ 두 번째로 선언해 버렸던 toggleSearch() 삭제 후 아래 하나만 남깁니다 */
+function toggleSearch(e){
+  if(e) e.preventDefault();          // form submit 방지
+
+  const input      = document.getElementById('searchInput');
+  const authLinks  = document.querySelectorAll('.auth');
+
+  // 입력창 열고/닫기
+  input.classList.toggle('show');
+
+  // Login / Cart 토글
+  authLinks.forEach(a => a.classList.toggle('hidden'));
+
+  if (input.classList.contains('show')) {
+    input.focus();
+  } else {
+    input.value = '';                // 닫힐 때 내용 비우기(선택)
+  }
+}
+
+/* Enter 키로 검색 페이지 이동 */
+document.getElementById('searchInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter'){
+    const keyword = e.target.value.trim();
+    if (!keyword){
+      alert('검색어를 입력하세요');
+      return;
+    }
+    location.href = `/search?keyword=${encodeURIComponent(keyword)}`;
+  }
+});
+
+document.getElementById('mobileSearchIcon').addEventListener('click', e => {
+  const overlay = document.getElementById('mobileSearchOverlay');
+  overlay.classList.add('active');
+  document.getElementById('searchInputOverlay').focus();
+});
+
+document.getElementById('searchInputOverlay').addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    const keyword = e.target.value.trim();
+    if (!keyword) {
+      alert('검색어를 입력하세요');
+      return;
+    }
+    location.href = `/search?keyword=${encodeURIComponent(keyword)}`;
+  }
+});
+
+
+// 모바일 메뉴 검색창: Enter로 검색 페이지 이동
+document.getElementById('search-mobile').addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    const keyword = e.target.value.trim();
+    if (!keyword) {
+      alert('검색어를 입력하세요');
+      return;
+    }
+    location.href = `/search?keyword=${encodeURIComponent(keyword)}`;
+  }
+});
+
+
+
+
+
+document.getElementById('searchCloseBtn').addEventListener('click', () => {
+  const overlay = document.getElementById('mobileSearchOverlay');
+  overlay.classList.remove('active'); // 또는 .classList.remove('active') → 네 CSS 기준에 맞춰
+  document.getElementById('searchInputOverlay').value = '';
+});
+
+
+
+
+
+
+
+/* =========== 초기 데이터 =========== */
+const cart = {};                        // { color: { qty, price } }
+const productName =                     // “리비아 M (2type)_Nutty” 자동 읽기
+  document.querySelector('.product-name').textContent.trim();
+
+/* =========== DOM =========== */
+const colorSelect  = document.getElementById('color-select');
+const cartList = document.getElementById('cart-list');
+const qtyEl   = document.querySelector('.qty-value');
+const totalEl  = document.querySelector('.total-value');
+const hiddenQty =document.getElementById('hidden-qty');
+const hiddenColor =document.getElementById('hidden-color');
+const hiddenPrice =document.getElementById('hidden-price');
+const hiddenThumb =document.getElementById('hidden-thumb');
+
+/* =========== 옵션 선택 =========== */
+
+colorSelect.addEventListener('change', () => {
+  const opt = colorSelect.options[colorSelect.selectedIndex];
+  const color = opt.value;
+  if (!color) return;
+
+  const price = Number(opt.dataset.price);
+  const thumb = opt.dataset.thumb || '';
+
+  // 이미 cart에 있으면 수량만 증가
+  if (cart[color]) {
+    cart[color].qty++;
+    updateRow(color);
+  } else {
+    // cart에 새로 추가
+    cart[color] = { qty: 1, price, thumb };
+    addRow(color);
+  }
+
+  // 숨겨진 input도 갱신
+  hiddenColor.value = color;
+  hiddenPrice.value = price;
+  hiddenQty.value = cart[color].qty;
+  hiddenThumb.value = thumb;
+
+  updateSummary(); // ✅ 이게 cart 전체 기준으로 합계 다시 계산함
+});
+
+/*colorSelect.addEventListener('change', () => {
+  const opt   = colorSelect.options[colorSelect.selectedIndex];
+  const color = opt.value;
+  if (!color) return;
+
+  const price = Number(opt.dataset.price);
+
+  if (cart[color]) {         // 이미 담긴 색상이면 수량 +1
+    cart[color].qty++;
+    updateRow(color);
+  } else {                   // 새 색상
+    cart[color] = { qty:1, price };
+    addRow(color);
+  }
+  updateSummary();
+}); */
+
+
+/* ============ 행 추가 ============ */
+function addRow(color){
+  const li = document.createElement('li');
+  li.className = 'cart-row';
+  li.dataset.color = color;
+  li.innerHTML = `
+    <!-- ① 윗줄 : 제목 · X-->
+    <div class="row-head">
+      <span class="row-title">${productName} (${color})</span>
+      
+    </div>
+
+    <!-- ② 아랫줄 : 수량 · 가격 -->
+    <div class="row-body">
+      <div class="qty-box">
+        <button class="minus">-</button>
+        <span class="qty">1</span>
+        <button class="plus">+</button>
+      </div>
+      <span class="row-price">${format(cart[color].price)}원</span>
+                                      <button class="remove">×</button>
+    
+
+      
+    </div>
+  `;
+  // 가로선이 없는 경우에만 추가
+if (!document.querySelector('.cart-divider')) {
+  const hr = document.createElement('hr');
+  hr.className = 'cart-divider';
+
+  const orderSummary = document.querySelector('.order-summary');
+  orderSummary.parentNode.insertBefore(hr, orderSummary); // 주문수량 위에 삽입
+}
+  cartList.appendChild(li);
+
+}
+
+
+
+/* =========== 버튼(±/×) 이벤트 위임 =========== */
+  cartList.addEventListener('click', e=>{
+  const li    = e.target.closest('.cart-row');
+  if(!li) return;
+  const color = li.dataset.color;
+
+  if(e.target.classList.contains('plus')){
+    cart[color].qty++; updateRow(color);
+
+    if(color === colorSelect.value)
+    hiddenQty.value = cart[color].qty;
+ }
+  if(e.target.classList.contains('minus') && cart[color].qty > 1) {
+    cart[color].qty--; updateRow(color);
+
+    if(color === colorSelect.value) 
+    hiddenQty.value = cart[color].qty;
+  }
+  if(e.target.classList.contains('remove')){
+    delete cart[color];
+    /* li 와 뒤 HR 둘 다 제거 */
+    const hr = li.nextElementSibling;
+    li.remove(); hr && hr.tagName==='HR' && hr.remove();
+
+   if(color === colorSelect.value) {
+     hiddenQty.value = 1;
+   }
+  }
+  updateSummary();
+});  
+
+
+  const format = n => n.toLocaleString();
+/* =========== 행 업데이트 =========== */
+function updateRow(color){
+  const li = cartList.querySelector(`[data-color="${color}"]`);
+  li.querySelector('.qty').textContent = cart[color].qty;
+  li.querySelector('.row-price').textContent =
+    format(cart[color].price * cart[color].qty)+'원';
+}
+
+/* =========== 합계 업데이트 =========== */
+function updateSummary(){
+  const qty   = Object.values(cart).reduce((s,v)=>s+v.qty,0);
+  const total = Object.values(cart).reduce((s,v)=>s+v.qty*v.price,0);
+  qtyEl.textContent   = qty+'개';
+  totalEl.textContent = format(total)+'원';
+}
+
+/* =========== 숫자 3-자리 콤마 =========== */
+
+   /* ---- ① 숨겨진 input 최신화 ---- */
+  function updateCartValues () {
+   
+    const opt   = colorSelect.options[colorSelect.selectedIndex];
+    if (!opt) return;
+
+    hiddenColor.value = opt.value;
+    hiddenPrice.value = opt.dataset.price;
+    hiddenThumb.value = opt.dataset.thumb || '';
+    /* 수량 ↓ 현재 선택된 색상의 카트 수량이 있으면 가져오고 없으면 1 */
+    const qty        = cart[opt.value]?.qty || 1;
+    hiddenQty.value = qty;
+  }
+
+  /* ▶ 장바구니 담기 버튼 클릭 → AJAX */
+/* ②: handleAdd() 를 ‘cart 전부 전송’ 방식으로 교체 ---------- */
+async function handleAdd () {
+  /* 1) select 가 방금 바뀐 상태라면 hidden 값 갱신 */
+  updateCartValues();
+
+ const items = Object.entries(cart).map(([color, v]) => {
+  const rawId = document.querySelector('[name="id"]').value;
+  const id = parseInt(rawId, 10);
+
+  if (Number.isNaN(id)) {
+    console.warn('❌ 숫자가 아닌 ID 감지됨:', rawId);
+  }
+
+  return {
+    id,  // 이제 숫자
+    name: document.querySelector('[name="name"]').value,
+    price: v.price,
+    quantity: v.qty,
+    color,
+    thumb: document.querySelector(
+      `#color-select option[value="${color}"]`
+    )?.dataset.thumb || ''
+  };
+});
+
+
+  if (items.length === 0) {
+    alert('담긴 상품이 없습니다!');
+    return;
+  }
+
+  /* 3) AJAX 한 번에 전송  */
+  try {
+    const res = await fetch('/cart/add', {
+      method : 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body   : JSON.stringify(items)          // ← 배열!
+    });
+
+    if (!res.ok) {
+      alert('장바구니 담기 실패');
+      return;
+    }
+    window.location.href = '/cart';           // 성공 → 이동
+  } catch (err) {
+    console.error(err);
+    alert('서버 통신 오류');
+  }
+}
+document.getElementById('add-to-cart-btn').addEventListener('click',handleAdd);
+
+/*document.getElementById('color-select').addEventListener('change', function (e) {
+  const opt = e.target.selectedOptions[0];
+  const price = parseInt(opt.dataset.price || 0);
+  document.querySelector('.total-value').textContent = price.toLocaleString() + '원';
+});*/
+
+
+
+//로그인유지
+
+    fetch('/auth/status')
+    .then(res => res.json())
+    .then(data => {
+      console.log('auth/status 응답:',data);
+      const banner = document.querySelector('#login-menu');
+      if (!banner) return;
+     console.warn('배너가 없음');
+      if (data.loggedIn) {
+        banner.innerHTML = `
+      
+          <a href="/mypage"class="auth">My page</a>
+
+        `;
+      }
+    });
+
+
+    fetch('/auth/status')
+    .then(res => res.json())
+    .then(data => {
+      console.log('auth/status 응답:',data);
+      const banner = document.querySelector('#logintoggle');
+      if (!banner) return;
+     console.warn('배너가 없음');
+      if (data.loggedIn) {
+        banner.innerHTML = `
+    
+          <a href="/mypage"class="login-mobile">My page</a>
+        `;
+      }
+    });
+
+
+    
+   fetch('/auth/status')
+    .then(res => res.json())
+    .then(data => {
+      console.log('auth/status 응답:',data);
+      const banner = document.querySelector('#logintoggle2');
+      if (!banner) return;
+     console.warn('배너가 없음');
+      if (data.loggedIn) {
+        banner.innerHTML = `
+    
+          <a href="/mypage"class="fa-solid fa-user"></a>
+        `;
+      }
+    else{
+      banner.innerHTML=` <a href="/login.html"class="fa-solid fa-user"></a>`;
+    }
+
+    });
+document.querySelector('.buy-btn').addEventListener('click', async e => {
+  e.preventDefault();
+
+  const colorSelect = document.getElementById('color-select');
+  const selectedOption = colorSelect.options[colorSelect.selectedIndex];
+  const color = selectedOption.value;
+
+  if (!color && Object.keys(cart).length === 0) {
+    alert('옵션을 선택하세요.');
+    return;
+  }
+
+  try {
+    // 로그인 여부 확인
+    const res = await fetch('/auth/status');
+    const { loggedIn } = await res.json();
+
+    if (!loggedIn) {
+      alert('로그인이 필요합니다.');
+      return location.href = '/login.html';
+    }
+
+    // cart 객체 기반으로 서버에 저장
+    const items = Object.entries(cart).map(([color, v]) => {
+      const rawId = document.querySelector('[name="id"]').value;
+      const id = parseInt(rawId, 10);
+      return {
+        id,
+        name: document.querySelector('[name="name"]').value,
+        price: v.price,
+        quantity: v.qty,
+        color,
+        thumb: document.querySelector(
+          `#color-select option[value="${color}"]`
+        )?.dataset.thumb || ''
+      };
+    });
+
+    if (items.length === 0) {
+      alert('담긴 상품이 없습니다!');
+      return;
+    }
+
+    // 서버로 저장
+    const saveRes = await fetch('/cart/add', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(items)
+    });
+
+    if (!saveRes.ok) {
+      alert('상품 저장 실패');
+      return;
+    }
+
+    location.href = '/purchase';
+  } catch (err) {
+    console.error('구매 처리 오류:', err);
+    alert('서버 오류가 발생했습니다.');
+  }
+});
+
+</script>
+
+<style>
+
+.logo a{
+  color: black !important;
+  text-decoration: none !important;
+  font-size: 30px !important;
+}
+
+  @media (max-width:768px) {
+.logo a{
+  color: black !important;
+  text-decoration: none !important;
+  font-size: 30px !important;
+}
+.header{
+  padding:0.3rem 2rem;
+}
+.bg-img{
+  padding-top:0;
+}
+.final{
+   font-size: 9px;
+   text-align: center;
+   margin-top: 15px;
+
+}
+.final2{
+    font-size: 9px;
+    text-align: center;
+   
+    
+}
+
+.row-price{
+  display: none;
+}
+  }
+
+</style>
+
+
+
+
+
+</body>
+</html>
+

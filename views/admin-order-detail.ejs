@@ -1,0 +1,64 @@
+<!DOCTYPE html><html lang="ko"><head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0" />
+<title>주문 <%= order.id %></title>
+<link rel="stylesheet" href="/css/admin.css" />
+</head><body class="admin-page">
+<header class="admin-header">
+  <h1 class="brand">YOLO</h1>
+  <div class="admin-info">
+    <span><%= admin.name %>님</span>
+    <form method="post" action="/admin/logout"><button>로그아웃</button></form>
+  </div>
+</header>
+
+<main class="detail-card">
+  <h2>주문 상세</h2>
+
+  <dl>
+    <dt>주문번호</dt> <dd><%= order.id %></dd>
+    <dt>회원</dt>     <dd><%= order.userid %> (<%= order.name %>)</dd>
+    <dt>금액</dt>     <dd><%= order.total_price.toLocaleString() %>원</dd>
+    <dt>상태</dt>     <dd><%= order.status %></dd>
+    <dt>주문일시</dt> <dd><%= new Date(order.created_at).toLocaleString('ko-KR') %></dd>
+  </dl>
+
+  <!-- 배송지 -->
+  <h3>배송지</h3>
+  <p>
+    <%= [order.postcode, order.address, order.address_detail].filter(Boolean).join(' ') %>
+  </p>
+  <% if (order.request_memo) { %>
+    <p><strong>요청사항:</strong> <%= order.request_memo %></p>
+  <% } %>
+
+  <!-- 상품 목록 -->
+  <h3>상품</h3>
+  <table class="user-table">
+    <thead><tr><th>상품명</th><th>옵션</th><th>수량</th><th>가격</th></tr></thead>
+    <tbody>
+      <% items.forEach(i => { %>
+        <tr>
+          <td><%= i.product_name %></td>
+          <td><%= i.option_name || '-' %></td>
+          <td><%= i.quantity %></td>
+          <td><%= (i.price*i.quantity).toLocaleString() %>원</td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+
+  <!-- 상태 변경 -->
+  <form class="status-form" method="post" action="/admin/orders/<%= order.id %>/status">
+    <label>상태 변경
+      <select name="status">
+        <% statuses.forEach(s => { %>
+          <option value="<%= s %>" <%= order.status===s?'selected':'' %>><%= s %></option>
+        <% }) %>
+      </select>
+    </label>
+    <button class="primary">저장</button>
+    <a class="btn" href="/admin/orders">목록</a>
+  </form>
+</main>
+</body></html>

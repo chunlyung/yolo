@@ -1,0 +1,245 @@
+<!DOCTYPE html> 
+<html> 
+     <head> <!-- 화면에 보이지 않는 화면에 대한 정보-->
+        <meta charset="utf-8"><!--인코딩식 한글지원 -->
+        <meta name="viewport"
+         content="width=device-width,initial-scale=1.0">
+         <!--반응형 웹 필수 설정 / 화면 너비를 기기 크기에 맟춰줌.-->
+      <title>YOLO 도예공방 </title> 
+      <!-- 브라우저 탭에 보이는 제목 / 사이트명 -->
+      <link href="./style/default2.css"rel="stylesheet">
+      <!--외부 CSS파일 연결--> 
+     </head> 
+
+
+    <body> <!--실제 화면에 보여질 내용 정보-->
+     <header class="header">
+     <!--header : 웹사이트 상단에 위치하는 영역을 의미
+     보통 로고나 사이트 이름,메뉴등을 넣음-->
+      <div class="container"> <!--전체 메뉴 또는 로고 등을 감싸는 컨테이너 박스.-->
+                               <!--일반적으로 중앙 정렬, 최대 너비 지정등에 사용됨.--> 
+      <span class="navbar"> <!--네비게이션 로고 위치.-->
+        <a href="yolo.html"> <!-- 클릭 시 메인페이지로 이동-->
+      <img src="../YOLO/img/title.png"class="menu-img1"
+      style="cursor: pointer;"> <!--마우스 커서를 손 모양으로 변경(클릭 유도.)-->
+     </a>
+       
+         </span>
+
+         <!--메뉴 리스트 시작 부분-->
+         <span class="title"><!--메뉴 항목들은 보통 ul로 묶음 그안에 li태그-->
+        <ul class="menu"> <!--메뉴 항목들(가로 메뉴, 드롭다운 등을 감싸는 태그)-->
+          <li class="dropdown">  <!--드롭다운 메뉴-->
+            <a class="about" href="#">ABOUT</a> <!--드롭다운 메뉴 제목-->
+            <ul class="dropdown-menu">  <!--서브 메뉴--> 
+              <li><a  class="about" href ="about-as.html">About us</a></li>
+              <li><a  class="about" href ="store.html">Store</a></li>
+              <li><a  class="about" href ="contact .html">Contact us</a></li>
+              </ul>
+              </li>
+           
+             <li> <a class="about" href="notice.html">NOTICE</a> </li>
+               <!-- 단일 메뉴-->
+
+        <li class="dropdown">  <!--드롭다운 메뉴--> <!-- <li>는 리스트 항목 하나.-->
+        <a class="about" href="#">SHOP</a> <!--드롭다운 메뉴 제목-->
+        <ul class="dropdown-menu"> <!--서브메뉴-->
+          <li><a  class="about" href ="shop-all.html">ALL</a></li>
+          <li><a  class="about" href ="#">접시</a></li>
+          <li><a  class="about" href ="#">볼</a></li>
+          <li><a  class="about" href ="#">컵</a></li>
+          <li><a  class="about" href ="#">기타 제품</a></li>
+          <li><a  class="about" href ="#">Plates for Pasta</a></li>
+          <li><a  class="about" href ="#">By color</a></li>
+         <li><a  class="about" href ="#">Only You</a></li>
+         
+        </ul>
+        </li>
+
+        <li class="dropdown">  <!-- 드롭다운 메뉴 항목을 만듬.-->
+        <a class="about" href="#">FAQ/QNA</a><!-- 드롭다운 제목-->
+        <ul class="dropdown-menu"><!--하위 메뉴들을 감싸는 리스트.-->
+          <li><a  class="about" href ="question.html">자주 묻는 질문</a></li>
+          <li><a  class="about" href ="QNA.html">Q&A</a></li><!--하위 메뉴 항목-->
+        </ul>
+        </li>
+        </ul>
+          </span>
+
+
+        
+
+         <!--로그인,장바구니-->
+          <span class="right"><!-- 로그인/장바구니는 네비게이션 우측에 고정하고 싶어서-->
+            <a class="about" href="#">Logln</a>
+            <a class="about" href="#">Cart</a>
+          </span>
+
+
+
+
+          <button class ="menu-toggle" onclick="toggleMenu()"> ☰</button>
+     <!--메뉴 토글 버튼(햄버거메뉴) / 모바일 등 좁은 화면에서 메뉴를 열고 닫을때 사용됨.-->
+     <!--oncilick버튼 클릭 시 자바스크립트 함수 toggleMenu()실행-->
+
+        </header>
+
+          <!--배경 이미지-->
+            <img src="./img/brrr.jpg" class="bg-img">
+             
+            </div>
+          
+
+            <!--소개 문구-->
+            <div class="middle">
+             욜로  도자기는 본연의 멋과 자연스러움을 추구하고 있습니다.
+            </div>
+            
+            <div class="middle">
+             우리의 모든 제품은 시간,불 그리고 그날의 분위기에 따라 조금씩
+             다른 느낌으로 완성되어 집니다.
+             </div>
+             <div class="middle">
+               때로는 부드럽게
+             </div>
+            
+             <div class="middle">
+              같지만 , 다르게 .
+
+             </div>
+             <br>
+
+             <div class="middle">
+               당신의 집에 이야기를
+             </div>
+             <br>
+             <br>
+             
+             <div class="middle">
+               We follow the natural look. 
+            </div>
+
+            <div class="middle">
+               All of our products depend on the time, fire and the mood of the day. 
+
+
+            </div>
+            <div class="middle">
+               Sometimes rough, and sometimes soft. 
+            </div>
+
+            <div class="middle">
+               The same, but different. 
+            </div>
+              <br>
+              <div class="middle">
+               Make your own story in your home with us
+              </div>
+                                                                                             
+            
+            
+            <br>
+            <br>
+            SINCE 2024. 10. /
+
+                                                                                                                                                                                                                                                                                                                                                                                                         
+
+           <br>
+           <br>
+           <br>
+           <br>
+           <br>
+           <br>
+           <br>  
+           <br>  
+      
+   
+       
+           
+           <hr ><!--수평선을 그리는 태그 , 디자인적으로 섹션을 나눌때 사용-->
+           <section class="info-block"><!--section: 독립적인 컨텐츠 영역을 의미-->
+           <div class="row"> <!-- 이 안에 3개의 열 (column)이 있음.-->
+           <!--컨텐츠를 가로 3등분 해 각 블록을 독립적으로 배치 -->
+           
+
+           <div class="column"> <!--하나의 정보 블럭 (가로 3분할 중 하나)-->
+           <h4> <img src="../YOLO/img/notice2.png"class=a></h4>
+            <p>주문 전 <strong>check list/notice</strong> <!-- strong:강조 텍스트-->
+              확인 후 신중한 구매 부탁드립니다</p>    <!-- p : 일반 텍스트 문단-->   
+            </div>
+
+            <div class="column "> <!-- 두번째 column-->
+            <h4><img src="../YOLO/img/customer.png"class="b"></h4>
+            <p><strong>카카오톡 채널 ID Yolo</strong></p>
+            <p> 11am - 6pm / 7 days a week</p>
+            <p>(문의 확인 후 순차적으로 신속하게 답변 드리겠습니다)</p>
+            
+            <div class="tel2">혹은 QNA 게시판에 문의 부탁 드립니다.</div>
+            </div>
+
+            <div class="column "> <!--세번째 column-->
+           <h4> <img src="../YOLO/img/store.png"class="c"></h4>
+              <div class="tel" ><strong >Tel. 010 2886 2375</strong></div>
+              <p>서울 강동구 천중로 53길 21 지하 1층</p>
+              <p>무궁화 놀이터 맞은편 건물</p>
+              <p>11am - 6pm</p>
+               </div>
+               </div>
+              </section>
+
+          
+           
+        
+              
+
+
+          
+              
+            
+
+          
+               
+
+
+             <br>   <br>  <br>   <br>   <br>   <br>   
+             
+      
+          
+          <span class="insta">
+          <a href="https://instagram.com/yol_o.0?igsh=MWd0OHlya3ZwcW5vbw=="
+         target="_blank">
+         <img src="../YOLO/img/insta.png" alt="instagram"
+         style="width: 30px; height: 30px;"></a>
+          </span>
+        
+        
+        </a>
+          <span class="final">
+            이용약관  개인정보처리방침  사업자정보확인
+          </span>
+          <br>
+          <br>
+
+          <span class="final2">
+            상호:Yolo | 대표: 정윤재 | 개인정보관리책임자: 정윤재 | 전화: 010.2886.2375 | 이메일: nvjae2018@gmail.com
+          </span>
+          <div class="final2">
+            주소: 서울 강동구 천중로 53길 21 지하 1층 무궁화 놀이터 맞은편 건물 | 사업자등록번호: ? | 통신판매: 제 2021-경기이천-0579호 | 호스팅제공자: (주)식스샵
+          </div>
+          <br>
+          <br>
+          <div class="final2">
+            Copyright 2024. YOLO All rights reserved.
+          </div>
+          <br>
+          <br>
+          
+
+
+
+
+          
+        </div>
+     </body>  
+
+</html>

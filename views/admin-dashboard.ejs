@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>관리자 대시보드</title>
+  <link rel="stylesheet" href="/css/admin2.css" />
+</head>
+<body class="admin-dashboard">
+  <header>
+    <h1>YOLO </h1>
+    <p><%= admin.name %>님</p>
+    <form method="post" action="/admin/logout">
+      <button>로그아웃</button>
+    </form>
+  </header>
+
+  <main>
+    <ul>
+      <li><a href="/admin/products">상품 관리</a></li>
+      <li><a href="/admin/orders">주문 관리</a></li>
+      <li><a href="/admin/users">회원 관리</a></li>
+    </ul>
+  </main>
+</body>
+</html>

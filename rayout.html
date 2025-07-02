@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>반응형 레이아웃</title>
+  <link rel="stylesheet" href="./style/rayout.css" />
+</head>
+
+
+
+<body>
+   <header class="header"> <!--페이지 상단 영역-->
+    <div class="top-bar">
+    <div class="logo">YOLO</div><!--로고 텍스트-->
+     <button class="menu-toggle" onclick="toggleMenu()"  >☰</button> <!--햄버거 버튼-->
+       </div>
+ 
+
+    <nav class="menu" id="navMenu">
+         <div class="search-box">
+      <label for="search-input" class="search-icon">🔍</label>
+       <input type="text" id="search-input" placeholder="검색">
+     </div> 
+      <a href="#">ABOUT</a>
+      <a href="#">NOTICE</a>
+      <a href="#">SHOP</a>
+      <a href="#">FAQ/QNA</a>
+      <a href="#">LOGIN</a>
+    </nav>
+    </header>
+   
+
+     
+
+
+  <main class="container"> <!--본문 영역-->
+    <section class="card">ABOUT</section> <!--각각 콘텐츠-->
+    <section class="card">NOTICE</section>
+    <section class="card">SHOP</section>
+    <!--반응형에서는 보통 3열로 보이다가, 모바일에선 1열로 떨어짐.-->
+  </main>
+
+
+
+
+
+<script> 
+ function toggleMenu(){
+  const nav=  document.getElementById('navMenu');
+  nav.classList.toggle('active');
+ }
+</script>
+
+</body>
+</html>
+

@@ -1,0 +1,20 @@
+.display{ 
+     display: flex; /*flexbox컨테이너 만듬*/
+     flex-direction: row; /*아이템 정렬방식(주축)*/
+     justify-content: center; /*가로 가운데*/
+     height: 100vh; /*세로 방향지정을 위해 높이를 줌*/
+     align-items: center; /*세로 가운데*/
+ 
+    
+}
+
+
+
+.display2{
+    display: flex; /*flexbox 컨테이너 설정*/
+     flex-direction: column; /*아이템 정렬방식 (주축)*/
+     height: 100vh;
+     justify-content: center; /*세로가운데*/
+     align-items: center;/*가로 가운데*/
+     
+}

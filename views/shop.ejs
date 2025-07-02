@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>shop</title>
+  <link rel="stylesheet" href="/css/admin.css" />
+</head>
+<body>
+<main class="shop-page">
+  <h1>상품 전체 보기</h1>
+  <div class="product-list">
+    <% products.forEach(p => { %>
+      <div class="product-card">
+        <img src="<%= p.thumb %>" alt="<%= p.name %>">
+        <h2><%= p.name %></h2>
+        <p><%= p.price.toLocaleString() %>원</p>
+        <a href="/admin/products/<%= p.id %>">자세히 보기</a>
+      </div>
+    <% }) %>
+  </div>
+</main>
+</body>
+</html>

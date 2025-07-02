@@ -1,0 +1,884 @@
+@import url('https://fonts.googleapis.com/css2?family=Diphylleia&family=Gowun+Batang&family=Nanum+Brush+Script&family=Nanum+Myeongjo&display=swap');
+body {
+    font-family: "Gowun Batang", serif; /*글꼴 지정*/
+    font-weight: 400;   /*굵기 (400은 기본굵기)*/
+    font-style: normal;    /*기본 글꼴 형태*/
+        text-align: center;    /*텍스트 가운데 정렬*/
+       
+        padding-top: 60px;                   /*위쪽에 여백 60px.*/
+        
+                                         /* 고정된 헤더 때문에 본문이 가려지
+                                            는걸 방지하려고 위에 여백을 줘. 
+                                   헤더 높이가 80px이면 본문도 그만큼 아래로 밀어줘야 돼*/ 
+          overflow-x: hidden;        /*수평 스크롤(가로 스크롤)이 생기지 않게 강제로 막음*/
+          font-size: clamp(14px, 1.5vw, 18px);
+          
+      }
+* {
+  margin: 0; /*바깥 여백 제거*/
+  padding: 0; /*안쪽 여백 제거*/
+  box-sizing: border-box; /*너비 계산 시 padding, border포함*/
+  
+}
+html{
+    overflow-x: hidden;                /*레이아웃이 화면보다 더 넓어질 때 발생하는 
+                                        가로 스크롤을 방지할 때 씀*/
+}
+.header{
+     display: flex;
+      justify-content: space-between;
+       align-items: center;
+       flex-wrap: wrap;
+        padding: 1rem 2rem;
+    position: fixed; 
+    top:0;       
+    width: 100%; 
+     background-color: white; 
+     z-index: 1000; 
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border-bottom: 17px solid white;/*파란선 대신 여기에*/
+              
+}    
+ .logo{
+  margin-left: 4rem;
+ max-width: 100%;
+ height: auto;
+ min-width: 10px;
+ flex-shrink: 0;
+ }
+   a.about{
+    color:black !important;  /*!important는 이 속성을 무조건 적용하라는 의미 우선순위 높음*/
+    text-decoration: none !important;  /*밑줄 제거 */
+   transition: color 0.3s ;   /*마우스 올릴 때 색상이 0.3초간 부드럽게 바뀜*/
+    border: 1px solid white;
+   
+}
+a.about:hover{   /*hover: 마우스 올렸을 때만 적용되는 스타일*/
+    color: brown !important;  /*마우스 올렷을 때 텍스트 색상 브라운 */
+    
+}
+.dropdown-menu{
+    display: none;  /*기본적으로는 안 보이게 숨김, 나중에 js나 hover로 display:block으로 바꿔야 보임*/
+    position: absolute;  /*기준이 되는 부모 요소 기준으로 위치 고정*/
+    top: 100%;  /*부모의 높이만큼 아래로 내려서 바로 밑에 붙게.*/
+    left: 0;   /*왼쪽 정렬*/
+    background-color: white;  /*배경 흰색*/
+    border: 1px solid#ccc;  /*테두리*/
+    padding: 10px 0 ;  /*상하 여백 10px 좌우 0*/
+    min-width: 150px;  /*최소 너비 150px*/
+    z-index: 999;  /*다른 요소들보다 위에 표시 (숫자가 클수록 위에 올라옴)*/
+}
+.nav-center  {
+   display: flex;
+  flex: 1;
+  justify-content: center;
+  flex-wrap: wrap;
+  
+
+}
+.header.nav-center{
+  overflow:visible;
+}
+.header.nav-right{
+  overflow: visible;
+}
+.nav-right  {
+  display: flex;
+  
+   font-size: 1rem;
+   gap:2rem;
+  margin-left: auto;
+  transform: translateX(-50px);
+  /*왼쪽으로 이동 (값은 조절 가능)*/
+  flex-shrink: 0;
+}
+/*translateX는 login/cart만 살짝 왼쪽으로 당기고*/
+/*다른 메뉴엔 영향 안줌, margin-left :auto 덕분에 오른쪽 정렬도 유지됨*/
+/* 이미지 요소*/
+
+
+.middle{
+    font-size: 14px;
+    margin-top: 10px;
+}
+  
+
+
+.tel{
+    margin-bottom: 30px;
+
+}
+.tel2{
+    font-size: 14px;
+    margin-top: 30px;
+
+}
+.insta{
+    justify-content: center;
+    position: relative;
+    bottom:5px;
+    left: 49vw;
+  }
+
+.final{
+   font-size: 11px;
+   text-align: center;
+   margin-top: 10px;
+
+}
+.final2{
+    font-size: 11px;
+    text-align: center;
+   
+}
+
+/* 이미지나 컨테이너가 넘치지 않도록*/
+img{
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+ul{
+    list-style: none;
+}  /* 리스트 옆 동그라미 삭제 */
+ul.menu{ /*.menu와 같을 수 있지만 미래를 위해 더 정확하게 css를 줌*/
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: none; /* 가로 정렬*/ /*ul과li가 모바일에도 영향을 받아서 일단 none해둠 해상도에따라 메뉴표시*/
+    justify-content: center; /* 가운데 정렬*/
+     gap:70px;
+     /* 항목 간 간격 조정 가능*/
+}  /* 지우면 개망*/
+.menu > li{ /*.menu 클래스가 있는 요소의 직속자식 <li>태그에만 스타일 적용*/
+    position: relative;
+}  /* 지우면 드롭다운 메뉴 이상한 대로 감*/
+.menu a{
+    text-decoration: none;
+    padding: 10px;
+    
+    color: black; /* 드롭 메뉴 색 변경*/
+
+}    /*드롭간의 여백 없어지고 메뉴쏠림*/
+.dropdown:hover .dropdown-menu{
+    display: block;
+    
+}   /*드롭다운 보이게 함*/
+.menu-toggle {
+  display: none; /*기본적으로 숨김 (모바일에서만 보이게 할 예정)*/
+  font-size: 24px; /*아이콘 크기 키움 */
+ }
+.menu-toggle:hover{
+     background-color: white;
+   }
+.mobile-menu{
+  display: none;
+}
+
+.search-btn{
+  
+  font-size: 20px;
+  border: none;
+  cursor: pointer;
+  transform: translateX(30px);
+  background: none;
+ 
+}
+
+.search-btn:hover{
+   color: brown !important; 
+}
+
+.search-input{
+   width: 0;
+   opacity: 0;
+   border-radius: 1px;
+   transition: width 0.3s ease, opacity 0.3s ease;
+   border:none;
+   border-bottom: 1px solid #000;
+  background: transparent;
+  outline: none;/*입력창에서 테두리 제거*/
+  
+}
+
+.search-input.active{
+  width: 130px;
+  opacity: 1;
+  
+ 
+}
+
+.auth.hidden{
+  
+  display: none;
+
+}
+
+.auth{
+   
+  color:black !important;  /*!important는 이 속성을 무조건 적용하라는 의미 우선순위 높음*/
+    text-decoration: none !important;  /*밑줄 제거 */
+   transition: color 0.3s ;   /*마우스 올릴 때 색상이 0.3초간 부드럽게 바뀜*/
+    border: 1px solid white;
+   font-size: auto;
+
+}
+
+.auth:hover{
+   color: brown !important; 
+}
+
+.hidden{
+  display: none !important;
+}
+
+
+
+
+.header-icons{
+  display: none;
+}
+
+
+ h1{
+    margin-top: 100px ;
+}
+
+
+
+
+
+
+/* === Cart Page === */
+.cart-page{max-width:1200px;margin:0 auto;padding:0 20px;}
+
+.cart-title{font-size:2rem;font-weight:400;margin-bottom:40px;
+             text-align: left; 
+ }
+
+.cart-header,
+.cart-item{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;
+           gap:10px;align-items:center;border-bottom:1px solid #e0e0e0;
+           padding:15px 0;font-size:0.95rem;}
+
+.cart-header{font-weight:400;}
+
+.cart-header label{display:flex;align-items:center;gap:8px;}
+
+.cart-item .item-info{display:flex;align-items:center;gap:16px;}
+
+.cart-item img{width:60px;height:60px;object-fit:cover;border-radius:8px;}
+
+.col-qty,.col-price,.col-shipping{justify-self:center;}
+
+.qty-input{width:60px;text-align:center;}
+/* 🔽 숫자 input 화살표 제거 (Chrome, Safari 등) */
+.qty-control input[type=number]::-webkit-inner-spin-button,
+.qty-control input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* 🔽 숫자 input 화살표 제거 (Firefox) */
+.qty-control input[type=number] {
+   -moz-appearance: textfield;
+}
+
+
+
+.btn-remove{background:none;border:none;color:#999;cursor:pointer;}
+
+/*.cart-summary{margin-top:40px;text-align:right;}
+
+/*.cart-summary dl{display:inline-grid;grid-template-columns:auto auto;
+                 gap:8px 40px;font-size:0.95rem;}
+*/
+.cart-summary dt{font-weight:400;}
+.summary-total dt{font-weight:600;}
+.summary-total dd{font-weight:600;}
+
+.cart-actions{margin-top:30px;text-align:right;}
+
+.btn-checkout{background:#fff;color:#444;border: 1px solid #444 ;padding:12px 40px;
+             font-size:1rem;cursor:pointer;border-radius:4px;}
+
+.btn-checkout:hover{
+      background-color: #444;
+      color: #fff;
+      transition: 0.3s ease;
+}             
+
+.cart-empty{margin:80px 0;text-align:center;color:#888;}
+
+.hidden{display:none;}
+
+
+.cart-summary {
+  max-width: 300px;
+  margin-left: auto;
+  text-align: right;
+  font-size: 0.95rem;
+  margin-top: 20px;
+  padding-right: 10px;
+  
+}
+
+.cart-summary .summary-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.cart-summary .summary-row.total {
+  font-weight: 600;
+  font-size: 1.05rem;
+  margin-top: 14px;
+}
+
+.cart-summary .label {
+  text-align: left;
+}
+
+.cart-summary .value {
+  text-align: right;
+}
+
+.summary-divider {
+  border: none;
+  border-top: 1px solid #ccc;
+  margin: 10px 0;
+}
+
+
+
+.shipping-note{
+  font-size: 0.85rem;
+  color:#888;
+  display: block;
+  margin-top: 2px;
+}
+
+
+
+
+/* ===================== */
+/* ✅ 반응형 대응 CSS 추가 */
+/* ===================== */
+@media (min-width:1025px) {  /*데스크탑*/
+
+    .menu-toggle{
+ display: none; /*메뉴 토글버튼(햄버거버튼)을 화면이 좁을 때 보이게 함*/
+    }  /*원래는 display: none으로 숨겨져 있다가 모바일화면에서는 block으로 보여짐*/
+    ul.menu{
+       display: flex;
+       flex-direction: row;
+       justify-content: center;
+       align-items: center;
+       gap: 70px;
+     list-style: none;
+    }
+   .nav-center {
+     margin-top: 1rem;
+   }
+   .nav-right {
+    margin-top: 1rem;
+   
+   }
+  .column {
+    width: 90%;
+  }
+  .insta {
+     display: flex;
+     flex-direction: row;
+     justify-content: center;
+     align-items: center;
+     text-align: center;
+    transform: translateX(-50%);
+  }
+.middle,.menu a {
+    font-size: 14px;
+  
+  }
+.dropdown-menu {
+  font-size: 20px;
+ /*글자 흐림을 사이즈를 늘려서 없앰*/
+}
+
+
+  
+}
+
+@media (max-width:1024px) {  /*태블릿*/
+
+    .menu-toggle{
+ display: none; /*메뉴 토글버튼(햄버거버튼)을 화면이 좁을 때 보이게 함*/
+    }  /*원래는 display: none으로 숨겨져 있다가 모바일화면에서는 block으로 보여짐*/
+    ul.menu{
+       display: flex;
+       flex-direction: row;
+       justify-content: center;
+       align-items: center;
+       gap: 70px;
+     list-style: none;
+    }
+   .nav-center {
+     margin-top: 1rem;
+
+   }
+
+   .nav-right{
+    margin-top: 1rem;
+   }
+
+   
+  .column {
+    width: 90%;
+  }
+  .insta {
+     display: flex;
+     flex-direction: row;
+     justify-content: center;
+     align-items: center;
+     text-align: center;
+    transform: translateX(-50%);
+  }
+
+.middle,.menu a {
+    font-size: 14px;
+  }
+
+.logo{
+  flex-shrink: 0; /*화면이 줄어도 크기 줄어들지 않게*/
+  margin: 0 auto;
+  text-align: center;
+}
+.dropdown-menu {
+  font-size: 20px;
+
+}
+}
+
+@media (max-width:768px) { /*모바일*/
+
+
+
+ .close-toggle{
+   /*display을 줘도 .hidden의 important때문에 보이지 않음*/
+    top:2rem;
+    z-index: 1001;
+    position: absolute;
+    cursor:pointer;
+    background-color: transparent;
+    border: none;
+    right:1rem;
+  
+ }
+    .menu-toggle{
+      display: block;
+      position: absolute;
+      left: 1rem;
+      top: 1.3rem;  
+      cursor: pointer; 
+      background-color: transparent;/*기본 배경 (없애고 시작*/
+      border: none;
+      transition:background-color 0.3s ease; /*부드럽게 변하게*/
+
+       }
+   .menu-toggle:hover{
+     background-color: white;
+   }
+.mobile-menu{
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  min-height: 100vh;
+  width: 90%;
+  height: 100%;
+  background-color: white;
+  transform: translateX(-100%);
+  z-index: 999;
+  padding: 2rem;
+  box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+  flex-direction: column;  
+}
+.mobile-menu.active {
+   transform: translateX(0);
+   display: flex;
+   background-color:rgb(241, 241, 241);
+   font-size: 1.2em;
+    transition: transform 0.3s ease;
+    overflow-y: auto;  /*드롭항목 길어짐에 따라 스크롤이 생김.*/
+    max-height: 100vh;
+}
+.mobile-menu.active.hidden{
+  display: block !important;
+} /*important 쓰니까 생김*/
+
+
+.mobile-menu.active.header-icons{
+  display: none !important;
+}
+
+
+
+
+.mobile-menu.active a {
+ text-decoration: none;
+ color:black;
+}
+.mobile-menu input[type="text"]{
+  padding:0.8rem auto;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  font-size: 1.7rem;
+  width: 100%;
+}
+.mobile-menu.active .top { /*띄어쓰기 중요*/
+  display: flex;
+   justify-content:space-between ;
+  align-items: center;
+  font-size: 1.5rem;
+  list-style: none;
+}
+.mobile-menu.active ul > li{
+      margin-top: 1.5rem;
+      font-size: 0.9rem;  /*검색창 하단메뉴 크기 조절*/
+}
+.mobile-menu.active ul{
+  list-style: none;
+  margin-left: -0.5rem;
+  text-align: left;
+}
+.mobile-menu.active .top .login-mobile{
+  font-size: 1rem;
+}
+.menuM {
+  list-style: none;
+}
+.menuM li{
+  margin-bottom: 1.2rem;
+}
+
+.dropheader{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+
+.arrow{
+  transition: transform 0.3s ease;
+  font-size: 1.5rem;
+}
+
+.dropMobile.open .arrow{
+  transform: rotate(180deg);
+}
+
+
+.submenu{
+ 
+  display: none;
+  padding-left: 1rem;
+  margin-top: 0.5rem;
+}
+
+.dropMobile.open .submenu{
+  display: block;
+}
+
+
+
+.submenu li{
+  margin-bottom: 0.8rem;
+}
+
+.submenu li a {
+  font-size: 0.9rem;
+  color:#444;
+  text-decoration: none;
+}
+
+
+  .header-icons{
+    position: absolute;
+    top:1.5rem;
+    right: 1rem;
+    display: flex;
+    gap: 1.2rem;
+    font-size: 1.2rem;
+    z-index: 1000;
+  }
+
+  .header-icons a{
+    color: #000;
+    text-decoration: none;
+  }
+
+
+.header-icons a:hover{
+  color: brown !important;
+}
+.menu-toggle:hover{
+  color: brown !important;
+}
+
+
+body.no-scroll,
+html.no-scroll{
+  overflow:hidden;
+  height: 100%;
+}
+
+
+
+
+   .nav-center ,.nav-right{
+    display: none;
+   }  
+        .logo{
+          text-align: center;
+          display: block;
+          margin: 0 auto;
+        }
+
+        .info-block{
+          flex-direction: column;
+          align-items: center;
+          text-align: center;
+     
+
+        }
+
+        .dropdown-menu {
+  font-size: 20px;}
+.cart-title{
+  font-size: 1.4rem;
+}
+
+}
+
+@media (max-width:1200px) { /*아슬한 겹침 방지하는 부분*/
+  .nav-right{
+    transform :translateX(-10px);  /*덜 왼쪽으로 이동*/
+    gap: 1rem; /*간격 축소*/
+  }
+  
+  .nav-center{
+    gap:2rem; /*중앙 메뉴 간격도 줄임*/
+  }
+
+  .logo{
+    max-width: 120px;/*로고 사이즈도 약간 줄임*/
+  }
+
+  
+  
+}
+
+
+/* ── 수량 버튼 UI ───────────────────────────── */
+.qty-control{
+  display: inline-flex;
+  border: 1px solid gray;     /* 파란 테두리 */
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.qty-control input{
+  width: 48px;                   /* 가운데 숫자칸 */
+  text-align: center;
+  border: 0;
+  outline: none;
+}
+
+.qty-control button{
+  width: 36px;                   /* - / + */
+  border: 0;
+  background: transparent;
+  font-size: 1rem;
+  line-height: 30px;
+  cursor: pointer;
+}
+
+.qty-control button:hover{
+  background:#f3f6ff;
+}
+/* ──────────────────────────────────────────── */
+/* ───── Cart Page : 모바일 전용 오버라이드 ─────────── */
+@media (max-width:768px){
+
+  /* 1) 헤더 행 숨김 – 좁은 화면에선 필요 없음 */
+  .cart-header{
+    display:none;
+  }
+
+  /* 2) cart-item 한 칸씩 세로로 배치 */
+  .cart-item{
+    display:flex;
+    flex-direction:column;
+    align-items:flex-start;
+    gap:8px;
+    padding:16px 0;
+    position:relative;          /* X버튼 위치 기준 */
+    border-bottom:1px solid #e0e0e0;
+  }
+
+  /* 체크박스 + 썸네일 + 상품명 영역 유지 */
+  .cart-item .item-info{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    width:100%;
+  }
+
+  /* 3) 나머지 컬럼들을 아래로 줄바꿈 */
+  .cart-item ,
+  .cart-item .col-price,
+  .cart-item .col-shipping{
+    width:100%;
+    text-align:left;      /* 왼쪽 정렬 */
+  }
+
+  /* 순서 살짝 가독성 좋게 */
+  .col-qty      {order:2;}
+  .col-price    {order:3;}
+  .col-shipping {order:4;}
+
+  /* 4) ‘삭제’ 버튼을 X 아이콘처럼 오른쪽 상단에 고정 */
+  .btn-remove{
+    position:absolute;
+    top:6px;
+    right:6px;
+    background:none;
+    border:none;
+    padding:0;
+    cursor:pointer;
+
+    /* 글자 숨기고 before로 X 출력 */
+    font-size:0;
+  }
+  .btn-remove::before{
+    content:'×';
+    font-size:22px;
+    color:#888;
+  }
+
+  /* 5) 합계 박스는 폭 100%로 내려 주기 */
+  .cart-summary{
+    max-width:none;
+    width:100%;
+    margin:24px 0 0;
+    padding:0 10px;
+  }
+}
+@media (max-width:768px) {
+
+  /* 수량 조절 박스 정렬 & 사이즈 조정 */
+  .col-qty {
+    display: flex;
+    justify-content: center;
+    margin-top: 5px;
+    text-align: center;
+  }
+
+  .qty-control {
+    transform: scale(0.9); /* 살짝 축소 */
+  }
+
+  /* 가격 가운데 정렬 */
+  .col-price {
+    text-align: center;
+    font-size: 1rem;
+  }
+
+  /* 배송비 숨기기 */
+  .col-shipping {
+    display: none;
+  }
+
+  /* 구매하기 버튼 모바일에서 꽉 차게 */
+  .cart-actions form {
+    width: 100%;
+    padding: 0 10px;
+  }
+
+  .btn-checkout {
+    width: 100%;
+    font-size: 1rem;
+    padding: 14px 0;
+    box-sizing: border-box;
+  }
+  #search-mobile{
+  font-size:20px ;
+  height: 30px !important;
+  box-sizing: border-box;
+  padding: 17px 10px;
+
+}
+
+}
+
+
+
+.header-icons{
+ align-items: center;
+}
+.search-input {
+  width: 0;
+  opacity: 0;
+  transition: width 0.3s ease, opacity 0.3s ease;
+  border: none;
+  border-bottom: 1px solid #666;
+  background: transparent;
+  outline: none;
+  padding: 6px 8px;
+}
+.search-input.show {
+  width: 130px;
+  opacity: 1;
+}
+.search-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 60px;
+  background-color: white;
+  z-index: 9999;
+  padding: 10px 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+.search-overlay.active {
+  display: flex;
+  align-items: center;
+}
+.search-input-overlay {
+  flex: 1;
+  width: 100%;
+  font-size: 1rem;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+#mobileSearchIcon{
+ margin-top: 3px;
+}
+
+#mobileSearchIcon:hover{
+ color:brown
+}
+.search-close-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  margin-left: 10px;
+  color: #333;
+}
+
+

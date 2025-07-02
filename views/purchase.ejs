@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>구매하기</title>
+  <link rel="stylesheet" href="purchase.css" />
+  </head>
+
+
+  <body>
+
+
+  <header><div id="login-banner">로그인 확인 중..</div></header>
+
+  <!-- 브랜드 -->
+  <header class="page-header"><p class="brand">YOLO</p></header>
+
+  <!-- ───────── 본문 ───────── -->
+  <main class="order-page">
+    <!-- 주문 상품 -->
+    <section class="order-products">
+      <h2 class="section-title">주문 상품</h2>
+      <ul id="order-items"><!-- JS로 상품 li 삽입 --></ul>
+    </section>
+
+    <!-- 주문자 -->
+    <section class="orderer">
+      <h2 class="section-title">주문자</h2>
+      <p class="recipient"><span id="u-name"></span></p>
+      <p class="phone"> <span id="u-phone"></span></p>
+      <p class="email"> <span id="u-email"></span></p>
+    </section>
+
+    <!-- 배송지 -->
+    <section class="shipping">
+      <h2 class="section-title">배송지</h2>
+
+      <!-- 기본/신규 주소 라디오 -->
+      <div class="address-choice">
+        <label><input type="radio" name="addr" checked> 기본 배송지</label>
+      </div>
+
+      <address class="address-info">
+       <p id="u-fulladdress"></p>
+      </address>
+
+      <!-- 배송 요청 사항 -->
+      <div class="request">
+        <label for="requestMemo">배송 시 요청 사항</label>
+        <textarea id="requestMemo" placeholder="선택 사항"></textarea>
+      </div>
+
+      <!-- 제주/도서 산간 안내 -->
+      <p class="islands-note">
+        제주 및 도서 산간 지역의 배송은 추가 배송비가 발생할 수 있습니다.
+      </p>
+    </section>
+
+    <!-- 결제 정보 -->
+    <section class="payment-info">
+      <h2 class="section-title">결제 정보</h2>
+
+      <!-- 적립금 -->
+      <div class="points">
+        <span>적립금 (보유 적립금 <span id="u-points">0</span>원)</span>
+        <button type="button" class="btn-outline" id="use-all-points">전액 사용</button>
+      </div>
+      <p class="points-note">
+        보유하신 적립 금액이 1,000원 이상일 때만 사용하실 수 있습니다
+      </p>
+
+      <!-- 금액 요약 -->
+      <div class="summary">
+        <div class="summary-row">
+          <span>상품 합계</span>
+          <strong id="sum-subtotal">0원</strong>
+        </div>
+        <div class="summary-row">
+          <span>배송비 <span class="tooltip">ⓘ</span></span>
+          <strong id="sum-shipping">0원</strong>
+        </div>
+        <div class="summary-row">
+          <span>총 할인 금액</span>
+          <strong id="sum-discount">0원</strong>
+        </div>
+        <div class="summary-row total">
+          <span>결제 금액</span>
+          <strong id="sum-total">0원</strong>
+        </div>
+      </div>
+    </section>
+
+    <!-- 결제 방법 -->
+    <section class="payment-method">
+      <h2 class="section-title">결제 방법</h2>
+      <ul class="method-list">
+        <li><label><input type="radio" name="paymethod" value="card" checked> 신용 / 체크카드</label></li>
+        <li><label><input type="radio" name="paymethod" value="virtualAccount"> 무통장입금</label></li>
+        <li><label><input type="radio" name="paymethod"value="naverpay"> 네이버페이</label></li>
+        <li><label><input type="radio" name="paymethod"value="tosspay"> 토스페이</label></li>
+        <li><label><input type="radio" name="paymethod"value="kakaopay"> 카카오페이</label></li>
+        <li><label><input type="radio" name="paymethod"value="mobilePhone"> 휴대폰 결제</label></li>
+      </ul>
+    </section>
+  </main>
+  <!-- 하단 고정 -->
+  <div class="pay-bar">
+    <button type="button" id="order-btn" class="btn-pay">0원 결제하기</button>
+  </div>
+<script src="https://js.tosspayments.com/v1/payment-widget"></script>
+
+  <!-- ───────── JS ───────── -->
+  <script>
+  /* 로그인 배너 표시 */
+  fetch('/auth/status',{credentials:'include'})
+    .then(r=>r.json())
+    .then(d=>{
+      if(!d.loggedIn) return location.href='/login.html';
+      const bn=document.getElementById('login-banner');
+      bn&&(bn.textContent=` `);
+    });
+
+  /* 구매페이지 데이터 주입 */
+  document.addEventListener('DOMContentLoaded',()=>{
+    fetch('/purchase/data',{credentials:'include'})
+      .then(r=>{
+        if(!r.ok) throw new Error('장바구니/로그인 정보 없음');
+        return r.json();
+      })
+      .then(({user,cart})=>{
+        window.cartData =cart;
+        /* --- 주문자&배송지 --- */
+        qs('#u-name' ).textContent = user.name;
+        qs('#u-phone').textContent = user.phone;
+        qs('#u-email').textContent = user.email;
+        qs('#u-fulladdress').textContent=[user.postcode,user.address,user.address_detail].filter(Boolean)
+        .join(',  ');  
+        
+        qs('#u-points').textContent  = (user.points||0).toLocaleString();
+
+        /* --- 상품 리스트 --- */
+        const list = qs('#order-items');
+        list.innerHTML = cart.map(it=>`
+          <li class="product-item">
+            <img class="product-thumb" src="${it.thumb||'/noimg.jpg'}" alt="">
+            <div class="product-info">
+              <p class="product-name">${it.name}</p>
+              <p class="product-option">Color : ${it.color}</p>
+              <p class="product-qty-price"><span>${it.quantity}개</span> / <span>${it.price.toLocaleString()}원</span></p>
+            </div>
+          </li>`).join('');
+
+        /* --- 금액 계산 --- */
+        const sub  = cart.reduce((s,v)=>s+v.price*v.quantity,0);
+        const ship = sub>=70000?0:3000;
+        const disc = 0;         // 현재 고정
+        const total= sub+ship-disc;
+
+        qs('#sum-subtotal').textContent = sub.toLocaleString()+'원';
+        qs('#sum-shipping').textContent = ship===0?'무료':ship.toLocaleString()+'원';
+        qs('#sum-discount').textContent = disc.toLocaleString()+'원';
+        qs('#sum-total'   ).textContent = total.toLocaleString()+'원';
+        qs('#order-btn'     ).textContent = total.toLocaleString()+'원 결제하기';
+      })
+      .catch(e=>{
+        alert(e.message);
+        location.href='/cart';
+      });
+  });
+
+  function qs(sel){return document.querySelector(sel);}
+
+
+
+
+
+
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('order-btn').addEventListener('click', () => {
+    const fullAddr = document.getElementById('u-fulladdress');
+    if (!fullAddr) {
+      alert('주소 정보 없음');
+      return;
+    }
+
+    const parts = fullAddr.textContent.split(',').map(s => s.trim());
+    const postcode = parts[0] || '';
+    const address = parts[1] || '';
+    const address_detail = parts[2] || '';
+
+    const cart = window.cartData; // 이건 미리 로딩돼 있어야 함
+    const request_memo = document.getElementById('requestMemo').value;
+    const total_price = parseInt(
+      document.getElementById('sum-total').textContent.replace(/[^\d]/g, '')
+    );
+   
+   // fetch('/order', {
+     // method: 'POST',
+      //headers: { 'Content-Type': 'application/json' },
+      //body: JSON.stringify({ cart, postcode, address, address_detail, request_memo, total_price })
+    //}).then(res => {
+     // if (res.redirected) location.href = res.url;
+    //  else alert('주문 실패');
+    //}); 
+  });
+});
+
+
+
+
+/*
+document.addEventListener("DOMContentLoaded", () => {
+  const orderBtn = document.getElementById("order-btn");
+
+  orderBtn.addEventListener("click", async (e) => {
+    e.preventDefault();
+
+      
+    // ✅ 주소 정보 확인
+    const fullAddr = document.getElementById("u-fulladdress");
+    if (!fullAddr) {
+      alert("주소 정보 없음");
+      return;
+    }
+    const parts = fullAddr.textContent.split(",").map(s => s.trim());
+    const postcode = parts[0] || "";
+    const address = parts[1] || "";
+    const address_detail = parts[2] || "";
+
+    // ✅ 요청사항
+    const memoInput = document.getElementById("requestMemo");
+    const request_memo = memoInput ? memoInput.value : "";
+
+    // ✅ 총 금액
+    const priceEl = document.getElementById("sum-total");
+    if (!priceEl) {
+      alert("결제 금액 정보를 찾을 수 없습니다.");
+      return;
+    }
+    const total_price = parseInt(priceEl.textContent.replace(/[^\d]/g, ""), 10);
+
+
+ await fetch('/order/cache-info', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    postcode,
+    address,
+    address_detail,
+    request_memo
+  })
+});
+
+    // ✅ 장바구니 데이터
+    const cart = window.cartData;
+    if (!cart || cart.length === 0) {
+      alert("장바구니가 비어 있습니다.");
+      return;
+    }
+
+    // ✅ 결제 수단 확인
+    const selectedRadio = document.querySelector('input[name="paymethod"]:checked');
+    if (!selectedRadio) {
+      alert("결제 수단을 선택해주세요.");
+      return;
+    }
+    const selectedMethod = selectedRadio.value;
+
+    // ✅ TossPayments 결제 요청
+    const clientKey = "test_ck_BX7zk2yd8y6BgXglynEE3x9POLqK";
+    const tossPayments = TossPayments(clientKey);
+
+    try {
+       
+      await tossPayments.requestPayment(selectedMethod, {
+        amount: total_price,
+        orderId: "ORDER-" + Math.floor(Math.random() * 1000000),
+        orderName: "YOLO 결제",
+        customerName: "",
+        successUrl: "http://localhost:3000/payment/success",
+        failUrl: "http://localhost:3000/payment/fail"
+      });
+    } catch (err) {
+      alert("❌ 결제를 진행할 수 없습니다: " + err.message);
+    }
+  });
+});
+*/
+
+
+document.addEventListener("DOMContentLoaded", () => {
+  const orderBtn = document.getElementById("order-btn");
+  orderBtn.addEventListener("click", async (e) => {
+    e.preventDefault();
+
+    // ✅ 주소 정보 확인
+    const fullAddr = document.getElementById("u-fulladdress");
+    if (!fullAddr) {
+      alert("주소 정보 없음");
+      return;
+    }
+    const parts = fullAddr.textContent.split(",").map(s => s.trim());
+    const postcode = parts[0] || "";
+    const address = parts[1] || "";
+    const address_detail = parts[2] || "";
+
+    // ✅ 요청사항
+    const memoInput = document.getElementById("requestMemo");
+    const request_memo = memoInput ? memoInput.value : "";
+
+    // ✅ 총 결제 금액
+    const priceEl = document.getElementById("sum-total");
+    if (!priceEl) {
+      alert("결제 금액 정보를 찾을 수 없습니다.");
+      return;
+    }
+    const total_price = parseInt(priceEl.textContent.replace(/[^\d]/g, ""), 10);
+
+    // ✅ 배송 정보 서버로 임시 저장
+    await fetch('/order/cache-info', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        postcode,
+        address,
+        address_detail,
+        request_memo
+      })
+    });
+
+    // ✅ 장바구니 데이터
+    const cart = window.cartData;
+    if (!cart || cart.length === 0) {
+      alert("장바구니가 비어 있습니다.");
+      return;
+    }
+
+    // ✅ 결제 수단 확인
+    const selectedRadio = document.querySelector('input[name="paymethod"]:checked');
+    if (!selectedRadio) {
+      alert("결제 수단을 선택해주세요.");
+      return;
+    }
+    const selectedMethod = selectedRadio.value;
+    console.log('선택된 결제 방식:',`"${selectedMethod}"`);
+
+    // ✅ 주문자 이름 가져오기
+    const customerName = document.getElementById('u-name')?.textContent || '';
+
+    // ✅ 주문 상품명 생성 (100자 제한 적용)
+    let orderNameItems = cart.map(item => `${item.name} (${item.color} x${item.quantity})`);
+    let orderName = orderNameItems.slice(0, 3).join(', ');
+    if (orderNameItems.length > 3) {
+      orderName += ` 외 ${orderNameItems.length - 3}건`;
+    }
+    if (orderName.length > 100) {
+      orderName = orderName.slice(0, 97) + '...';
+    }
+
+    // ✅ TossPayments 결제 요청
+    const clientKey = "test_ck_BX7zk2yd8y6BgXglynEE3x9POLqK"; // 테스트 키 또는 실제 키
+    const tossPayments = TossPayments(clientKey);
+
+    try {
+      await tossPayments.requestPayment(selectedMethod, {
+        amount: total_price,
+        orderId: "ORDER-" + Math.floor(Math.random() * 1000000),
+        orderName: orderName,
+        customerName: customerName,
+        successUrl: "http://localhost:3000/payment/success",
+        failUrl: "http://localhost:3000/payment/fail"
+      });
+    } catch (err) {
+      alert("❌ 결제를 진행할 수 없습니다: " + err.message);
+    }
+  });
+});
+
+</script>
+
+
+
+
+
+
+  
+  
+</body>
+</html>
