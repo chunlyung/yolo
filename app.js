@@ -111,9 +111,6 @@ app.get('/QNA',(req,res)=> {
   res.render('QNA');
 });
 
-app.get('/index',(req,res)=> {
-  res.render('index');
-});
 
 app.get('/signup',(req,res)=> {
   res.render('signup');
@@ -130,6 +127,10 @@ app.get('/privacy',(req,res)=> {
 
 
 app.use(express.static(path.join(__dirname,'public')));
+
+app.get('/',(req,res)=>{
+  res.render('index');
+});
 
 console.log('서버 라우터들 정상 등록 완료');
 
