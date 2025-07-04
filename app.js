@@ -124,13 +124,12 @@ app.get('/privacy',(req,res)=> {
   res.render('privacy');
 });
 
-
-
-app.use(express.static(path.join(__dirname,'public')));
-
 app.get('/',(req,res)=>{
   res.render('index');
 });
+
+app.use(express.static(path.join(__dirname,'public')));
+
 
 console.log('서버 라우터들 정상 등록 완료');
 
