@@ -78,9 +78,58 @@ app.use('/payment',paymentRouter);
 app.use('/',passwordRouter);
 app.use('/shop',shopRouter);
 
+
+
+app.get('/about-as',(req,res)=> {
+  res.render('about-as');
+});
+
+app.get('/store',(req,res)=> {
+  res.render('store');
+});
+
+app.get('/contact',(req,res)=> {
+  res.render('contact');
+});
+
+app.get('/notice',(req,res)=> {
+  res.render('notice');
+});
+app.get('/yolo',(req,res)=> {
+  res.render('yolo');
+});
+app.get('/index',(req,res)=> {
+  res.render('index');
+});
+app.get('/login',(req,res)=> {
+  res.render('login');
+});
+app.get('/question',(req,res)=> {
+  res.render('question');
+});
+app.get('/QNA',(req,res)=> {
+  res.render('QNA');
+});
+
+app.get('/index',(req,res)=> {
+  res.render('index');
+});
+
+app.get('/signup',(req,res)=> {
+  res.render('signup');
+});
+
+app.get('/policy',(req,res)=> {
+  res.render('policy');
+});
+
+app.get('/privacy',(req,res)=> {
+  res.render('privacy');
+});
+
+
+
 app.use(express.static(path.join(__dirname,'public')));
-
-
 
 app.get('/',(req,res)=>{
   res.send('접속성공');

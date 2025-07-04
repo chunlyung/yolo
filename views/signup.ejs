@@ -1,29 +1,122 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang ="ko"> 
-          
-     <head> 
-        <meta charset="utf-8">
-        <meta name="viewport"content="width=device-width,initial-scale=1.0">
-      <title>YOLO 도예공방 </title> 
-      <link href="./about.css"rel="stylesheet">
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-     </head> 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+    content="width=device-width,initial-scale=1.0">
+    <title>회원가입</title>
+  <link href="./signup.css" rel="stylesheet">
+ <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
+<script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js">
+</script>
+
+</head>
+
+<body>
      
-    <body> 
-         <section id="notice-body">
-  <div class="notice-container">
-    <h2 class="notice-title">공지사항</h2>
-    <p class="notice-text">중요한 메시지를 다루고 있습니다.</p>
-    <p class="notice-text">(준비중입니다)</p>
-  </div>
-</section>
-<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-     <header class="header">
+
+
+<main class="signup-container">
+    <p class="head">회원 가입</p>
+    <form action="/signup" method="POST" class="signup-form">
+     
+      <label for="userid">아이디 *</label>
+      <input type="text" id="userid" name="userid" required placeholder="영문, 숫자 5자 이상 입력해주세요.">
+
+      <label for="email">이메일 *</label>
+      <input type="email" id="email" name="email" required>
+
+      <label for="name">이름 *</label>
+      <input type="text" id="name" name="user_name" required>
+
+      <label for="password">비밀번호 *</label>
+      <input type="password" id="password" name="password" required placeholder="6자 이상 입력해주세요.">
+
+      <label for="passwordConfirm">비밀번호 확인 *</label>
+      <input type="password" id="passwordConfirm" name="passwordConfirm" required>
+
+      <label for="phoneNumber">휴대폰 번호</label>
+      <div class="phone-box">
+        <input type="text" name="phoneNumber1" maxlength="3" placeholder="010" required>
+        <span>-</span>
+        <input type="text"  name="phoneNumber2"maxlength="4" required>
+        <span>-</span>
+        <input type="text"  name="phoneNumber3"maxlength="4" required>
+      </div>
+
+
+
+      <input type="text" id="postcode"name="postcode" placeholder="우편번호" >
+     <input type="text" id="address" name="address" placeholder="주소" >
+     <input type="text" id="address_detail"name="address_detail" placeholder="상세주소" >
+     <button type="button" class="faxtitle" onclick="execDaumPostcode()">우편번호 검색</button> 
+
+
+
+     <div id="daum-postcode-layer" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%);
+     width: 100%; max-width: 500px; height: 300px; z-index: 100; border: 1px solid #888; box-shadow: 0 4px 20px
+     rgba(0,0,0,0.2); background: #fff;">
+   
+        <div id="btnCloseLayer" style="text-align: right; margin: 10px;">
+
+        <button onclick="closeDaumPostcode()" style="padding: 4px 10px;">X</button>
+
+        </div>
+        </div>
+
+
+       
+      <div class="checkboxes">
+        <label><input type="checkbox" name="agree_all"> 모두 동의합니다.</label>
+        <label><input type="checkbox" name="terms_required"> (필수) 이용약관 및 개인정보 수집 및 이용에 동의합니다.</label>
+        <label><input type="checkbox" name="age_required"> (필수) 만 14세 이상입니다.</label>
+        <label><input type="checkbox" name="sms_agree"> (선택) 이메일 및 SMS로 혜택정보 수신에 동의합니다.</label>
+      </div>
+
+      <button type="submit" class="submit-btn">가입하기</button>
+
+    </form>
+    </main>
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ <header class="header">
 
      <div class="header-icons">
-
-
+   
        <i class="fa-solid fa-search" id="mobileSearchIcon" style="cursor:pointer;"></i>
        
       <div id="mobileSearchOverlay" class="search-overlay">
@@ -42,20 +135,19 @@
 
 
 
+
+
       <button class ="menu-toggle"onclick="toggleMenu()" >☰</button>
       <button class="close-toggle hidden" onclick="toggleMenu()">X</button>
      <!--close-toggle과 hidden의 두 클래스를 사용 가능-->
         <nav class="mobile-menu" id="navMenu"> 
           
           <div class="top">
-          <li> <a class="logo-mobile" href="yolo.html">YOLO</a></li>
+         <li> <a class="logo-mobile" href="/yolo">YOLO</a></li>
           <div id="logintoggle">
-            <li> <a class="login-mobile" href="login.html">Log In</a></li>
+            <li> <a class="login-mobile" href="/login">Log In</a></li>
           </div>
              </div>
-
-
-
           <div class="search-m">
              <input type="text" id="search-mobile" placeholder="⌕">
           </div>
@@ -69,13 +161,13 @@
               <span class="arrow">&#709;</span>
             </a> <!--드롭다운 메뉴 제목-->
             <ul class="submenu">  <!--서브 메뉴--> 
-              <li><a  href ="about-as.html">About us</a></li>
-              <li><a  href ="store.html">Store</a></li>
-              <li><a  href ="contact .html">Contact us</a></li>
+              <li><a  href ="/about-as">About us</a></li>
+              <li><a  href ="/store">Store</a></li>
+              <li><a  href ="/contact">Contact us</a></li>
               </ul>
               </li>
            
-             <li> <a  href="notice.html">NOTICE</a> </li>
+             <li> <a  href="/notice">NOTICE</a> </li>
                <!-- 단일 메뉴-->
 
         <li class="dropMobile">  <!--드롭다운 메뉴--> <!-- <li>는 리스트 항목 하나.-->
@@ -88,7 +180,7 @@
           <li><a   href ="/shop/bowl">볼</a></li>
           <li><a   href ="/shop/cup">컵</a></li>
           <li><a   href ="/shop/N">기타 제품</a></li>
-         
+        
          </ul>
         </li>
 
@@ -97,52 +189,54 @@
           <span class="arrow">&#709;</span>
         </a><!-- 드롭다운 제목-->
         <ul class="submenu"><!--하위 메뉴들을 감싸는 리스트.-->
-          <li><a href ="question.html">자주 묻는 질문</a></li>
-          <li><a href ="QNA.html">Q&A</a></li><!--하위 메뉴 항목-->
+          <li><a href ="/question">자주 묻는 질문</a></li>
+          <li><a href ="/QNA">Q&A</a></li><!--하위 메뉴 항목-->
         </ul>
         </li>
         </ul>
 
+
+
+
+
+
+
          </nav>
-         
-
-
-
+        
 <div class="logo" style="cursor: pointer;"> 
-        <a href="yolo.html">  YOLO
+        <a href="/yolo">  YOLO
      </a></div>
-
       <nav class="nav-center">
       <ul class="menu"> <!--메뉴 항목들(가로 메뉴, 드롭다운 등을 감싸는 태그)-->
           <li class="dropdown">  <!--드롭다운 메뉴-->
             <a class="about" href="#">ABOUT</a> <!--드롭다운 메뉴 제목-->
             <ul class="dropdown-menu">  <!--서브 메뉴--> 
-              <li><a  class="about" href ="about-as.html">About us</a></li>
-              <li><a  class="about" href ="store.html">Store</a></li>
-              <li><a  class="about" href ="contact .html">Contact us</a></li>
+              <li><a  class="about" href ="/about-as">About us</a></li>
+              <li><a  class="about" href ="/store">Store</a></li>
+              <li><a  class="about" href ="/contact">Contact us</a></li>
               </ul>
               </li>
            
-             <li> <a class="about" href="notice.html">NOTICE</a> </li>
+             <li> <a class="about" href="/notice">NOTICE</a> </li>
                <!-- 단일 메뉴-->
 
         <li class="dropdown">  <!--드롭다운 메뉴--> <!-- <li>는 리스트 항목 하나.-->
         <a class="about" href="#">SHOP</a> <!--드롭다운 메뉴 제목-->
         <ul class="dropdown-menu"> <!--서브메뉴-->
-           <li><a  class="about" href ="shop-all">ALL</a></li>
+     <li><a  class="about" href ="shop-all">ALL</a></li>
           <li><a  class="about" href ="/shop/plate">접시</a></li>
           <li><a  class="about" href ="/shop/bowl">볼</a></li>
           <li><a  class="about" href ="/shop/cup">컵</a></li>
           <li><a  class="about" href ="/shop/N">기타 제품</a></li>
-      
+        
          </ul>
         </li>
 
         <li class="dropdown">  <!-- 드롭다운 메뉴 항목을 만듬.-->
         <a class="about" href="#">FAQ/QNA</a><!-- 드롭다운 제목-->
         <ul class="dropdown-menu"><!--하위 메뉴들을 감싸는 리스트.-->
-          <li><a  class="about" href ="question.html">자주 묻는 질문</a></li>
-          <li><a  class="about" href ="QNA.html">Q&A</a></li><!--하위 메뉴 항목-->
+          <li><a  class="about" href ="/question">자주 묻는 질문</a></li>
+          <li><a  class="about" href ="/QNA">Q&A</a></li><!--하위 메뉴 항목-->
         </ul>
         </li>
         </ul>
@@ -150,7 +244,7 @@
 
          <div class="nav-right">
          <!--로그인,장바구니-->
-             
+         
            <button type="button" id="searchToggle" class="search-btn" onclick="toggleSearch(event)">
             ⌕  </button>
 <input  type="text"
@@ -160,12 +254,9 @@
             <!-- 토글로 나타날 검색 입력창 -->
 
 
-           
-           <div id="login-menu">
-            <a class="auth" href="login.html">Logln</a>
-            </div>
-            
-            <a class="auth"  href="cart">Cart</a>
+       
+            <a class="auth" href="/login">Logln</a>
+            <a class="auth" href="/cart">Cart</a>
             
         </div>
           
@@ -177,8 +268,8 @@
 
 
 
-         
-          <span class="insta">
+
+ <span class="insta">
           <a href="https://instagram.com/yol_o.0?igsh=MWd0OHlya3ZwcW5vbw=="
          target="_blank">
          <img src="./insta.png" alt="instagram"
@@ -187,10 +278,10 @@
         </a>
 <section class="footer">
           <span class="final">
-            <a href="/policy.html" style="text-decoration: none; color:inherit;">
+            <a href="/policy" style="text-decoration: none; color:inherit;">
             이용약관</a>&nbsp;  
             
-             <a href="/privacy.html" style="text-decoration: none; color:inherit;">
+             <a href="/privacy" style="text-decoration: none; color:inherit;">
             개인정보처리방침</a>&nbsp; 
             
             <!-- ✅ 사업자정보 확인 팝업 링크 -->
@@ -204,7 +295,7 @@
             상호:Yolo | 대표: 정윤재 | 개인정보관리책임자: 정윤재 | 전화: 010.2886.2375 | 이메일: leerungab@naver.com
           </span>
           <div class="final2">
-            주소: 서울 강동구 천중로 53길 21 지하 1층 무궁화 놀이터 맞은편 건물 | 사업자등록번호:  702-30-01816 | 통신판매: | 호스팅제공자: (주)가비아
+            주소: 서울 강동구 천중로 53길 21 지하 1층 무궁화 놀이터 맞은편 건물 | 사업자등록번호:  702-30-01816 | 통신판매:  | 호스팅제공자: (주)가비아
           </div>
           <br>
           <br>
@@ -217,9 +308,8 @@
         </div>
          </section>
           
-         
-          
-  <script> 
+
+<script>
 
     document.querySelectorAll('.dropheader').forEach(header => { header.addEventListener('click' ,
       () => {
@@ -229,22 +319,16 @@
       });
     });
 
-
-
-
  function toggleMenu() {
      const nav = document.getElementById('navMenu');
      const openBtn = document.querySelector('.menu-toggle');
      const closeBtn = document.querySelector('.close-toggle');
      const icons= document.querySelector('.header-icons');
 
-     
-    
      nav.classList.toggle('active');
     
      const isOpen =nav.classList.contains('active');
    
-
 if(isOpen) {
      openBtn.classList.add('hidden');
      closeBtn.classList.remove('hidden');
@@ -266,12 +350,9 @@ if(isOpen) {
  }
 
 
-
  function toggleSearch(event) {
  
      if(event)event.preventDefault();  //submit 동작을 방지
-
-
 
    const input = document.querySelector('.search-input');
     const authLinks = document.querySelectorAll('.auth');
@@ -279,7 +360,6 @@ if(isOpen) {
     // classList.toggle()은 직접 쓸 수 없음 
     // forEach 나 for문으로 (반복문으로) 처리해야 함. 
  
-
   input.classList.toggle('active'); 
   input.focus(); // 돋보기를 누르면 커서 깜빡임
       
@@ -289,11 +369,7 @@ if(isOpen) {
 
      });
  }
- 
 
-
-
-/* --- (dropheader, toggleMenu 등 기존 코드 그대로) --- */
 
 /* ✅ 두 번째로 선언해 버렸던 toggleSearch() 삭제 후 아래 하나만 남깁니다 */
 function toggleSearch(e){
@@ -361,8 +437,6 @@ document.getElementById('search-mobile').addEventListener('keydown', e => {
 
 
 
-
-
 document.getElementById('searchCloseBtn').addEventListener('click', () => {
   const overlay = document.getElementById('mobileSearchOverlay');
   overlay.classList.remove('active'); // 또는 .classList.remove('active') → 네 CSS 기준에 맞춰
@@ -374,30 +448,40 @@ document.getElementById('searchCloseBtn').addEventListener('click', () => {
 
 
 
+ function execDaumPostcode(){
 
+   const layer = document.getElementById('daum-postcode-layer');
+     const width=500;
+     const height = 400;
+     const borderWidth = 2; // iframe 테두리 고려 
+   
+    new daum.Postcode( {
+      oncomplete: function(data){ // 주소 정보 입력
 
+         document.getElementById('postcode').value = data.zonecode;
+        document.getElementById('address').value = data.roadAddress;
+         document.getElementById('address_detail').focus();
+                 layer.style.display = 'none'; //검색 완료 시 iframe 닫기
+      },
+      width:'100%', 
+      heiight : '100%',
+      maxSuggestItems:5
+    }).embed(layer);// 핵심 : iframe 방식으로 삽입
 
-
-
-/* --- 로그인 유지 fetch 부분 그대로 --- */
-
-//로그인유지
-
-    fetch('/auth/status')
-    .then(res => res.json())
-    .then(data => {
-      console.log('auth/status 응답:',data);
-      const banner = document.querySelector('#login-menu');
-      if (!banner) return;
-     console.warn('배너가 없음');
-      if (data.loggedIn) {
-        banner.innerHTML = `
-    
-          <a href="/mypage"class="auth">My page</a>
-        `;
-      }
-    });
-     fetch('/auth/status')
+    layer.style.display = 'block'; //iframe열기
+     layer.style.width= width + 'px';
+      layer.style.height = height + 'px';
+       layer.style.border = borderWidth + 'px solid #888';
+        layer.style.position='fixed';
+         layer.style.top='50%';
+         layer.style.transform='translate(-50%, -50%)';
+          layer.style.zIndex='999';
+  }
+          function closeDaumPostcode(){
+            const layer = document.getElementById('daum-postcode-layer');
+            layer.style.display = 'none';
+          }
+   fetch('/auth/status')
     .then(res => res.json())
     .then(data => {
       console.log('auth/status 응답:',data);
@@ -412,7 +496,10 @@ document.getElementById('searchCloseBtn').addEventListener('click', () => {
       }
     });
 
- 
+
+
+
+
    fetch('/auth/status')
     .then(res => res.json())
     .then(data => {
@@ -427,64 +514,33 @@ document.getElementById('searchCloseBtn').addEventListener('click', () => {
         `;
       }
     else{
-      banner.innerHTML=` <a href="/login.html"class="fa-solid fa-user"></a>`;
+      banner.innerHTML=` <a href="/login"class="fa-solid fa-user"></a>`;
     }
 
     });
 
 
 
+
+
+
+
+
+
+       
 </script>
 
 
 <style>
-#notice-body {
 
-  all: initial !important;
-  position:  relative !important;
-  top: 100px !important;
-  font-family: 'Gowun Batang', serif !important;
-  max-width: 1000px !important;
-  margin: 120px auto 80px !important;
-  padding: 0 20px !important;
-  text-align: center !important;
-  color: #333 !important;
-  box-sizing: border-box !important;
+.logo a{
+  color: black !important;
+  text-decoration: none !important;
+  font-size: 30px !important;
 }
 
-.notice-title {
-  font-size: 16px !important;
-  font-weight: bold !important;
-  letter-spacing: 1px !important;
-  margin-bottom: 3rem !important;
-  position: relative !important;
-}
-
-.notice-title::after {
-  content: "";
-  display: block;
-  width: 280px !important;
-  height: 1px !important;
-  background-color: #aaa !important;
-  margin: 30px auto 0 auto !important;
-}
-
-.notice-text {
-  font-size: 0.9rem !important;
-  margin-top: 1rem !important;
-  color: #666 !important;
-  line-height: 1.7 !important;
-}
-
-/* ✅ 모바일 대응 */
-@media (max-width: 768px) {
-  .notice-title {
-    font-size: 12px !important;
-  }
-  .notice-text {
-    font-size: 10px !important;
-  }
-  .logo a{
+  @media (max-width:768px) {
+.logo a{
   color: black !important;
   text-decoration: none !important;
   font-size: 30px !important;
@@ -494,7 +550,9 @@ document.getElementById('searchCloseBtn').addEventListener('click', () => {
 }
 .bg-img{
   padding-top:0;
+
 }
+  
 .final{
    font-size: 9px;
    text-align: center;
@@ -506,18 +564,16 @@ document.getElementById('searchCloseBtn').addEventListener('click', () => {
     text-align: center;
    
 }
-}
 
-.logo a{
-  color: black !important;
-  text-decoration: none !important;
-  font-size: 30px !important;
-}
-
-
+  }
 
 </style>
-     </body>  
 
+
+
+
+
+
+</body>
 </html>
 

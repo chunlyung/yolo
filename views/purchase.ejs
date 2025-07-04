@@ -116,7 +116,7 @@
   fetch('/auth/status',{credentials:'include'})
     .then(r=>r.json())
     .then(d=>{
-      if(!d.loggedIn) return location.href='/login.html';
+      if(!d.loggedIn) return location.href='/login';
       const bn=document.getElementById('login-banner');
       bn&&(bn.textContent=` `);
     });

@@ -1,43 +1,53 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang ="ko"> 
-          
-     <head> 
-        <meta charset="utf-8">
-        <meta name="viewport"content="width=device-width,initial-scale=1.0">
-      <title>YOLO 도예공방 </title> 
-      <link href="./about.css"rel="stylesheet">
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-     </head> 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+    content="width=device-width,initial-scale=1.0">
+    <title>로그인</title>
+  <link href="./default4.css" rel="stylesheet">
+ <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-     
-    <body> 
-      <br>
-         <section id="yolo-about">
-  <div class="about-grid">
-    <p class="about-title">ABOUT US</p>
-    <div class="about-texts">
-      <p class="highlight">욜로 도자기는 불완의 미와 자연스러움을 추구하고 있습니다.</p>
-      <p>
-        우리의 모든 제품은 시간, 불 그리고 하루의 분위기에 따라 조용히 다른 느낌으로 완성되어 갑니다.<br>
-        때로는 거칠고, 때로는 부드럽고, 언제나 다름.
-      </p>
-      <p class="highlight">욜로와 함께 당신의 집의 이야기를.</p>
-      <p class="eng">
-        We stay true to the natural feel. Our pieces are shaped by time, fire and the mood of the day.<br>
-        Sometimes soft. Sometimes rough.<br>
-        Make your own story at home with us.
-      </p>
+</head>
+
+<body>
+
+
+
+
+<main class="login-container">
+  <p class="head">로그인<p>
+  <form action="/login" method="POST" class="login-form">
+    <label class ="text" for="userid">아이디  또는  이메일</label>
+    <input type="text" id="userid" name="userid" required>
+
+    <label class="text" for="password" >비밀번호</label>
+    <input type="password" id="password" name="password" required>
+
+    <div class="login-options">
+      <label><input type="checkbox" name="remember"> 아이디 저장</label>
+      <a href="/forgot" class="find-link">비밀번호 찾기</a>
     </div>
-  </div>
-</section>
-<br><br>
+
+    <button type="submit" class="login-btn">로그인하기</button>
+    
+<a href="./signup" class="signup-link">회원가입하기</a>
+
+  </form>
+</main>
 
 
-     <header class="header">
+
+
+
+
+
+
+
+ <header class="header">
 
      <div class="header-icons">
-
-
+    
        <i class="fa-solid fa-search" id="mobileSearchIcon" style="cursor:pointer;"></i>
        
       <div id="mobileSearchOverlay" class="search-overlay">
@@ -62,14 +72,11 @@
         <nav class="mobile-menu" id="navMenu"> 
           
           <div class="top">
-          <li> <a class="logo-mobile" href="yolo.html">YOLO</a></li>
+           <li> <a class="logo-mobile" href="/yolo">YOLO</a></li>
           <div id="logintoggle">
-            <li> <a class="login-mobile" href="login.html">Log In</a></li>
+            <li> <a class="login-mobile" href="/login">Log In</a></li>
           </div>
              </div>
-
-
-
           <div class="search-m">
              <input type="text" id="search-mobile" placeholder="⌕">
           </div>
@@ -83,13 +90,13 @@
               <span class="arrow">&#709;</span>
             </a> <!--드롭다운 메뉴 제목-->
             <ul class="submenu">  <!--서브 메뉴--> 
-              <li><a  href ="about-as.html">About us</a></li>
-              <li><a  href ="store.html">Store</a></li>
-              <li><a  href ="contact .html">Contact us</a></li>
+              <li><a  href ="/about-as">About us</a></li>
+              <li><a  href ="/store">Store</a></li>
+              <li><a  href ="/contact">Contact us</a></li>
               </ul>
               </li>
            
-             <li> <a  href="notice.html">NOTICE</a> </li>
+             <li> <a  href="/notice">NOTICE</a> </li>
                <!-- 단일 메뉴-->
 
         <li class="dropMobile">  <!--드롭다운 메뉴--> <!-- <li>는 리스트 항목 하나.-->
@@ -97,7 +104,7 @@
           <span class="arrow">&#709;</span>
         </a> <!--드롭다운 메뉴 제목-->
         <ul class="submenu"> <!--서브메뉴-->
-        <li><a  href ="/shop-all">ALL</a></li>
+    <li><a  href ="/shop-all">ALL</a></li>
           <li><a  href ="/shop/plate">접시</a></li>
           <li><a   href ="/shop/bowl">볼</a></li>
           <li><a   href ="/shop/cup">컵</a></li>
@@ -111,39 +118,41 @@
           <span class="arrow">&#709;</span>
         </a><!-- 드롭다운 제목-->
         <ul class="submenu"><!--하위 메뉴들을 감싸는 리스트.-->
-          <li><a href ="question.html">자주 묻는 질문</a></li>
-          <li><a href ="QNA.html">Q&A</a></li><!--하위 메뉴 항목-->
+          <li><a href ="/question">자주 묻는 질문</a></li>
+          <li><a href ="/QNA">Q&A</a></li><!--하위 메뉴 항목-->
         </ul>
         </li>
         </ul>
 
+
+
+
+
+
+
          </nav>
-         
-
-
-
-
-      <div class="logo" style="cursor: pointer;"> 
-        <a href="yolo.html">  YOLO
+       
+<div class="logo" style="cursor: pointer;"> 
+        <a href="/yolo">  YOLO
      </a></div>
       <nav class="nav-center">
       <ul class="menu"> <!--메뉴 항목들(가로 메뉴, 드롭다운 등을 감싸는 태그)-->
           <li class="dropdown">  <!--드롭다운 메뉴-->
             <a class="about" href="#">ABOUT</a> <!--드롭다운 메뉴 제목-->
             <ul class="dropdown-menu">  <!--서브 메뉴--> 
-              <li><a  class="about" href ="about-as.html">About us</a></li>
-              <li><a  class="about" href ="store.html">Store</a></li>
-              <li><a  class="about" href ="contact .html">Contact us</a></li>
+              <li><a  class="about" href ="/about-as">About us</a></li>
+              <li><a  class="about" href ="/store">Store</a></li>
+              <li><a  class="about" href ="/contact">Contact us</a></li>
               </ul>
               </li>
            
-             <li> <a class="about" href="notice.html">NOTICE</a> </li>
+             <li> <a class="about" href="/notice">NOTICE</a> </li>
                <!-- 단일 메뉴-->
 
         <li class="dropdown">  <!--드롭다운 메뉴--> <!-- <li>는 리스트 항목 하나.-->
         <a class="about" href="#">SHOP</a> <!--드롭다운 메뉴 제목-->
         <ul class="dropdown-menu"> <!--서브메뉴-->
-         <li><a  class="about" href ="shop-all">ALL</a></li>
+             <li><a  class="about" href ="shop-all">ALL</a></li>
           <li><a  class="about" href ="/shop/plate">접시</a></li>
           <li><a  class="about" href ="/shop/bowl">볼</a></li>
           <li><a  class="about" href ="/shop/cup">컵</a></li>
@@ -155,8 +164,8 @@
         <li class="dropdown">  <!-- 드롭다운 메뉴 항목을 만듬.-->
         <a class="about" href="#">FAQ/QNA</a><!-- 드롭다운 제목-->
         <ul class="dropdown-menu"><!--하위 메뉴들을 감싸는 리스트.-->
-          <li><a  class="about" href ="question.html">자주 묻는 질문</a></li>
-          <li><a  class="about" href ="QNA.html">Q&A</a></li><!--하위 메뉴 항목-->
+          <li><a  class="about" href ="/question">자주 묻는 질문</a></li>
+          <li><a  class="about" href ="/QNA">Q&A</a></li><!--하위 메뉴 항목-->
         </ul>
         </li>
         </ul>
@@ -165,21 +174,16 @@
          <div class="nav-right">
          <!--로그인,장바구니-->
              
-           <button type="button" id="searchToggle" class="search-btn" onclick="toggleSearch(event)">
+            <button type="button" id="searchToggle" class="search-btn" onclick="toggleSearch(event)">
             ⌕  </button>
 <input  type="text"
         class="search-input"
         id="searchInput"
         placeholder=" " />
             <!-- 토글로 나타날 검색 입력창 -->
-
-
-           
-           <div id="login-menu">
-            <a class="auth" href="login.html">Logln</a>
-            </div>
-            
-            <a class="auth"  href="cart">Cart</a>
+       
+            <a class="auth" href="/login">Logln</a>
+            <a class="auth" href="cart">Cart</a>
             
         </div>
           
@@ -191,20 +195,21 @@
 
 
 
-         
-          <span class="insta">
+
+ <span class="insta">
           <a href="https://instagram.com/yol_o.0?igsh=MWd0OHlya3ZwcW5vbw=="
          target="_blank">
-         <img src="./insta.png" alt="instagram"
+         <img src="/insta.png" alt="instagram"
          style="width: 25px; height: 25px;"></a>
           </span>
         </a>
- <section class="footer">
+
+         <section class="footer">
           <span class="final">
-            <a href="/policy.html" style="text-decoration: none; color:inherit;">
+            <a href="/policy" style="text-decoration: none; color:inherit;">
             이용약관</a>&nbsp;  
             
-             <a href="/privacy.html" style="text-decoration: none; color:inherit;">
+             <a href="/privacy" style="text-decoration: none; color:inherit;">
             개인정보처리방침</a>&nbsp; 
             
             <!-- ✅ 사업자정보 확인 팝업 링크 -->
@@ -218,7 +223,7 @@
             상호:Yolo | 대표: 정윤재 | 개인정보관리책임자: 정윤재 | 전화: 010.2886.2375 | 이메일: leerungab@naver.com
           </span>
           <div class="final2">
-            주소: 서울 강동구 천중로 53길 21 지하 1층 무궁화 놀이터 맞은편 건물 | 사업자등록번호: 702-30-01816 | 통신판매: | 호스팅제공자: (주)가비아
+            주소: 서울 강동구 천중로 53길 21 지하 1층 무궁화 놀이터 맞은편 건물 | 사업자등록번호:  702-30-01816 | 통신판매:  | 호스팅제공자: (주)가비아
           </div>
           <br>
           <br>
@@ -231,8 +236,48 @@
         </div>
          </section>
           
-          
-  <script> 
+
+<script>
+
+
+
+document.querySelector('.login-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const userid = document.getElementById('userid').value;
+  const password = document.getElementById('password').value;
+
+
+
+  try {
+    const res = await fetch('/login', {
+      method : 'POST',
+      credentials:'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userid, password })
+    });
+
+    const result = await res.json();
+    if (result.success) {
+      
+      window.location.href = '/mypage';
+    } else {
+      alert('❌ 로그인 실패: ' + result.message);
+    }
+  } catch (err) {
+    alert('서버 오류 발생');
+    console.error(err);
+  }
+});
+
+
+
+
+
+
+
+
+
 
     document.querySelectorAll('.dropheader').forEach(header => { header.addEventListener('click' ,
       () => {
@@ -241,9 +286,6 @@
          parent.classList.toggle('open');
       });
     });
-
-
-
 
  function toggleMenu() {
      const nav = document.getElementById('navMenu');
@@ -302,11 +344,6 @@ if(isOpen) {
 
      });
  }
- 
-
-
-
-/* --- (dropheader, toggleMenu 등 기존 코드 그대로) --- */
 
 /* ✅ 두 번째로 선언해 버렸던 toggleSearch() 삭제 후 아래 하나만 남깁니다 */
 function toggleSearch(e){
@@ -374,8 +411,6 @@ document.getElementById('search-mobile').addEventListener('keydown', e => {
 
 
 
-
-
 document.getElementById('searchCloseBtn').addEventListener('click', () => {
   const overlay = document.getElementById('mobileSearchOverlay');
   overlay.classList.remove('active'); // 또는 .classList.remove('active') → 네 CSS 기준에 맞춰
@@ -384,33 +419,7 @@ document.getElementById('searchCloseBtn').addEventListener('click', () => {
 
 
 
-
-
-
-
-
-
-
-
-/* --- 로그인 유지 fetch 부분 그대로 --- */
-
-//로그인유지
-
-    fetch('/auth/status')
-    .then(res => res.json())
-    .then(data => {
-      console.log('auth/status 응답:',data);
-      const banner = document.querySelector('#login-menu');
-      if (!banner) return;
-     console.warn('배너가 없음');
-      if (data.loggedIn) {
-        banner.innerHTML = `
-    
-          <a href="/mypage"class="auth">My page</a>
-        `;
-      }
-    });
-     fetch('/auth/status')
+  fetch('/auth/status')
     .then(res => res.json())
     .then(data => {
       console.log('auth/status 응답:',data);
@@ -425,7 +434,10 @@ document.getElementById('searchCloseBtn').addEventListener('click', () => {
       }
     });
 
- 
+
+
+
+
    fetch('/auth/status')
     .then(res => res.json())
     .then(data => {
@@ -440,100 +452,33 @@ document.getElementById('searchCloseBtn').addEventListener('click', () => {
         `;
       }
     else{
-      banner.innerHTML=` <a href="/login.html"class="fa-solid fa-user"></a>`;
+      banner.innerHTML=` <a href="/login"class="fa-solid fa-user"></a>`;
     }
 
     });
 
 
 
+
+
+
+
+
+
+ 
+ 
 </script>
 
 
 <style>
-#yolo-about .about-grid {
-  
-  all: initial !important;
-  font-family: 'Gowun Batang', serif !important;
-  background: none !important;
-  padding: 100px 20px 80px !important;
-  max-width: 1200px !important;
-  margin: 0 auto !important;
-  box-sizing: border-box !important;
+
+.logo a{
+  color: black !important;
+  text-decoration: none !important;
+  font-size: 30px !important;
 }
 
-#yolo-about .about-grid {
-  display: grid !important;
-  grid-template-columns: 200px 1fr !important;
-  gap: 40px !important;
-  align-items: start !important;
-  
-}
-
-.about-title {
-  font-size: 20px !important;
-  letter-spacing: 1px !important;
-  padding-top: 10px !important;
-  margin-top: 40px !important;
-  position: relative !important;
-  text-align: center !important;
-}
-
-/* ✅ ABOUT US 밑에 선 추가 */
-.about-title::after {
-  content: "";
-  display: block;
-  width: 170px;
-  height: 0.1px;
-  background-color: #555;
-  margin: 20px auto 0 auto;
-}
-.about-texts {
-  line-height: 1.8 !important;
-  font-size: 0.8rem !important;
-  color: #222 !important;
-  text-align: center !important;
-}
-
-.about-texts p {
-  margin-bottom: 1.2rem !important;
-  
-}
-
-.about-texts .highlight {
-  font-weight:600 !important;
-  color: #111 !important;
-  
-}
-
-.about-texts .eng {
-  font-style: italic !important;
-  color: #555 !important;
-  font-size: 0.8rem !important;
-
-}
-
-/* ✅ 모바일 대응 */
-@media (max-width: 768px) {
-  #yolo-about .about-grid {
-    display: block !important;
-    text-align: center !important;
-  }
-
-  .about-title {
-    text-align: center !important;
-    font-size: 13px !important;
-    margin-bottom: 1.5rem !important;
-    margin-left: 0 !important;
-  }
-
-  .about-texts {
-    font-size: 0.6rem !important;
-  }
-
-  .about-texts .eng {
-    font-size: 0.5rem !important;
-  }
+  @media (max-width:768px) {
 .logo a{
   color: black !important;
   text-decoration: none !important;
@@ -558,17 +503,18 @@ document.getElementById('searchCloseBtn').addEventListener('click', () => {
 }
 
 
-}
+  .login-container {
+    padding: 40px 45px; /* 좌우 20px 여백 추가 */
+  }
 
-.logo a{
-  color: black !important;
-  text-decoration: none !important;
-  font-size: 30px !important;
-}
-
+  }
 
 </style>
-     </body>  
 
+
+
+
+
+</body>
 </html>
 

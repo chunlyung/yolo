@@ -9,7 +9,7 @@ router.use(express.urlencoded({ extended: true }));
 
 router.get('/', (req, res) => {
   const user = req.session.user;
-  if (!user) return res.redirect('/login.html');
+  if (!user) return res.redirect('/login');
   res.render('cart', { user });  // views/cart.ejs 에 렌더링
 });
 /* -------------------- 1) 장바구니 담기 -------------------- */
