@@ -131,10 +131,6 @@ app.get('/privacy',(req,res)=> {
 
 app.use(express.static(path.join(__dirname,'public')));
 
-app.get('/',(req,res)=>{
-  res.send('접속성공');
-});
-
 console.log('서버 라우터들 정상 등록 완료');
 
 app.listen(port,'0.0.0.0');
