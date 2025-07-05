@@ -123,10 +123,15 @@ app.get('/policy',(req,res)=> {
 app.get('/privacy',(req,res)=> {
   res.render('privacy');
 });
+app.get('/notice-detail',(req,res)=>{
+  res.render('notice-detail');
+});
 
 app.get('/',(req,res)=>{
   res.render('index');
 });
+
+
 
 app.use(express.static(path.join(__dirname,'public')));
 
