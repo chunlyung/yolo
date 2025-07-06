@@ -4,7 +4,7 @@
      <head> 
         <meta charset="utf-8">
         <meta name="viewport"content="width=device-width,initial-scale=1.0">
-      <title>YOLO 도예공방 </title> 
+      <title>공지사항 </title> 
       <link href="./about.css"rel="stylesheet">
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
      </head> 
@@ -20,7 +20,7 @@
 
     <ul class="notice-list">
       <li>
-        <a href="/notice-detail">
+        <a class="detail"  href="/notice-detail">
            [필독] 구매 전 체크리스트
           <span class="date">2025.07.05</span>
         </a>
@@ -513,7 +513,17 @@ document.getElementById('searchCloseBtn').addEventListener('click', () => {
 .final2{
     font-size: 9px;
     text-align: center;
-   
+ 
+    
+}
+
+.detail{
+  font-size: 0.7rem !important;
+
+}
+
+.date{
+  font-size: 0.7rem !important;
 }
 }
 
@@ -544,8 +554,8 @@ document.getElementById('searchCloseBtn').addEventListener('click', () => {
 
 .notice-list a {
   text-decoration: none;
-  font-size: 1.1rem;
-  color: #333;
+  font-size: 1rem;
+  color: #666;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -553,7 +563,7 @@ document.getElementById('searchCloseBtn').addEventListener('click', () => {
 
 
 .date {
-  font-size: 0.9rem;
+  font-size: 1rem;
   color: #999;
 }
 

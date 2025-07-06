@@ -4,7 +4,7 @@
      <head> 
         <meta charset="utf-8">
         <meta name="viewport"content="width=device-width,initial-scale=1.0">
-      <title>YOLO 도예공방 </title> 
+      <title>공지사항</title> 
       <link href="./product-detail.css"rel="stylesheet">
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
      </head> 
@@ -22,9 +22,12 @@
     
     <section class="brand-story">
     
+      <section class="headtext">
+      <p>구매 전 (필독) 체크리스트 </p>
+      <div>2025.07.06  |  관리자</div>
+    </section>
 
-
-  <br><br><br><br>
+  <br><br><br><br><br><br>
 
  <div class="caution">
   <h6 class="middle">CAUTION</h6>
@@ -628,14 +631,7 @@ document.getElementById('searchCloseBtn').addEventListener('click', () => {
   position: relative !important;
 }
 
-.notice-title::after {
-  content: "";
-  display: block;
-  width: 280px !important;
-  height: 1px !important;
-  background-color: #aaa !important;
-  margin: 30px auto 0 auto !important;
-}
+
 
 .notice-text {
   font-size: 0.9rem !important;
@@ -674,6 +670,13 @@ document.getElementById('searchCloseBtn').addEventListener('click', () => {
     text-align: center;
    
 }
+
+.headtext div{
+  font-size: 0.7rem !important;
+  color: #333;
+
+}
+
 }
 
 .logo a{
@@ -688,6 +691,17 @@ document.getElementById('searchCloseBtn').addEventListener('click', () => {
     align-items: center;
     margin-top: 100px;
 }
+
+.headtext p{
+  font-size: 1.5rem !important;
+  color: #333;
+}
+
+.brand-story{
+  border-top: none !important;
+}
+
+
 
 
 </style>
