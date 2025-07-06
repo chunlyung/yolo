@@ -14,10 +14,21 @@
          <section id="notice-body">
   <div class="notice-container">
     <h2 class="notice-title">FAQ</h2>
-    <p class="notice-text">자주 묻는 질문을 다루고 있습니다.</p>
-    <p class="notice-text">(준비중입니다)</p>
   </div>
 </section>
+
+<div class="container">
+
+    <ul class="notice-list">
+      <li>
+        <a class="detail" href="/faq-detail">
+           Q. 기본 포장 / 선물 포장
+          <span class="date">2025.07.06</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+
 <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
      <header class="header">
 
@@ -516,6 +527,39 @@ document.getElementById('searchCloseBtn').addEventListener('click', () => {
 
 
 
+.container {
+  max-width: 800px;
+  margin: 80px auto;
+  padding: 20px;
+}
+
+
+
+.notice-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.notice-list li {
+  border-bottom: 1px solid #eee;
+  padding: 16px 0;
+}
+
+.notice-list a {
+  text-decoration: none;
+  font-size: 1rem;
+  color: #666;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+
+.date {
+  font-size: 1rem;
+  color: #999;
+}
 </style>
      </body>  
 

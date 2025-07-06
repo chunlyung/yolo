@@ -126,6 +126,10 @@ app.get('/privacy',(req,res)=> {
 app.get('/notice-detail',(req,res)=>{
   res.render('notice-detail');
 });
+app.get('/faq-detail',(req,res)=>{
+  res.render('faq-detail');
+});
+
 
 app.get('/',(req,res)=>{
   res.render('index');
