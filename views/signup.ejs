@@ -68,10 +68,10 @@
 
        
       <div class="checkboxes">
-        <label><input type="checkbox" name="agree_all"> 모두 동의합니다.</label>
-        <label><input type="checkbox" name="terms_required"> (필수) 이용약관 및 개인정보 수집 및 이용에 동의합니다.</label>
-        <label><input type="checkbox" name="age_required"> (필수) 만 14세 이상입니다.</label>
-        <label><input type="checkbox" name="sms_agree"> (선택) 이메일 및 SMS로 혜택정보 수신에 동의합니다.</label>
+        <label><input type="checkbox" name="agree_all" id="agreeAll"> 모두 동의합니다.</label>
+        <label><input type="checkbox" class="agree-item" name="terms_required"> (필수) 이용약관 및 개인정보 수집 및 이용에 동의합니다.</label>
+        <label><input type="checkbox" class="agree-item" name="age_required"> (필수) 만 14세 이상입니다.</label>
+        <label><input type="checkbox" class="agree-item"name="sms_agree"> (선택) 이메일 및 SMS로 혜택정보 수신에 동의합니다.</label>
       </div>
 
       <button type="submit" class="submit-btn">가입하기</button>
@@ -528,7 +528,20 @@ document.getElementById('searchCloseBtn').addEventListener('click', () => {
     });
 
 
+// ✅ 모두 동의 → 전체 항목 체크/해제
+  const agreeAll = document.getElementById('agreeAll');
+  const agreeItems = document.querySelectorAll('.agree-item');
 
+  agreeAll.addEventListener('change', function () {
+    agreeItems.forEach(item => item.checked = this.checked);
+  });
+
+  // ✅ 개별 항목 중 하나라도 체크 해제 시 → agreeAll도 해제
+  agreeItems.forEach(item => {
+    item.addEventListener('change', function () {
+      agreeAll.checked = [...agreeItems].every(i => i.checked);
+    });
+  });
 
 
 
