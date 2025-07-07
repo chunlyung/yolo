@@ -39,7 +39,7 @@ router.post('/forgot', async (req, res) => {
     [token, expire, email]
   );
 
-  const resetLink = `http://localhost:3000/reset/${token}`;
+  const resetLink = `http://yolo2024.com/reset/${token}`;
 
   await transporter.sendMail({
     from: 'yangpang3@naver.com',
