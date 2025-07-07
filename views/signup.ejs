@@ -476,6 +476,14 @@ document.getElementById('searchCloseBtn').addEventListener('click', () => {
          layer.style.top='50%';
          layer.style.transform='translate(-50%, -50%)';
           layer.style.zIndex='999';
+
+    const isMobile =window.innerWidth <= 768;
+
+    layer.style.width =isMobile ? '90%' : width + 'px';
+
+    layer.style.height =isMobile ? '400px' : height + 'px';
+
+
   }
           function closeDaumPostcode(){
             const layer = document.getElementById('daum-postcode-layer');
