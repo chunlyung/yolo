@@ -30,11 +30,16 @@ router.get("/success", async (req, res) => {
       return res.status(400).send("장바구니 없음 또는 로그인 필요");
     }
 
+    const now= new Date();
+      
     // ✅ 주문 저장
     await db.beginTransaction();
 
+
+
     const { postcode, address, address_detail, request_memo } = req.session.checkoutInfo || {};
 
+    
 
     const [orderResult] = await db.execute(
       `INSERT INTO orders (user_id, total_price, postcode, address, address_detail, request_memo, status, created_at, updated_at)
