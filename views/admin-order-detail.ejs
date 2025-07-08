@@ -20,7 +20,7 @@
     <dt>회원</dt>     <dd><%= order.userid %> (<%= order.name %>)</dd>
     <dt>금액</dt>     <dd><%= order.total_price.toLocaleString() %>원</dd>
     <dt>상태</dt>     <dd><%= order.status %></dd>
-    <dt>주문일시</dt> <dd><%= new Date(order.created_at).toLocaleString('ko-KR',{ timeZone:'Asia/Seoul'}) %></dd>
+    <dt>주문일시</dt> <dd><%= new Date(order.created_at).toLocaleString('ko-KR',{ timeZone:'+09:00'}) %></dd>
   </dl>
 
   <!-- 배송지 -->

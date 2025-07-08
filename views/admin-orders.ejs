@@ -36,7 +36,7 @@
           <td><%= o.userid %> (<%= o.name %>)</td>
           <td><%= o.total_price.toLocaleString() %>원</td>
           <td><%= o.status %></td>
-          <td><%= new Date(o.created_at).toLocaleString('ko-KR',{ timeZone:'Asia/Seoul'}) %></td>
+          <td><%= new Date(o.created_at).toLocaleString('ko-KR',{ timeZone:'+09:00'}) %></td>
           <td><a href="/admin/orders/<%= o.id %>">상세</a></td>
         </tr>
       <% }) %>

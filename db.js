@@ -15,7 +15,7 @@ async function getConnection() {
     password:process.env.DB_PASSWORD, // 비밀번호
     database:process.env.DB_NAME,
     port:process.env.DB_PORT,
-    timezone:'Asia/Seoul'
+    timezone:'+09:00'
   })
   return connection;
 }
