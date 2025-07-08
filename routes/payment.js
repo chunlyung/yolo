@@ -37,9 +37,9 @@ router.get("/success", async (req, res) => {
 
 
     const [orderResult] = await db.execute(
-      `INSERT INTO orders (user_id, total_price, postcode, address, address_detail, request_memo, status, created_at, updated_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [user.id, payment.totalAmount, postcode, address, address_detail, request_memo, '결제완료', now, now]
+      `INSERT INTO orders (user_id, total_price, postcode, address, address_detail, request_memo, status)
+       VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      [user.id, payment.totalAmount, postcode, address, address_detail, request_memo, '결제완료']
     );
 
     const dbOrderId = orderResult.insertId;
