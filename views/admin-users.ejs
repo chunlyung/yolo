@@ -35,7 +35,7 @@
             <td><%= u.email %></td>
             <td><%= u.name %></td>
             <td><%= u.fullPhone %></td>
-            <td><%= new Date(u.created_at).toLocaleDateString('ko-KR') %></td>
+            <td><%= new Date(u.created_at).toLocaleDateString('ko-KR',{ timeZone:'Asia/Seoul'}) %></td>
             <td class="actions">
               <a href="/admin/users/<%= encodeURIComponent(u.userid) %>">상세</a>
               |

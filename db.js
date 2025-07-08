@@ -14,7 +14,8 @@ async function getConnection() {
     user:process.env.DB_USER,            // 너의 MySQL 계정
     password:process.env.DB_PASSWORD, // 비밀번호
     database:process.env.DB_NAME,
-    port:process.env.DB_PORT  
+    port:process.env.DB_PORT,
+    timezone:'Asia/Seoul'
   })
   return connection;
 }

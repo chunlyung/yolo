@@ -30,7 +30,7 @@
                 <div class="order-meta">
                   <p>주문번호:<%= o.id %></p>
                   <span class="order-status"><%= o.status %></span> 
-                  <%= new Date(o.created_at).toLocaleString('ko-KR') %>
+                  <%= new Date(o.created_at).toLocaleString('ko-KR',{ timeZone:'Asia/Seoul'}) %>
                 </div>
                 <span class="order-toggle" data-id="<%= o.id %>">⌄</span>
               </div>

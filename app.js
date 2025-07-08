@@ -24,7 +24,7 @@ app.use(session({
     user:process.env.DB_USER,
     password:process.env.DB_PASSWORD,
     database:process.env.DB_NAME,
-    timezone:'Asia/seoul'
+    timezone:'Asia/Seoul'
   }),
   cookie: {
     httpOnly:true,
