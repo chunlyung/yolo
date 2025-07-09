@@ -251,10 +251,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
     try {
       await tossPayments.requestPayment(payMethod, {
-        amount: {value: total_price, currency:"KRW"},
+        amount: total_price,
         orderId: "ORDER-" + Date.now(),
-        orderName,
-        customerName,
+        orderName:"테스트상품",
+        customerName:"testUser",
         successUrl: "https://yolo2024.com/payment/success",
         failUrl: "https://yolo2024.com/payment/fail",
          variantKey:"DEFAULT"
