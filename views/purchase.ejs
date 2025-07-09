@@ -251,7 +251,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
     try {
       await tossPayments.requestPayment(payMethod, {
-        amount: total_price,
+        amount: {value: total_price, currency:"KRW"},
         orderId: "ORDER-" + Date.now(),
         orderName,
         customerName,
