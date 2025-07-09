@@ -201,63 +201,89 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-document.addEventListener("DOMContentLoaded", async () => {
-  const orderBtn = document.getElementById("order-btn");
-  const clientKey = "test_gck_ZLKGPx4M3MaRYeRNDOOw3BaWypv1"; // 라이브 클라이언트 키 넣기
-  const tossPayments = TossPayments(clientKey);
 
+
+document.addEventListener("DOMContentLoaded", () => {
+  const orderBtn = document.getElementById("order-btn");
   orderBtn.addEventListener("click", async (e) => {
     e.preventDefault();
 
+    // ✅ 주소 정보 확인
     const fullAddr = document.getElementById("u-fulladdress");
-    if (!fullAddr) return alert("주소 정보 없음");
-
+    if (!fullAddr) {
+      alert("주소 정보 없음");
+      return;
+    }
     const parts = fullAddr.textContent.split(",").map(s => s.trim());
     const postcode = parts[0] || "";
     const address = parts[1] || "";
     const address_detail = parts[2] || "";
-    const request_memo = document.getElementById("requestMemo").value;
 
+    // ✅ 요청사항
+    const memoInput = document.getElementById("requestMemo");
+    const request_memo = memoInput ? memoInput.value : "";
+
+    // ✅ 총 결제 금액
     const priceEl = document.getElementById("sum-total");
+    if (!priceEl) {
+      alert("결제 금액 정보를 찾을 수 없습니다.");
+      return;
+    }
     const total_price = parseInt(priceEl.textContent.replace(/[^\d]/g, ""), 10);
 
-    const cart = window.cartData;
-    if (!cart || cart.length === 0) return alert("장바구니 비어 있음");
-
+    // ✅ 배송 정보 서버로 임시 저장
     await fetch('/order/cache-info', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ postcode, address, address_detail, request_memo })
+      body: JSON.stringify({
+        postcode,
+        address,
+        address_detail,
+        request_memo
+      })
     });
 
-    const selected = document.querySelector('input[name="paymethod"]:checked');
-    if (!selected) return alert("결제 수단 선택 안됨");
-    const payMethod = selected.value;
+    // ✅ 장바구니 데이터
+    const cart = window.cartData;
+    if (!cart || cart.length === 0) {
+      alert("장바구니가 비어 있습니다.");
+      return;
+    }
 
+    // ✅ 결제 수단 확인
+    const selectedRadio = document.querySelector('input[name="paymethod"]:checked');
+    if (!selectedRadio) {
+      alert("결제 수단을 선택해주세요.");
+      return;
+    }
+    const selectedMethod = selectedRadio.value;
+    console.log('선택된 결제 방식:',`"${selectedMethod}"`);
 
-    const customerName = document.getElementById("u-name")?.textContent || "";
+    // ✅ 주문자 이름 가져오기
+    const customerName = document.getElementById('u-name')?.textContent || '';
+
+    // ✅ 주문 상품명 생성 (100자 제한 적용)
     let orderNameItems = cart.map(item => `${item.name} (${item.color} x${item.quantity})`);
     let orderName = orderNameItems.slice(0, 3).join(', ');
-    if (orderNameItems.length > 3) orderName += ` 외 ${orderNameItems.length - 3}건`;
-    if (orderName.length > 100) orderName = orderName.slice(0, 97) + "...";
+    if (orderNameItems.length > 3) {
+      orderName += ` 외 ${orderNameItems.length - 3}건`;
+    }
+    if (orderName.length > 100) {
+      orderName = orderName.slice(0, 97) + '...';
+    }
 
-    
-    console.log("결제요청 데이터 확인", {
-  amount: total_price,
-  orderName,
-  customerName,
-  orderId: "ORDER-" + Date.now(),
-  method: payMethod
-});
+    // ✅ TossPayments 결제 요청
+    const clientKey = "live_ck_PBal2vxj814MGOMabQ4Kr5RQgOAN"; // 테스트 키 또는 실제 키
+    const tossPayments = TossPayments(clientKey);
+
     try {
-      await tossPayments.requestPayment(payMethod, {
+      await tossPayments.requestPayment(selectedMethod, {
         amount: total_price,
-        orderId: "ORDER-" + Date.now(),
-        orderName:"테스트상품",
-        customerName:"testUser",
+        orderId: "ORDER-" + Math.floor(Math.random() * 1000000),
+        orderName: orderName,
+        customerName: customerName,
         successUrl: "https://yolo2024.com/payment/success",
-        failUrl: "https://yolo2024.com/payment/fail",
-         variantKey:"DEFAULT"
+        failUrl: "https://yolo2024.com/payment/fail"
       });
     } catch (err) {
       alert("❌ 결제를 진행할 수 없습니다: " + err.message);
