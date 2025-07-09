@@ -234,13 +234,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!selected) return alert("결제 수단 선택 안됨");
     const payMethod = selected.value;
 
-    console.log("결제요청 데이터 확인", {
-  amount: total_price,
-  orderName,
-  customerName,
-  orderId: "ORDER-" + Date.now(),
-  method: selectedMethod
-});
 
     const customerName = document.getElementById("u-name")?.textContent || "";
     let orderNameItems = cart.map(item => `${item.name} (${item.color} x${item.quantity})`);
@@ -248,6 +241,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (orderNameItems.length > 3) orderName += ` 외 ${orderNameItems.length - 3}건`;
     if (orderName.length > 100) orderName = orderName.slice(0, 97) + "...";
 
+    
+    console.log("결제요청 데이터 확인", {
+  amount: total_price,
+  orderName,
+  customerName,
+  orderId: "ORDER-" + Date.now(),
+  method: payMethod
+});
     try {
       await tossPayments.requestPayment(payMethod, {
         amount: total_price,
