@@ -359,27 +359,22 @@ document.addEventListener("DOMContentLoaded", () => {
       orderName = orderName.slice(0, 97) + '...';
     }
 
-  
-
-
-
-  document.getElementById('order-btn').addEventListener('click', () => {
-    const clientKey = "test_gck_ZLKGPx4M3MaRYeRNDOOw3BaWypv1"; // 라이브 전환 시 바꿔줘
+    // ✅ TossPayments 결제 요청
+    const clientKey = "live_ck_GePWvyJnrKag9Bap4dGL3gLzN97E"; // 테스트 키 또는 실제 키
     const tossPayments = TossPayments(clientKey);
 
-    tossPayments.requestPayment('카드', {
-      amount: 15000,
-      orderId: 'ORDER_' + Date.now(),
-      orderName: 'YOLO 도자기 머그컵',
-      customerName: '홍길동',
-      successUrl: "https://yolo2024.com/payments/success",
-      failUrl: "https://yolo2024.com/payments/fail"
-    });
-  });
-
-
-
-
+    try {
+      await tossPayments.requestPayment(selectedMethod, {
+        amount: total_price,
+        orderId: "ORDER-" + Math.floor(Math.random() * 1000000),
+        orderName: orderName,
+        customerName: customerName,
+        successUrl: "https://yolo2024.com/payment/success",
+        failUrl: "https://yolo2024.com/payment/fail"
+      });
+    } catch (err) {
+      alert("❌ 결제를 진행할 수 없습니다: " + err.message);
+    }
   });
 });
 
