@@ -95,12 +95,12 @@
     <section class="payment-method">
       <h2 class="section-title">결제 방법</h2>
       <ul class="method-list">
-        <li><label><input type="radio" name="paymethod" value="card" checked> 신용 / 체크카드</label></li>
-        <li><label><input type="radio" name="paymethod" value="virtualAccount" checked> 무통장입금</label></li>
-        <li><label><input type="radio" name="paymethod"value="naverPay" checked> 네이버페이</label></li>
-        <li><label><input type="radio" name="paymethod"value="tosspay" checked> 토스페이</label></li>
-        <li><label><input type="radio" name="paymethod"value="kakaopay" checked> 카카오페이</label></li>
-        <li><label><input type="radio" name="paymethod"value="mobilePhone" checked> 휴대폰 결제</label></li>
+        <li><label><input type="radio" name="paymethod" value="카드" checked> 신용 / 체크카드</label></li>
+        <li><label><input type="radio" name="paymethod" value="가상계좌" checked> 무통장입금</label></li>
+        <li><label><input type="radio" name="paymethod"value="네이버페이" checked> 네이버페이</label></li>
+        <li><label><input type="radio" name="paymethod"value="토스페이" checked> 토스페이</label></li>
+        <li><label><input type="radio" name="paymethod"value="카카오페이" checked> 카카오페이</label></li>
+        <li><label><input type="radio" name="paymethod"value="휴대폰" checked> 휴대폰 결제</label></li>
       </ul>
     </section>
   </main>
@@ -203,7 +203,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 document.addEventListener("DOMContentLoaded", async () => {
   const orderBtn = document.getElementById("order-btn");
-  const clientKey = "live_gck_Gv6LjeKD8aK11QQXd4MLVwYxAdXy"; // 라이브 클라이언트 키 넣기
+  const clientKey = "test_gck_ZLKGPx4M3MaRYeRNDOOw3BaWypv1"; // 라이브 클라이언트 키 넣기
   const tossPayments = TossPayments(clientKey);
 
   orderBtn.addEventListener("click", async (e) => {
