@@ -234,6 +234,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!selected) return alert("결제 수단 선택 안됨");
     const payMethod = selected.value;
 
+    console.log("결제요청 데이터 확인", {
+  amount: total_price,
+  orderName,
+  customerName,
+  orderId: "ORDER-" + Date.now(),
+  method: selectedMethod
+});
+
     const customerName = document.getElementById("u-name")?.textContent || "";
     let orderNameItems = cart.map(item => `${item.name} (${item.color} x${item.quantity})`);
     let orderName = orderNameItems.slice(0, 3).join(', ');
