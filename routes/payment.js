@@ -6,7 +6,7 @@ const getConnection = require("../db");
 router.get("/success", async (req, res) => {
   const { paymentKey, orderId, amount } = req.query;
   const db = await getConnection();
-  const secretKey = "test_gsk_vZnjEJeQVxayk77QB1yzrPmOoBN0";
+  const secretKey = "live_gsk_EP59LybZ8B9gG7AW0O7br6GYo7pR";
 
   try {
     // ✅ 토스 결제 인증
