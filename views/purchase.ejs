@@ -251,12 +251,13 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
     try {
       await tossPayments.requestPayment(payMethod, {
-        amount:  {value: total_price, currency:'KRW'},
+        amount: total_price,
         orderId: "ORDER-" + Date.now(),
         orderName,
         customerName,
         successUrl: "https://yolo2024.com/payment/success",
-        failUrl: "https://yolo2024.com/payment/fail"
+        failUrl: "https://yolo2024.com/payment/fail",
+         variantKey:"DEFAULT"
       });
     } catch (err) {
       alert("❌ 결제를 진행할 수 없습니다: " + err.message);
