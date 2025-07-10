@@ -113,7 +113,7 @@
   });
 
   async function initTossWidgets(user, cart, total_price) {
-    const tossPayments = TossPayments("test_gck_ZLKGPx4M3MaRYeRNDOOw3BaWypv1");
+    const tossPayments = TossPayments("live_gck_Gv6LjeKD8aK11QQXd4MLVwYxAdXy");
     const widgets = tossPayments.widgets({ customerKey: user.uuid || `user-${user.id}` });
     await widgets.setAmount({ value: total_price, currency: 'KRW' });
 
