@@ -10,13 +10,17 @@ router.use(express.urlencoded({ extended: true }));
 
 router.get('/', async (req, res) => {
   const user = req.session.user;
+  if (!user) return res.redirect('/login');
+
   const cart = req.session.cart || [];
 
-  if (!user) return res.redirect('/login');
-  if (cart.length === 0) return res.render('cart', { user, cart: [] });
+  if (cart.length === 0) {
+    return res.render('cart', { user, cart: [] });
+  }
 
   try {
-    const db = await getConnection(); // 🔥 이렇게 불러야 맞음
+    const db = await getConnection();
+
     for (const item of cart) {
       const [rows] = await db.query(
         'SELECT stock FROM products_option WHERE product_id = ? AND color = ?',
@@ -24,15 +28,15 @@ router.get('/', async (req, res) => {
       );
       item.stock = rows[0]?.stock ?? 0;
     }
-    await db.end(); // 접속 종료
+
+    await db.end();
 
     res.render('cart', { user, cart });
   } catch (err) {
-    console.error('🔥 장바구니 오류:', err);
+    console.error('❌ 장바구니 stock 조회 실패:', err);
     res.status(500).send('서버에러: ' + err.message);
   }
 });
-
 
 /* -------------------- 1) 장바구니 담기 -------------------- */
 /* POST /cart/add  –  items 배열 또는 단일 객체 모두 허용  */
