@@ -64,7 +64,7 @@
             <option value="<%= o.color %>"data-thumb ="<%= o.thumb  %>" data-price="<%= o.price %>"  data-stock="<%= o.stock %>" <%= o.stock === 0 ? 'disabled' : '' %>
                   >    
               <%= o.color %>
-    <% if (o.stock === 0) { %>
+      <% if (o.stock === 0) { %>
       (품절)
     <% } else { %>
       (재고 <%= o.stock %>개)
@@ -778,10 +778,17 @@ colorSelect.addEventListener('change', () => {
   const opt = colorSelect.options[colorSelect.selectedIndex];
   const color = opt.value;
   if (!color) return;
+  
 
   const price = Number(opt.dataset.price);
   const thumb = opt.dataset.thumb || '';
-
+  
+ const stock = parseInt(opt.dataset.stock, 10);
+  if (stock === 0) {
+    alert('선택하신 옵션은 품절입니다.');
+    return;
+  }
+  // ...이후 로직 그대로 유지
   // 이미 cart에 있으면 수량만 증가
   if (cart[color]) {
     cart[color].qty++;
