@@ -2,47 +2,34 @@
 const express = require('express');
 const router  = express.Router();
 const path    = require('path');
-const db = require('../db');
+const getConnection = require('../db');
 router.use(express.json());
 router.use(express.urlencoded({ extended: true }));
+
+
 
 router.get('/', async (req, res) => {
   const user = req.session.user;
   const cart = req.session.cart || [];
 
   if (!user) return res.redirect('/login');
-  if (cart.length === 0) {
-    return res.render('cart', { user, cart: [] });
-  }
+  if (cart.length === 0) return res.render('cart', { user, cart: [] });
 
   try {
+    const db = await getConnection(); // 🔥 이렇게 불러야 맞음
     for (const item of cart) {
-      // 로그로 item 내부 확인
-      console.log('🛒 item in cart:', item);
-
-      if (!item.id || !item.color) {
-        console.warn('❌ 장바구니 항목에 id 또는 color 없음:', item);
-        item.stock = 0;
-        continue;
-      }
-
       const [rows] = await db.query(
         'SELECT stock FROM products_option WHERE product_id = ? AND color = ?',
         [item.id, item.color]
       );
-
-      if (!rows || rows.length === 0) {
-        console.warn(`⚠️ DB에 해당 옵션 없음 → id: ${item.id}, color: ${item.color}`);
-        item.stock = 0;
-      } else {
-        item.stock = rows[0].stock;
-      }
+      item.stock = rows[0]?.stock ?? 0;
     }
+    await db.end(); // 접속 종료
 
-    return res.render('cart', { user, cart });
+    res.render('cart', { user, cart });
   } catch (err) {
-    console.error('🔥 서버에러:', err);
-    return res.status(500).send('서버에러: ' + err.message);
+    console.error('🔥 장바구니 오류:', err);
+    res.status(500).send('서버에러: ' + err.message);
   }
 });
 
