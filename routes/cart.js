@@ -7,11 +7,30 @@ router.use(express.json());
 router.use(express.urlencoded({ extended: true }));
 
 
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
   const user = req.session.user;
   if (!user) return res.redirect('/login');
-  res.render('cart', { user });  // views/cart.ejs 에 렌더링
+
+  const cart = req.session.cart || [];
+
+  // 장바구니가 비어있으면 stock 없이 렌더링
+  if (cart.length === 0) {
+    return res.render('cart', { user, cart: [] });
+  }
+
+  // 옵션별 재고 정보를 DB에서 불러와서 각 item에 stock 추가
+  for (const item of cart) {
+    const [rows] = await db.query(
+      'SELECT stock FROM products_option WHERE product_id = ? AND color = ?',
+      [item.id, item.color]
+    );
+    item.stock = rows[0]?.stock ?? 0;
+  }
+
+  res.render('cart', { user, cart });
 });
+
+
 /* -------------------- 1) 장바구니 담기 -------------------- */
 /* POST /cart/add  –  items 배열 또는 단일 객체 모두 허용  */
 router.post('/add', (req, res) => {
