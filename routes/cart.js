@@ -9,25 +9,35 @@ router.use(express.urlencoded({ extended: true }));
 
 router.get('/', async (req, res) => {
   const user = req.session.user;
-  if (!user) return res.redirect('/login');
-
   const cart = req.session.cart || [];
 
-  // 장바구니가 비어있으면 stock 없이 렌더링
+  if (!user) return res.redirect('/login');
   if (cart.length === 0) {
     return res.render('cart', { user, cart: [] });
   }
 
-  // 옵션별 재고 정보를 DB에서 불러와서 각 item에 stock 추가
-  for (const item of cart) {
-    const [rows] = await db.query(
-      'SELECT stock FROM products_option WHERE product_id = ? AND color = ?',
-      [item.id, item.color]
-    );
-    item.stock = rows[0]?.stock ?? 0;
-  }
+  try {
+    for (const item of cart) {
+      // 필수값 존재 체크
+      if (!item.id || !item.color) {
+        console.warn('❌ 장바구니 item에 id 또는 color 없음:', item);
+        item.stock = 0;
+        continue;
+      }
 
-  res.render('cart', { user, cart });
+      const [rows] = await db.query(
+        'SELECT stock FROM products_option WHERE product_id = ? AND color = ?',
+        [item.id, item.color]
+      );
+
+      item.stock = (rows && rows.length > 0) ? rows[0].stock : 0;
+    }
+
+    return res.render('cart', { user, cart });
+  } catch (err) {
+    console.error('🚨 장바구니 렌더링 실패:', err);
+    return res.status(500).send('서버 에러');
+  }
 });
 
 
