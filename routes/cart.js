@@ -2,42 +2,16 @@
 const express = require('express');
 const router  = express.Router();
 const path    = require('path');
-const getConnection = require('../db');
+
 router.use(express.json());
 router.use(express.urlencoded({ extended: true }));
 
 
-
-router.get('/', async (req, res) => {
+router.get('/', (req, res) => {
   const user = req.session.user;
   if (!user) return res.redirect('/login');
-
-  const cart = req.session.cart || [];
-
-  if (cart.length === 0) {
-    return res.render('cart', { user, cart: [] });
-  }
-
-  try {
-    const db = await getConnection();
-
-    for (const item of cart) {
-      const [rows] = await db.query(
-        'SELECT stock FROM products_option WHERE product_id = ? AND color = ?',
-        [item.id, item.color]
-      );
-      item.stock = rows[0]?.stock ?? 0;
-    }
-
-    await db.end();
-
-    res.render('cart', { user, cart });
-  } catch (err) {
-    console.error('❌ 장바구니 stock 조회 실패:', err);
-    res.status(500).send('서버에러: ' + err.message);
-  }
+  res.render('cart', { user });  // views/cart.ejs 에 렌더링
 });
-
 /* -------------------- 1) 장바구니 담기 -------------------- */
 /* POST /cart/add  –  items 배열 또는 단일 객체 모두 허용  */
 router.post('/add', (req, res) => {
@@ -71,22 +45,8 @@ router.post('/add', (req, res) => {
 /* -------------------- 2) 장바구니 페이지 -------------------- */
 
 /* GET /cart/data  – 세션 cart JSON */
-router.get('/data', async (req, res) => {
-
-  const cart = req.session.cart || [];
-
-  for (const item of cart) {
-    const [rows] = await db.query(
-      'SELECT stock FROM products_option WHERE product_id = ? AND color = ?',
-      [item.id, item.color]
-    );
-    item.stock = rows[0]?.stock ?? 0;
-  }
-
-  res.json(cart);
-
-
-
+router.get('/data', (req, res) => {
+  res.json(req.session.cart || []);
 });
 
 /* -------------------- 3) 수량 변경 -------------------- */
