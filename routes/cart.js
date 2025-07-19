@@ -6,7 +6,6 @@ const db = require('../db');
 router.use(express.json());
 router.use(express.urlencoded({ extended: true }));
 
-
 router.get('/', async (req, res) => {
   const user = req.session.user;
   const cart = req.session.cart || [];
@@ -18,9 +17,11 @@ router.get('/', async (req, res) => {
 
   try {
     for (const item of cart) {
-      // 필수값 존재 체크
+      // 로그로 item 내부 확인
+      console.log('🛒 item in cart:', item);
+
       if (!item.id || !item.color) {
-        console.warn('❌ 장바구니 item에 id 또는 color 없음:', item);
+        console.warn('❌ 장바구니 항목에 id 또는 color 없음:', item);
         item.stock = 0;
         continue;
       }
@@ -30,13 +31,18 @@ router.get('/', async (req, res) => {
         [item.id, item.color]
       );
 
-      item.stock = (rows && rows.length > 0) ? rows[0].stock : 0;
+      if (!rows || rows.length === 0) {
+        console.warn(`⚠️ DB에 해당 옵션 없음 → id: ${item.id}, color: ${item.color}`);
+        item.stock = 0;
+      } else {
+        item.stock = rows[0].stock;
+      }
     }
 
     return res.render('cart', { user, cart });
   } catch (err) {
-    console.error('🚨 장바구니 렌더링 실패:', err);
-    return res.status(500).send('서버 에러');
+    console.error('🔥 서버에러:', err);
+    return res.status(500).send('서버에러: ' + err.message);
   }
 });
 
