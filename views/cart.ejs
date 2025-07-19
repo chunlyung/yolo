@@ -489,7 +489,7 @@ fetch('/cart/data')
 
         <div class="col-qty qty-control"
       data-id="${item.id}" data-color="${item.color}"
-      data-unit="${item.price}">
+      data-unit="${item.price}" data-stock="${item.stock}">
    <button type="button" class="btn-minus">−</button>
    <input type="number" class="qty-input"
           value="${item.quantity}" min="1">
@@ -533,18 +533,36 @@ list.addEventListener('click', e => {
     const input   = control.querySelector('.qty-input');
     let qty       = +input.value;
 
-    if (e.target.classList.contains('btn-plus'))  qty++;
-    else if (qty > 1)                             qty--;
 
-    input.value = qty;
-    handleQtyChange(control, qty);
+  if (e.target.classList.contains('btn-plus')) {
+    const stock = parseInt(control.dataset.stock, 10);
+    if (qty >= stock) {
+      alert('재고보다 많이 담을 수 없습니다.');
+      return;
+    }
+    qty++;
+  } else if (qty > 1) {
+    qty--;
   }
+
+  input.value = qty;
+  handleQtyChange(control, qty);
+}
+
+
 });
 
 list.addEventListener('change', e => {
   if (e.target.matches('.qty-input')) {
     const control = e.target.closest('.qty-control');
+     const stock = parseInt(control.dataset.stock, 10); // 재고 읽기
     const qty     = Math.max(1, +e.target.value);
+
+   if (qty > stock) {
+      alert(`최대 ${stock}개까지 주문 가능합니다.`);
+      qty = stock;
+    }
+
     e.target.value = qty;         // 최소 1 보정
     handleQtyChange(control, qty);
   }

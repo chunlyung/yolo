@@ -2,7 +2,7 @@
 const express = require('express');
 const router  = express.Router();
 const path    = require('path');
-
+const db = require('../db');
 router.use(express.json());
 router.use(express.urlencoded({ extended: true }));
 
@@ -45,8 +45,22 @@ router.post('/add', (req, res) => {
 /* -------------------- 2) 장바구니 페이지 -------------------- */
 
 /* GET /cart/data  – 세션 cart JSON */
-router.get('/data', (req, res) => {
-  res.json(req.session.cart || []);
+router.get('/data', async (req, res) => {
+
+  const cart = req.session.cart || [];
+
+  for (const item of cart) {
+    const [rows] = await db.query(
+      'SELECT stock FROM products_option WHERE product_id = ? AND color = ?',
+      [item.id, item.color]
+    );
+    item.stock = rows[0]?.stock ?? 0;
+  }
+
+  res.json(cart);
+
+
+
 });
 
 /* -------------------- 3) 수량 변경 -------------------- */
