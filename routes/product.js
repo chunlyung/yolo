@@ -23,7 +23,7 @@ router.get('/:id', async (req, res) => {
 
     // 옵션(색상, 가격, 썸네일) 정보
     const [options] = await db.query(`
-      SELECT color, price, thumb FROM products_option WHERE product_id = ?
+      SELECT color, price, thumb, stock FROM products_option WHERE product_id = ?
     `, [id]);
 
     res.render('product-detail', {

@@ -61,9 +61,16 @@
             <option value ="" selected disabled>선택하세요.</option>
 
             <% options.forEach(o => { %>
-            <option value="<%= o.color %>"data-thumb ="<%= o.thumb  %>" data-price="<%= o.price %>"> 
-               <%= o.color %> - <%= o.price.toLocaleString() %>원</option>
-              <% }) %>
+            <option value="<%= o.color %>"data-thumb ="<%= o.thumb  %>" data-price="<%= o.price %>"  data-stock="<%= o.stock %>" <%= o.stock === 0 ? 'disabled' : '' %>
+                  >    
+              <%= o.color %>
+    <% if (o.stock === 0) { %>
+      (품절)
+    <% } else { %>
+      (재고 <%= o.stock %>개)
+    <% } %> - <%= o.price.toLocaleString() %>원
+  </option>
+<% }) %>
           </select>
         </div> 
         
