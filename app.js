@@ -96,9 +96,7 @@ app.get('/contact',(req,res)=> {
 app.get('/notice',(req,res)=> {
   res.render('notice');
 });
-app.get('/yolo',(req,res)=> {
-  res.render('yolo');
-});
+
 app.get('/index',(req,res)=> {
   res.render('index');
 });
