@@ -1,3 +1,3 @@
 User-agent: *
 Allow:/
-Sitemap:https://www.yolo2024.com/sitemap.xml
+Sitemap:https://yolo2024.com/sitemap.xml
