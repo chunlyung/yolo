@@ -8,7 +8,7 @@
          <link rel="shortcut icon" href="https://yolo2024.com/favicon.ico" />
         <link rel="icon" href="https://yolo2024.com/favicon.ico" type="image/x-icon" />
         <meta name="robots" content="index,follow">
-      <title>YOLO </title> 
+      <title>YOLO 도예공방 </title> 
       <meta name="description" content="부드러운 선에 마음을 담고, 따뜻하고 단정한 온기를 빚어냅니다.">
   
        <meta property="og:title" content="YOLO 도예공방">
@@ -573,25 +573,6 @@ document.getElementById('searchCloseBtn').addEventListener('click', () => {
       prevEl: '.swiper-button-prev'
     }
   });
-
-
-
-(function(){
-      const open = document.getElementById('rvOpen');
-      const modal = document.getElementById('rvModal');
-      const close = document.getElementById('rvClose');
-      const backdrop = document.getElementById('rvBackdrop');
-
-      function show(){ modal.style.display='block'; backdrop.style.display='block'; document.body.style.overflow='hidden'; }
-      function hide(){ modal.style.display='none'; backdrop.style.display='none'; document.body.style.overflow=''; }
-
-      if(open){ open.addEventListener('click', show); }
-      [close, backdrop].forEach(el=> el && el.addEventListener('click', hide));
-      document.addEventListener('keydown', e => { if(e.key==='Escape') hide(); });
-    })();
-
-
-
 </script>
 
 
