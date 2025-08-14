@@ -131,7 +131,141 @@
         
       </div>
     </section>
-<br><br><br><br><br><br><br><br>
+
+
+<!-- ====== 리뷰 미리보기 START (수정본) ====== -->
+<section id="reviews-section" class="rv">
+
+<%
+  // ----- 안전한 기본값 (locals 사용) -----
+  const _reviews = Array.isArray(locals.reviews) ? locals.reviews : [];
+  const _count   = (typeof locals.reviewCount === 'number') ? locals.reviewCount : _reviews.length;
+  const _avg     = (typeof locals.avgRating === 'number')
+                    ? locals.avgRating
+                    : (_reviews.length ? (_reviews.reduce((s,r)=> s + (r.rating||0), 0) / _reviews.length) : 0);
+
+  const STAR_FULL = `
+    <span class="rv-star" aria-hidden="true">
+      <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.7 5.82 22 7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+    </span>`;
+  const STAR_EMPTY = `
+    <span class="rv-star" aria-hidden="true">
+      <svg viewBox="0 0 24 24"><path d="M22 9.27l-6.91-1.01L12 2 8.91 8.26 2 9.27l5 4.87L5.82 22 12 18.7 18.18 22 17 14.14l5-4.87z" fill="#b38b6d" opacity=".35"/></svg>
+    </span>`;
+  const STAR_HALF = `
+    <span class="rv-star" aria-hidden="true">
+      <svg viewBox="0 0 24 24">
+        <defs><linearGradient id="rvHalfGrad"><stop offset="50%" stop-color="#b38b6d"/><stop offset="50%" stop-color="#eee"/></linearGradient></defs>
+        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.7 5.82 22 7 14.14 2 9.27l6.91-1.01L12 2z" fill="url(#rvHalfGrad)"/>
+      </svg>
+    </span>`;
+
+  const full  = Math.floor(_avg);
+  const half  = (_avg - full >= 0.5) ? 1 : 0;
+  const empty = 5 - full - half;
+
+  const fmtDate = d => { try { return new Date(d).toISOString().slice(0,10); } catch(e){ return d || ''; } };
+%>
+
+  <!-- 상단 요약 -->
+  <div class="rv-header">
+    <div class="rv-stars">
+      <% for (let i=0;i<full;i++){ %><%- STAR_FULL %><% } %>
+      <% if (half){ %><%- STAR_HALF %><% } %>
+      <% for (let i=0;i<empty;i++){ %><%- STAR_EMPTY %><% } %>
+    </div>
+    <div class="rv-score"><%= _avg.toFixed(1) %></div>
+    <div class="rv-meta">
+      <span><%= _count %>개의 리뷰</span>
+      <span class="rv-divider"></span>
+      <button class="rv-view-all" id="rvOpen">전체보기</button>
+    </div>
+  </div>
+
+  <!-- 4분할 미리보기 -->
+  <div class="rv-grid">
+    <% const preview = _reviews.slice(0,4); %>
+    <% if (!preview.length) { %>
+      <div class="rv-card" style="grid-column:1/-1;justify-content:center;padding:24px;">아직 작성된 리뷰가 없습니다.</div>
+    <% } %>
+    <% preview.forEach(r => { %>
+      <article class="rv-card">
+        <div class="rv-left">
+          <div class="rv-stars" aria-label="별점">
+            <% for (let i=0;i<(r.rating||0);i++){ %><%- STAR_FULL %><% } %>
+            <% for (let i=(r.rating||0);i<5;i++){ %><%- STAR_EMPTY %><% } %>
+          </div>
+          <div class="rv-userline">
+            <span class="rv-username"><%= r.user_mask || r.user_id %></span>
+            <span class="rv-bul">•</span><span><%= fmtDate(r.created_at) %></span>
+            <% if (r.color_name) { %><span class="rv-bul">•</span><span><%= r.color_name %></span><% } %>
+          </div>
+          <div class="rv-content"><%= r.content %></div>
+        </div>
+        <div class="rv-right">
+          <% if (r.media && r.media.length) {
+               const m=r.media[0]; const isVideo=/\.(mp4|webm|ogg)$/i.test(m); %>
+            <div class="rv-media-wrap">
+              <% if (isVideo) { %>
+                <video class="rv-media" src="<%= m %>" muted playsinline></video>
+              <% } else { %>
+                <img class="rv-media" src="<%= m %>" alt="리뷰 미디어">
+              <% } %>
+            </div>
+          <% } else { %>
+            <span style="font-size:12px;color:#aaa;">첨부 파일 없음</span>
+          <% } %>
+        </div>
+      </article>
+    <% }) %>
+  </div>
+
+  <!-- 모달 -->
+  <div class="rv-modal-backdrop" id="rvBackdrop" aria-hidden="true"></div>
+  <div class="rv-modal" id="rvModal" role="dialog" aria-modal="true" aria-labelledby="rvTitle">
+    <div class="rv-modal-header">
+      <div class="rv-modal-title" id="rvTitle">전체 리뷰 (<%= _count %>)</div>
+      <button class="rv-close" id="rvClose">닫기</button>
+    </div>
+    <div class="rv-modal-body">
+      <div class="rv-list">
+        <% _reviews.forEach(r => { %>
+          <article class="rv-item">
+            <div class="rv-left">
+              <div class="rv-stars">
+                <% for (let i=0;i<(r.rating||0);i++){ %><%- STAR_FULL %><% } %>
+                <% for (let i=(r.rating||0);i<5;i++){ %><%- STAR_EMPTY %><% } %>
+              </div>
+              <div class="rv-userline">
+                <span class="rv-username"><%= r.user_mask || r.user_id %></span>
+                <span class="rv-bul">•</span><span><%= fmtDate(r.created_at) %></span>
+                <% if (r.color_name) { %><span class="rv-bul">•</span><span><%= r.color_name %></span><% } %>
+              </div>
+              <% if (r.title) { %><div style="font-weight:600;"><%= r.title %></div><% } %>
+              <div class="rv-content" style="-webkit-line-clamp:unset;max-height:none;"><%= r.content %></div>
+            </div>
+            <div class="rv-right">
+              <% if (r.media && r.media.length) {
+                   const m=r.media[0]; const isVideo=/\.(mp4|webm|ogg)$/i.test(m); %>
+                <div class="rv-media-wrap">
+                  <% if (isVideo) { %>
+                    <video class="rv-media" src="<%= m %>" controls playsinline></video>
+                  <% } else { %>
+                    <img class="rv-media" src="<%= m %>" alt="리뷰 미디어">
+                  <% } %>
+                </div>
+              <% } else { %>
+                <span style="font-size:12px;color:#aaa;">첨부 파일 없음</span>
+              <% } %>
+            </div>
+          </article>
+        <% }) %>
+      </div>
+    </div>
+  </div>
+
+</section>
+<!-- ====== 리뷰 미리보기 END ====== -->
     <!-- 브랜드 스토리 (스크롤 내리면 보이는 구간) -->
     <section class="brand-story">
       <div class="storyLogo">YOLO</div>
@@ -1107,6 +1241,17 @@ document.querySelector('.buy-btn').addEventListener('click', async e => {
   }
 });
 
+    (function(){
+      const open=document.getElementById('rvOpen');
+      const modal=document.getElementById('rvModal');
+      const close=document.getElementById('rvClose');
+      const backdrop=document.getElementById('rvBackdrop');
+      function show(){modal.style.display='block';backdrop.style.display='block';document.body.style.overflow='hidden'}
+      function hide(){modal.style.display='none';backdrop.style.display='none';document.body.style.overflow=''}
+      open&&open.addEventListener('click',show);
+      [close,backdrop].forEach(el=>el&&el.addEventListener('click',hide));
+      document.addEventListener('keydown',e=>{if(e.key==='Escape')hide()});
+    })();
 </script>
 
 <style>
@@ -1151,7 +1296,37 @@ document.querySelector('.buy-btn').addEventListener('click', async e => {
 }
   }
 
-
+ .rv{margin:48px 0;font-family:inherit}.rv *{box-sizing:border-box}
+    .rv a,.rv button{all:unset;cursor:pointer}
+    .rv-header{display:flex;align-items:center;gap:16px}
+    .rv-stars{display:flex;align-items:center;gap:8px}
+    .rv-star{width:28px;height:28px}
+    .rv-star svg{width:100%;height:100%;fill:#b38b6d}
+    .rv-score{font-size:32px;font-weight:700;line-height:1}
+    .rv-meta{color:#666;font-size:14px;display:flex;gap:12px;align-items:center}
+    .rv-divider{width:1px;height:14px;background:#ddd}
+    .rv-view-all{padding:6px 10px;border:1px solid #ddd;border-radius:8px;font-size:13px}
+    .rv-grid{margin-top:20px;display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+    .rv-card{border:1px solid #eee;border-radius:14px;overflow:hidden;background:#fff;display:flex}
+    .rv-card .rv-left{flex:1 1 60%;padding:14px;display:flex;flex-direction:column;gap:8px}
+    .rv-card .rv-right{flex:1 1 40%;background:#faf9f7;display:flex;align-items:center;justify-content:center;min-height:120px}
+    .rv-userline{display:flex;flex-wrap:wrap;gap:8px;font-size:13px;color:#666}
+    .rv-username{font-weight:600;color:#333}.rv-bul{color:#bbb}
+    .rv-content{font-size:14px;color:#333;line-height:1.5;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+    .rv-media{width:100%;height:100%;object-fit:cover}.rv-media-wrap{width:100%;height:100%}
+    .rv-modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;z-index:999}
+    .rv-modal{position:fixed;inset:40px 16px;background:#fff;border-radius:16px;display:none;z-index:1000;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+    .rv-modal-header{padding:14px 16px;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center}
+    .rv-modal-title{font-weight:700;font-size:16px}
+    .rv-close{padding:6px 10px;border:1px solid #ddd;border-radius:8px;font-size:13px}
+    .rv-modal-body{padding:16px;height:calc(100% - 54px);overflow:auto}
+    .rv-list{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+    .rv-item{border:1px solid #eee;border-radius:14px;overflow:hidden;background:#fff;display:grid;grid-template-columns:1.4fr 1fr}
+    .rv-item .rv-left{padding:14px;display:flex;flex-direction:column;gap:8px}
+    .rv-item .rv-right{background:#faf9f7;display:flex;align-items:center;justify-content:center;min-height:140px}
+    @media (max-width:1024px){.rv-grid{grid-template-columns:repeat(3,1fr)}}
+    @media (max-width:768px){.rv-header{flex-direction:column;align-items:flex-start;gap:10px}.rv-score{font-size:28px}.rv-grid{grid-template-columns:repeat(2,1fr)}.rv-item{grid-template-columns:1fr}}
+    @media (max-width:480px){.rv-grid{grid-template-columns:1fr}}
 </style>
 
 

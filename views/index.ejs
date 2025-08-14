@@ -8,7 +8,7 @@
          <link rel="shortcut icon" href="https://yolo2024.com/favicon.ico" />
         <link rel="icon" href="https://yolo2024.com/favicon.ico" type="image/x-icon" />
         <meta name="robots" content="index,follow">
-      <title>YOLO 도예공방 </title> 
+      <title>YOLO </title> 
       <meta name="description" content="부드러운 선에 마음을 담고, 따뜻하고 단정한 온기를 빚어냅니다.">
   
        <meta property="og:title" content="YOLO 도예공방">
@@ -21,17 +21,12 @@
       <link href="./default2.css"rel="stylesheet">
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
            
-      <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
      <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
      </head> 
 
-
-
-
-     
     <body> 
         
-
      <header class="header">
 
      <div class="header-icons">
@@ -370,17 +365,11 @@
       });
     });
 
-
-
-
  function toggleMenu() {
      const nav = document.getElementById('navMenu');
      const openBtn = document.querySelector('.menu-toggle');
      const closeBtn = document.querySelector('.close-toggle');
      const icons= document.querySelector('.header-icons');
-
-     
-    
      nav.classList.toggle('active');
     
      const isOpen =nav.classList.contains('active');
@@ -499,11 +488,6 @@ document.getElementById('search-mobile').addEventListener('keydown', e => {
 });
 
 
-
-
-
-
-
 document.getElementById('searchCloseBtn').addEventListener('click', () => {
   const overlay = document.getElementById('mobileSearchOverlay');
   overlay.classList.remove('active'); // 또는 .classList.remove('active') → 네 CSS 기준에 맞춰
@@ -589,6 +573,25 @@ document.getElementById('searchCloseBtn').addEventListener('click', () => {
       prevEl: '.swiper-button-prev'
     }
   });
+
+
+
+(function(){
+      const open = document.getElementById('rvOpen');
+      const modal = document.getElementById('rvModal');
+      const close = document.getElementById('rvClose');
+      const backdrop = document.getElementById('rvBackdrop');
+
+      function show(){ modal.style.display='block'; backdrop.style.display='block'; document.body.style.overflow='hidden'; }
+      function hide(){ modal.style.display='none'; backdrop.style.display='none'; document.body.style.overflow=''; }
+
+      if(open){ open.addEventListener('click', show); }
+      [close, backdrop].forEach(el=> el && el.addEventListener('click', hide));
+      document.addEventListener('keydown', e => { if(e.key==='Escape') hide(); });
+    })();
+
+
+
 </script>
 
 
