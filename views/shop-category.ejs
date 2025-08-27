@@ -20,17 +20,16 @@
 
     <% products.forEach(p => {%>
   <div class="product-card">
-    <div class="img-wrapper">
-      <a href ="/product/<%= p.id %>" class="product-link">
-    <img src="<%= p.thumb %>"  alt="<%= p.name %> (<%= p.color %>)"  class="default-img">
     
-<% if (p.hover_img_list && p.hover_img_list.trim()) { %>
-  <img src="<%= p.hover_img_list.trim() %>" alt="hover image" class="hover-img">
-<% } %>
-
-
-    </a>
-    </div>
+    <div class="img-wrapper" style="--pos-x:50%; --pos-y:35%;"> <!-- ← 호버때 쓰던 위치값 -->
+  <a href="/product/<%= p.id %>" class="product-link">
+    <img src="<%= p.thumb %>" alt="<%= p.name %>" class="default-img">
+    <% if (p.hover_img_list && p.hover_img_list.trim()) { %>
+      <img src="<%= p.hover_img_list.trim() %>" alt="hover image" class="hover-img">
+    <% } %>
+  </a>
+</div>
+    
     <div class="product-info">
     <p class="product-title"><%= p.name %>(<%= p.color %>)</p>
     <span class="product-price"><%= p.price.toLocaleString() %>원 </span>
@@ -498,10 +497,79 @@ fetch('/auth/status')
 .product-card:hover .default-img {
   opacity: 0;
 }
-   .product-info {
-  transform: translateX(5%);
- 
+
+
+
+
+
+
+
+
+/* ① 부모 박스는 높이를 ‘명시’해서(비율) 사라지지 않게 */
+.img-wrapper{
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 1 / 1;          /* 정사각 아니면 4/5, 3/4 등 실제 썸네일 비율로 */
+  --pos-x: 50%;
+  --pos-y: 35%;                  /* ← 호버에서 보이던 위치값으로 맞추기 */
 }
+
+/* ② 두 이미지를 동일 좌표계/규칙으로 강제 */
+.product-card .default-img,
+.product-card .hover-img{
+  position: absolute; inset: 0;  /* 같은 캔버스 */
+  width: 100%; height: 100%;     /* object-fit이 실제로 동작하도록 */
+  object-fit: cover !important;
+  object-position: var(--pos-x) var(--pos-y) !important; /* ← 핵심 */
+  display: block;
+  margin: 0;
+}
+
+/* ③ 교체는 투명도로만 */
+.product-card .hover-img{ opacity: 0; transition: opacity .3s ease; }
+.product-card:hover .hover-img{ opacity: 1; }
+.product-card .default-img{ transition: opacity .3s ease; }
+.product-card:hover .default-img{ opacity: 0; }
+
+
+.product-info{
+    display: flex;
+    flex-direction: column ;
+    align-items: flex-start;
+   
+    line-height: 1.4;
+    margin-top: 8px;
+    text-align: left;
+}
+.product-title{
+    font-size:13px;
+    margin: 0;
+    font-weight:600;   
+}
+.product-price{
+    white-space: nowrap;
+    margin-top: 4px;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+
+@media (max-width:768px) {
+.product-title{
+    font-size:12px;
+    margin: 0;
+    font-weight:600;   
+}
+.product-price{
+    white-space: nowrap;
+    margin-top: 4px;
+   
+    font-size: 12px;
+    
+    font-weight: bold;
+}
+}
+
 
 </style>
 
