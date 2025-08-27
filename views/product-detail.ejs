@@ -2297,19 +2297,7 @@ document.querySelector('.buy-btn').addEventListener('click', async e => {
   overflow-y: auto !important;
   -webkit-overflow-scrolling: touch !important;
   max-height: 80vh !important;   /* 내용 많을 때만 스크롤 */
-}
 
-
-#rvQuick .rv-quick-body {
-  overflow-y: auto !important;
-  -webkit-overflow-scrolling: touch !important;
-
-  /* ↓ 여기만 교체: 80vh 대신 (화면높이 - 헤더높이) */
-  height: calc(100svh - 54px) !important;     /* 모바일 브라우저 주소창 대응 */
-  height: calc(100dvh - 54px) !important;     /* 최신 표준, 지원 시 적용 */
-
-  box-sizing: border-box !important;
-  padding-bottom: env(safe-area-inset-bottom, 0px) !important; /* 아이폰 하단 안전영역 */
 }
 
 
