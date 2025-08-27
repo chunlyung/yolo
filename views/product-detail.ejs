@@ -2301,13 +2301,24 @@ document.querySelector('.buy-btn').addEventListener('click', async e => {
 }
 
 
+/* === 모바일 전용: 퀵뷰 부모 높이 '명시'해서 내부 스크롤 끝까지 보이게 === */
+@media (max-width: 900px){
+  /* 이미 max-height: 90svh 를 쓰고 있으니, height도 동일하게 '명시' */
+  #rvQuick{
+    height: 90svh !important;      /* ← % 계산용 기준 높이 제공 */
+  }
 
-
-
-
-
-
-
+  /* 본문 스크롤 영역 (기존 디자인 그대로) */
+  #rvQuick .rv-quick-body{
+    height: calc(100% - 54px) !important;   /* 헤더(닫기줄) 높이만큼 뺌 */
+    min-height: 0 !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    /* 하단 안전영역 보정(아이폰 홈바) */
+    padding-bottom: max(env(safe-area-inset-bottom), 12px) !important;
+    box-sizing: border-box !important;
+  }
+}
 
 </style>
 
