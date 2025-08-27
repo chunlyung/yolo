@@ -1536,13 +1536,11 @@ document.querySelector('.buy-btn').addEventListener('click', async e => {
     // 열기
     modal.style.display = 'block';
     bg.style.display    = 'block';
-    document.body.style.overflow='hidden';
   }
 
   function closeQuick(){
     modal.style.display = 'none';
     bg.style.display    = 'none';
-    document.body.style.overflow='';
   }
 
   close.addEventListener('click', closeQuick);
@@ -2296,14 +2294,11 @@ document.querySelector('.buy-btn').addEventListener('click', async e => {
 
 
 
-
-
-
-
-
-
-
-
+#rvQuick .rv-quick-body {
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  max-height: 80vh !important;   /* 내용 많을 때만 스크롤 */
+}
 
 
 
