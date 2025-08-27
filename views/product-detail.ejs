@@ -2320,6 +2320,47 @@ document.querySelector('.buy-btn').addEventListener('click', async e => {
   }
 }
 
+/* === 모바일 초협폭(≤420px)에서도 2열 유지 + 깔끔한 3줄 말줄임 === */
+@media (max-width: 420px){
+
+  /* 2열은 그대로 */
+  .rv-grid{
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 12px !important;               /* 너무 좁아지는 것만 살짝 완화 */
+  }
+  #rvCarousel .rv-track{
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 12px !important;
+  }
+
+  /* 텍스트 3줄 말줄임: 반줄 잘림 방지 */
+  #rvCarousel .rv-content{
+    display: -webkit-box !important;
+    -webkit-box-orient: vertical !important;
+    -webkit-line-clamp: 3 !important;   /* 정확히 3줄 */
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: normal !important;
+
+    line-height: 1.5 !important;        
+    /* 소수점 반올림으로 마지막 글자 잘리는 것 방지: +2px 여유 */
+    max-height: calc(3 * 1.5em + 2px) !important;
+    padding-bottom: 2px !important;    
+
+    /* 공백 없는 연속 문자(!!!, 이모지 등)도 줄바꿈 가능하게 */
+    overflow-wrap: anywhere !important;
+    word-break: break-word !important;
+  }
+
+  /* 상자 자체가 잘라먹지 않게 */
+  #rvCarousel .rv-left{ overflow: visible !important; padding: 8px 10px !important; }
+}
+
+
+
+
+
 </style>
 
 
