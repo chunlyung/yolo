@@ -168,7 +168,6 @@ router.get('/info/:id', async (req, res) => {
 
 
 
-
 // GET /order/info/:id - 주문 상세정보 반환 (JSON)
 router.get('/info/:id', async (req, res) => {
   if (!req.session.user) {
@@ -192,21 +191,36 @@ router.get('/info/:id', async (req, res) => {
     // 주문 상품들
     const [items] = await db.query(`
       SELECT
+        CAST(i.id AS UNSIGNED) AS order_item_id,   -- ✅ 숫자로 강제 변환
+        i.color, i.quantity, i.price,
         p.name, p.thumb,
-        i.color, i.quantity, i.price
+        CASE WHEN r.id IS NOT NULL THEN 1 ELSE 0 END AS has_review
       FROM order_items i
       JOIN products p ON p.id = i.product_id
+      LEFT JOIN reviews r
+        ON r.order_item_id = i.id
+       AND r.user_id = ?
       WHERE i.order_id = ?
-    `, [orderId]);
+    `, [userId, orderId]);
 
-    // 응답
+    // JSON 안전하게 변환
+    const plainItems = items.map(it => ({
+      order_item_id: Number(it.order_item_id),
+      name: it.name,
+      color: it.color,
+      price: it.price,
+      quantity: it.quantity,
+      thumb: it.thumb,
+      has_review: !!it.has_review
+    }));
+
     res.json({
-      items,
+      items: plainItems,
       postcode: order.postcode,
       address: order.address,
       address_detail: order.address_detail,
       request_memo: order.request_memo,
-      tracking_number:order.tracking_number
+      tracking_number: order.tracking_number
     });
   } catch (err) {
     console.error('상세정보 오류:', err);

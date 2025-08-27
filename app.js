@@ -13,7 +13,7 @@ const MySQLStore=require('express-mysql-session')(session);
 const axios = require("axios");
 const nodemailer = require('nodemailer');
 
-
+ 
 app.use(session({
   secret: '232300',
   resave: false,
@@ -61,6 +61,7 @@ const searchRouter = require('./routes/search');
 const paymentRouter =require('./routes/payment');
 const passwordRouter=require('./routes/password');
 const shopRouter= require('./routes/shop');
+const reviewsRouter = require('./routes/reviews');
 
 app.use('/',loginRouter);
 app.use('/',signupRouter);
@@ -78,6 +79,7 @@ app.use('/search',searchRouter);
 app.use('/payment',paymentRouter);
 app.use('/',passwordRouter);
 app.use('/shop',shopRouter);
+app.use('/reviews', reviewsRouter);
 
 
 

@@ -166,6 +166,33 @@
 
   const fmtDate = d => { try { return new Date(d).toISOString().slice(0,10); } catch(e){ return d || ''; } };
 %>
+<%
+  // ... (기존 _reviews, _count, _avg, STAR_* , fmtDate 까지 그대로)
+
+function maskId(id){
+  // null/숫자/문자 모두 처리 + 공백 제거
+  const raw   = (id == null) ? '' : String(id);
+  const base  = raw.replace(/\s+/g, '');
+
+  // 이미 마스킹돼 있으면 그대로
+  if (/\*+$/.test(base)) return base;
+
+  const chars = Array.from(base);         // 유니코드 안전
+  const keep  = Math.min(3, chars.length);
+
+  // 남는 길이 계산
+  const rest  = chars.length - keep;
+
+  // ★ 최소 1개 별표는 보장 (길이<=3이라도 * 하나 붙임)
+  const stars = Math.max(rest, 1);
+
+  return chars.slice(0, keep).join('') + '*'.repeat(stars);
+}
+
+
+%>
+
+
 
   <!-- 상단 요약 -->
   <div class="rv-header">
@@ -181,82 +208,145 @@
       <button class="rv-view-all" id="rvOpen">전체보기</button>
     </div>
   </div>
+<!-- ▼ 미리보기: 데스크탑(>=1200px)은 캐러셀, 그 이하는 2열 그리드 -->
+<div class="rv-carousel" id="rvCarousel">
+  <div class="rv-viewport">
+    <!-- 좌/우 버튼을 'viewport' 안으로 -->
+    <button class="rv-btn rv-prev" type="button" aria-label="이전">‹</button>
 
-  <!-- 4분할 미리보기 -->
-  <div class="rv-grid">
-    <% const preview = _reviews.slice(0,4); %>
-    <% if (!preview.length) { %>
-      <div class="rv-card" style="grid-column:1/-1;justify-content:center;padding:24px;">아직 작성된 리뷰가 없습니다.</div>
-    <% } %>
-    <% preview.forEach(r => { %>
-      <article class="rv-card">
-        <div class="rv-left">
-          <div class="rv-stars" aria-label="별점">
-            <% for (let i=0;i<(r.rating||0);i++){ %><%- STAR_FULL %><% } %>
-            <% for (let i=(r.rating||0);i<5;i++){ %><%- STAR_EMPTY %><% } %>
-          </div>
-          <div class="rv-userline">
-            <span class="rv-username"><%= r.user_mask || r.user_id %></span>
-            <span class="rv-bul">•</span><span><%= fmtDate(r.created_at) %></span>
-            <% if (r.color_name) { %><span class="rv-bul">•</span><span><%= r.color_name %></span><% } %>
-          </div>
-          <div class="rv-content"><%= r.content %></div>
+    <div class="rv-track">
+      
+       <%
+         const preview = _reviews
+  .filter(r => Array.isArray(r.media) && r.media.length > 0)
+  .slice(0, 20);
+  %>   
+
+
+      <% if (!preview.length) { %>
+        <div class="rv-card" style="justify-content:center;padding:24px;">
+          아직 작성된 리뷰가 없습니다.
         </div>
-        <div class="rv-right">
-          <% if (r.media && r.media.length) {
-               const m=r.media[0]; const isVideo=/\.(mp4|webm|ogg)$/i.test(m); %>
-            <div class="rv-media-wrap">
-              <% if (isVideo) { %>
-                <video class="rv-media" src="<%= m %>" muted playsinline></video>
-              <% } else { %>
-                <img class="rv-media" src="<%= m %>" alt="리뷰 미디어">
-              <% } %>
+      <% } %>
+
+      <% preview.forEach(r => { %>
+        <article class="rv-card" 
+         data-rid="<%= r.id %>"
+  data-images="<%= (r.media || []).join('|') %>"
+  data-username="<%= r.user_mask %>"
+  data-color="<%= r.color_name || '' %>"
+  data-rating="<%= r.rating || 0 %>"
+  data-content="<%= (r.content || '').replace(/\s+/g,' ').trim() %>"
+   data-date="<%= fmtDate(r.created_at) %>"            
+  data-epoch="<%= new Date(r.created_at).getTime() %>" 
+     > 
+
+          <!-- 이미지 -->
+          <div class="rv-right">
+            <% if (r.media && r.media.length) { const m=r.media[0]; const isVideo=/\.(mp4|webm|ogg)$/i.test(m); %>
+              <div class="rv-media-wrap">
+                <% if (isVideo) { %>
+                  <video class="rv-media" src="<%= m %>" muted playsinline></video>
+                <% } else { %>
+                  <img class="rv-media" src="<%= m %>" alt="리뷰 미디어">
+                <% } %>
+              </div>
+            <% } else { %>
+              <span style="font-size:12px;color:#aaa;"></span>
+            <% } %>
+          </div>
+
+          <!-- 텍스트(별점/작성자/내용) — 기존 그대로 유지 -->
+          <div class="rv-left">
+            <div class="rv-stars" aria-label="별점">
+              <% for (let i=0;i<(r.rating||0);i++){ %><%- STAR_FULL %><% } %>
+              <% for (let i=(r.rating||0);i<5;i++){ %><%- STAR_EMPTY %><% } %>
             </div>
-          <% } else { %>
-            <span style="font-size:12px;color:#aaa;">첨부 파일 없음</span>
-          <% } %>
-        </div>
-      </article>
-    <% }) %>
-  </div>
+            <div class="rv-userline">
+               <span class="rv-username"><%= maskId(
+  r.user_mask
+  || r.user_name
+  || r.nickname
+  || r.name
+  || (r.email && String(r.email).split('@')[0])
+  || r.user_id
+) %></span>
+              <span class="rv-bul">•</span><span><%= fmtDate(r.created_at) %></span>
+              <% if (r.color_name) { %><span class="rv-bul">•</span><span><%= r.color_name %></span><% } %>
+            </div>
+           
+            <div class="rv-content"><%= r.content %></div>
+          </div>
+        </article>
+      <% }) %>
+    </div>
 
+    <button class="rv-btn rv-next" type="button" aria-label="다음">›</button>
+  </div>
+</div>
   <!-- 모달 -->
   <div class="rv-modal-backdrop" id="rvBackdrop" aria-hidden="true"></div>
   <div class="rv-modal" id="rvModal" role="dialog" aria-modal="true" aria-labelledby="rvTitle">
+    
     <div class="rv-modal-header">
+      <div class="rv-sort">
+  <button type="button" class="rv-sort-btn" data-sort="latest">최신순</button>
+  <button type="button" class="rv-sort-btn" data-sort="rating-desc">평점↑</button>
+  <button type="button" class="rv-sort-btn" data-sort="rating-asc">평점↓</button>
+</div>
+
       <div class="rv-modal-title" id="rvTitle">전체 리뷰 (<%= _count %>)</div>
-      <button class="rv-close" id="rvClose">닫기</button>
+      <button class="rv-close" id="rvClose">X</button>
     </div>
     <div class="rv-modal-body">
       <div class="rv-list">
-        <% _reviews.forEach(r => { %>
-          <article class="rv-item">
+        <% _reviews.forEach(r => { 
+          const hasMedia = Array.isArray(r.media) && r.media.length > 0;
+        %>
+     <article class="rv-item <%= hasMedia ? '' : 'no-media' %>"
+           data-rid="<%= r.id %>"
+           data-images="<%= (r.media || []).join('|') %>"
+           data-username="<%= r.user_mask %>"
+           data-color="<%= r.color_name || '' %>"
+           data-rating="<%= r.rating || 0 %>"
+           data-content="<%= (r.content || '').replace(/\s+/g,' ').trim() %>"
+           data-date="<%= fmtDate(r.created_at) %>"
+           data-epoch="<%= new Date(r.created_at).getTime() %>">
             <div class="rv-left">
               <div class="rv-stars">
                 <% for (let i=0;i<(r.rating||0);i++){ %><%- STAR_FULL %><% } %>
                 <% for (let i=(r.rating||0);i<5;i++){ %><%- STAR_EMPTY %><% } %>
               </div>
               <div class="rv-userline">
-                <span class="rv-username"><%= r.user_mask || r.user_id %></span>
+                  <span class="rv-username"><%= maskId(
+  r.user_mask
+  || r.user_name
+  || r.nickname
+  || r.name
+  || (r.email && String(r.email).split('@')[0])
+  || r.user_id
+) %></span>
+
+
                 <span class="rv-bul">•</span><span><%= fmtDate(r.created_at) %></span>
                 <% if (r.color_name) { %><span class="rv-bul">•</span><span><%= r.color_name %></span><% } %>
               </div>
-              <% if (r.title) { %><div style="font-weight:600;"><%= r.title %></div><% } %>
               <div class="rv-content" style="-webkit-line-clamp:unset;max-height:none;"><%= r.content %></div>
             </div>
             <div class="rv-right">
-              <% if (r.media && r.media.length) {
-                   const m=r.media[0]; const isVideo=/\.(mp4|webm|ogg)$/i.test(m); %>
-                <div class="rv-media-wrap">
-                  <% if (isVideo) { %>
-                    <video class="rv-media" src="<%= m %>" controls playsinline></video>
-                  <% } else { %>
-                    <img class="rv-media" src="<%= m %>" alt="리뷰 미디어">
-                  <% } %>
-                </div>
-              <% } else { %>
-                <span style="font-size:12px;color:#aaa;">첨부 파일 없음</span>
-              <% } %>
+               <% if (hasMedia) {
+           const m = r.media[0];
+           const isVideo = /\.(mp4|webm|ogg)$/i.test(m); %>
+    <div class="rv-media-wrap">
+      <% if (isVideo) { %>
+        <video class="rv-media" src="<%= m %>" controls playsinline></video>
+      <% } else { %>
+        <img class="rv-media" src="<%= m %>" alt="리뷰 미디어">
+      <% } %>
+    </div>
+  <% } else { %>
+    <span style="font-size:12px;color:#aaa;"></span>
+  <% } %>
             </div>
           </article>
         <% }) %>
@@ -265,6 +355,38 @@
   </div>
 
 </section>
+
+<div id="rvQuickBg" class="rv-modal-backdrop" style="display:none;"></div>
+<div id="rvQuick" class="rv-modal rv-quick" role="dialog" aria-modal="true" aria-labelledby="rvQuickTitle" style="display:none;">
+  <div class="rv-modal-header">
+    <div class="rv-modal-title" id="rvQuickTitle">REVIEW</div>
+    <button class="rv-close" id="rvQuickClose">X</button>
+  </div>
+
+  <div class="rv-quick-body">
+    <!-- 왼쪽: 큰 이미지 + 썸네일 -->
+    <div class="rv-q-left">
+      <div class="rv-q-main">
+        <img id="rvQMain" alt="리뷰 이미지" />
+      </div>
+      <div class="rv-q-thumbs" id="rvQThumbs"></div>
+    </div>
+
+    <!-- 오른쪽: 정보 -->
+    <div class="rv-q-right">
+      <h3 class="rv-q-product"><%= product.name %></h3>
+      <div class="rv-q-meta">
+        <div><strong>컬러</strong> : <span id="rvQColor"></span></div>
+        <div><strong>작성자</strong> : <span id="rvQUser"></span></div>
+        <div><strong>날짜</strong> : <span id="rvQDate"></span></div> 
+        <div class="rv-q-stars" id="rvQStars" aria-label="별점"></div>
+      </div>
+      <div class="rv-q-content" id="rvQText"></div>
+    </div>
+  </div>
+</div>
+
+
 <!-- ====== 리뷰 미리보기 END ====== -->
     <!-- 브랜드 스토리 (스크롤 내리면 보이는 구간) -->
     <section class="brand-story">
@@ -1252,6 +1374,203 @@ document.querySelector('.buy-btn').addEventListener('click', async e => {
       [close,backdrop].forEach(el=>el&&el.addEventListener('click',hide));
       document.addEventListener('keydown',e=>{if(e.key==='Escape')hide()});
     })();
+
+
+(function(){
+  const root = document.getElementById('rvCarousel');
+  if(!root) return;
+
+  const viewport = root.querySelector('.rv-viewport');
+  const track    = root.querySelector('.rv-track');
+  const cards    = Array.from(track.children);
+  const prevBtn  = root.querySelector('.rv-prev');
+  const nextBtn  = root.querySelector('.rv-next');
+
+  const mq = window.matchMedia('(min-width:1200px)'); // 데스크탑만 캐러셀
+  const GAP = 16;
+  let perView = 3;   // 한 화면에 3장
+  let index = 0;
+
+  function layoutDesktop(){
+    const vw = viewport.clientWidth;
+    const itemW = (vw - GAP * (perView - 1)) / perView;
+    cards.forEach(el => el.style.width = itemW + 'px');
+    go(index);
+  }
+
+  function clearMobile(){
+    track.style.transform = '';
+    cards.forEach(el => el.style.width = '');
+    prevBtn.disabled = true;
+    nextBtn.disabled = false;
+  }
+
+  function maxIndex(){ return Math.max(0, cards.length - perView); }
+
+  function go(i){
+    const max = maxIndex();
+    index = Math.max(0, Math.min(i, max));
+    const w = cards[0]?.offsetWidth || 0;
+    const offset = index * (w + GAP);
+    track.style.transform = `translateX(${-offset}px)`;
+    prevBtn.disabled = index === 0;
+    nextBtn.disabled = index === max;
+  }
+
+  function applyMode(){
+    if (mq.matches){
+      prevBtn.style.display = '';
+      nextBtn.style.display = '';
+      layoutDesktop();
+    } else {
+      prevBtn.style.display = 'none';
+      nextBtn.style.display = 'none';
+      clearMobile();
+    }
+  }
+(function(){
+  const list = document.querySelector('#rvModal .rv-list');
+  if(!list) return;
+  const btns = document.querySelectorAll('#rvModal .rv-sort-btn');
+
+  function sortList(mode){
+    const items = Array.from(list.children);
+    items.sort((a,b)=>{
+      const ra = Number(a.dataset.rating||0);
+      const rb = Number(b.dataset.rating||0);
+      const ta = Number(a.dataset.epoch||0);
+      const tb = Number(b.dataset.epoch||0);
+      if(mode==='rating-desc'){ if(rb!==ra) return rb-ra; return tb-ta; } // 평점 높은순, 동점은 최신
+      if(mode==='rating-asc'){  if(ra!==rb) return ra-rb; return tb-ta; } // 평점 낮은순, 동점은 최신
+      /* default: 최신순 */
+      return tb - ta;
+    });
+    items.forEach(el=>list.appendChild(el)); // 재배치
+  }
+
+  function activate(btn){
+    btns.forEach(b=>b.classList.toggle('is-active', b===btn));
+  }
+
+  btns.forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const mode = btn.dataset.sort;
+      activate(btn);
+      sortList(mode);
+    });
+  });
+
+  // 최초 진입은 최신순
+  const first = document.querySelector('#rvModal .rv-sort-btn[data-sort="latest"]');
+  if(first){ first.classList.add('is-active'); sortList('latest'); }
+})();
+
+
+
+
+
+
+  prevBtn.addEventListener('click', () => go(index - 1));
+  nextBtn.addEventListener('click', () => go(index + 1));
+  window.addEventListener('resize', () => mq.matches && layoutDesktop());
+  mq.addEventListener ? mq.addEventListener('change', applyMode)
+                      : mq.addListener(applyMode);
+
+  applyMode();
+})();
+
+
+
+(function(){
+  // 별 SVG (사이트와 동일 톤)
+  const STAR_FULL = '<svg viewBox="0 0 24 24" width="20" height="20"><path fill="#b38b6d" d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.7 5.82 22 7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>';
+  const STAR_EMPTY= '<svg viewBox="0 0 24 24" width="20" height="20"><path fill="#b38b6d" opacity=".35" d="M22 9.27l-6.91-1.01L12 2 8.91 8.26 2 9.27l5 4.87L5.82 22 12 18.7 18.18 22 17 14.14l5-4.87z"/></svg>';
+
+  const bg     = document.getElementById('rvQuickBg');
+  const modal  = document.getElementById('rvQuick');
+  const close  = document.getElementById('rvQuickClose');
+  const main   = document.getElementById('rvQMain');
+  const thumbs = document.getElementById('rvQThumbs');
+  const elUser = document.getElementById('rvQUser');
+  const elColor= document.getElementById('rvQColor');
+  const elStars= document.getElementById('rvQStars');
+  const elText = document.getElementById('rvQText');
+  const elDate = document.getElementById('rvQDate');  // ★ 추가
+  if(!modal) return;
+
+  function renderStars(n){
+    const rating = Math.max(0, Math.min(5, Number(n)||0));
+    let html = '';
+    for(let i=0;i<rating;i++) html += STAR_FULL;
+    for(let i=rating;i<5;i++) html += STAR_EMPTY;
+    return html;
+  }
+
+  function openQuick(data){
+    const images = (data.images || '').split('|').filter(Boolean);
+    // 메인 이미지
+    main.src = images[0] || '';
+    // 썸네일
+    thumbs.innerHTML = images.map((src,i)=>(
+      `<button type="button" class="rv-q-thumb${i===0?' is-active':''}" data-index="${i}">
+         <img src="${src}" alt="썸네일 ${i+1}">
+       </button>`
+    )).join('');
+
+    // 정보 채우기
+    elUser.textContent  = data.username || '';
+    elColor.textContent = data.color || '';
+    elStars.innerHTML   = renderStars(data.rating);
+    elText.textContent  = data.content || '';
+   elDate.textContent = data.date || '';               
+    // 이벤트(썸네일)
+    thumbs.querySelectorAll('.rv-q-thumb').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        thumbs.querySelectorAll('.rv-q-thumb').forEach(b=>b.classList.remove('is-active'));
+        btn.classList.add('is-active');
+        const idx = Number(btn.dataset.index)||0;
+        main.src = images[idx] || '';
+      });
+    });
+
+    // 열기
+    modal.style.display = 'block';
+    bg.style.display    = 'block';
+    document.body.style.overflow='hidden';
+  }
+
+  function closeQuick(){
+    modal.style.display = 'none';
+    bg.style.display    = 'none';
+    document.body.style.overflow='';
+  }
+
+  close.addEventListener('click', closeQuick);
+  bg.addEventListener('click', closeQuick);
+  document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeQuick(); });
+
+  // 카드/아이템 클릭 바인딩 (미리보기 + 전체보기 목록)
+  const selector = '#reviews-section .rv-card, #reviews-section .rv-item';
+  document.querySelectorAll(selector).forEach(card=>{
+    card.style.cursor='pointer';
+    card.addEventListener('click', (e)=>{
+      // 내부 링크/버튼 클릭 제외하고 싶으면 아래 주석 해제
+      // if (e.target.closest('a,button')) return;
+      const d = card.dataset;
+      openQuick({
+        images:   d.images || '',
+        username: d.username || '',
+        color:    d.color || '',
+        rating:   d.rating || 0,
+        content:  d.content || '',
+        date:     d.date || ''         
+      });
+    });
+  });
+})();
+
+
+
 </script>
 
 <style>
@@ -1305,30 +1624,699 @@ document.querySelector('.buy-btn').addEventListener('click', async e => {
     .rv-score{font-size:32px;font-weight:700;line-height:1}
     .rv-meta{color:#666;font-size:14px;display:flex;gap:12px;align-items:center}
     .rv-divider{width:1px;height:14px;background:#ddd}
-    .rv-view-all{padding:6px 10px;border:1px solid #ddd;border-radius:8px;font-size:13px}
+    .rv-view-all{padding:6px 10px;border:1px solid #ddd;font-size:13px}
     .rv-grid{margin-top:20px;display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
-    .rv-card{border:1px solid #eee;border-radius:14px;overflow:hidden;background:#fff;display:flex}
+    .rv-card{border:1px solid #eee;overflow:hidden;background:#fff;display:flex}
     .rv-card .rv-left{flex:1 1 60%;padding:14px;display:flex;flex-direction:column;gap:8px}
-    .rv-card .rv-right{flex:1 1 40%;background:#faf9f7;display:flex;align-items:center;justify-content:center;min-height:120px}
+    .rv-card .rv-right{flex:1 1 40%;background:#faf9f7;display:flex;align-items:center;justify-content:center; aspect-ratio: 1 / 1 !important; overflow: hidden; }
     .rv-userline{display:flex;flex-wrap:wrap;gap:8px;font-size:13px;color:#666}
     .rv-username{font-weight:600;color:#333}.rv-bul{color:#bbb}
     .rv-content{font-size:14px;color:#333;line-height:1.5;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
-    .rv-media{width:100%;height:100%;object-fit:cover}.rv-media-wrap{width:100%;height:100%}
+    .rv-media{width:100%;height:100%;object-fit:cover;display:block; image-orientation: from-image;}.rv-media-wrap{width:100%;height:100%}
     .rv-modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;z-index:999}
-    .rv-modal{position:fixed;inset:40px 16px;background:#fff;border-radius:16px;display:none;z-index:1000;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+    .rv-modal{position:fixed;inset:40px 16px;background:#fff;display:none;z-index:1000;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.25)}
     .rv-modal-header{padding:14px 16px;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center}
     .rv-modal-title{font-weight:700;font-size:16px}
-    .rv-close{padding:6px 10px;border:1px solid #ddd;border-radius:8px;font-size:13px}
+    .rv-close{padding:6px 10px;border:1px solid #ddd;font-size:13px}
     .rv-modal-body{padding:16px;height:calc(100% - 54px);overflow:auto}
     .rv-list{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
-    .rv-item{border:1px solid #eee;border-radius:14px;overflow:hidden;background:#fff;display:grid;grid-template-columns:1.4fr 1fr}
+    .rv-item{border:1px solid #eee;overflow:hidden;background:#fff;display:grid;grid-template-columns:1.4fr 1fr}
     .rv-item .rv-left{padding:14px;display:flex;flex-direction:column;gap:8px}
-    .rv-item .rv-right{background:#faf9f7;display:flex;align-items:center;justify-content:center;min-height:140px}
+    .rv-item .rv-right{background:#faf9f7;display:flex;align-items:center;justify-content:center;aspect-ratio: 4 / 3; overflow: hidden;  min-height:140px}
     @media (max-width:1024px){.rv-grid{grid-template-columns:repeat(3,1fr)}}
     @media (max-width:768px){.rv-header{flex-direction:column;align-items:flex-start;gap:10px}.rv-score{font-size:28px}.rv-grid{grid-template-columns:repeat(2,1fr)}.rv-item{grid-template-columns:1fr}}
     @media (max-width:480px){.rv-grid{grid-template-columns:1fr}}
-</style>
+  
 
+/* ====== 모바일~노트북: 이미지 위, 텍스트 아래 카드 2장 가로 스크롤 ====== */
+@media (max-width: 1200px){
+  /* 카드들을 가로로 배치(캐러셀 느낌), 2장씩 꽉 차게 */
+  .rv-grid{
+    display: grid !important;
+    grid-auto-flow: column !important;
+    grid-auto-columns: calc(50% - 12px) !important; /* 2장 보이도록 */
+    gap: 16px !important;
+    overflow-x: auto !important;
+    scroll-snap-type: x mandatory !important;
+    padding: 4px 2px 10px !important;
+  }
+  .rv-grid::-webkit-scrollbar{ height: 6px; }
+  .rv-grid::-webkit-scrollbar-thumb{ background: #ddd;  }
+
+  /* 카드 구조: 이미지 위 / 내용 아래 */
+  .rv-card{
+    display: flex !important;
+    flex-direction: column !important;
+    min-width: 0 !important;
+    border: 1px solid #e9e9e9 !important;
+   
+    background: #fff !important;
+    overflow: hidden !important;
+    scroll-snap-align: start !important;
+  }
+
+  /* 이미지 영역: 가로 100%, 4:3 비율(원하면 1/1로 변경 가능) */
+  .rv-card .rv-right{
+    order: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+    aspect-ratio: 4 / 3 !important;   /* <- 1 / 1 로 바꾸면 정사각 */
+    background: #faf9f7 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overflow: hidden !important;
+    border-bottom: 1px solid #f0f0f0 !important;
+  }
+
+  /* 텍스트 영역 */
+  .rv-card .rv-left{
+    order: 1 !important;
+    padding: 12px 14px !important;
+  }
+
+  /* 미디어 채우기 */
+  .rv-media-wrap{ width:100% !important; height:100% !important; }
+  .rv-media{
+    width:100% !important; height:100% !important;
+    object-fit: cover !important;
+    display:block !important;
+    image-orientation: from-image !important;
+  }
+}
+
+
+
+
+
+
+/* ===== 리뷰 레이아웃 최종 덮어쓰기 ===== */
+
+/* 공통: 그리드 기본값 */
+.rv-grid{
+  display: grid !important;
+  gap: 16px !important;
+  overflow: visible !important;       /* 가로 스크롤/캐러셀 제거 */
+  grid-auto-flow: row !important;     /* 세로 흐름 고정 */
+  padding: 0 !important;
+}
+
+/* 데스크탑/노트북: 3열 */
+@media (min-width: 1200px){
+  .rv-grid{ grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
+}
+
+/* 모바일~태블릿: 2열 */
+@media (max-width: 1199px){
+  .rv-grid{ grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+}
+
+
+
+/* 카드: 이미지 위 / 텍스트 아래(모든 구간 동일) */
+.rv-card{
+  display: flex !important;
+  flex-direction: column !important;
+  border: 1px solid #e9e9e9 !important;
+
+  background: #fff !important;
+  overflow: hidden !important;
+  min-width: 0 !important;
+}
+
+/* 이미지 영역: 가로 100% + 4:3 비율 고정 */
+.rv-card .rv-right{
+  order: 0 !important;
+  width: 100% !important;
+  height: auto !important;
+  aspect-ratio: 4 / 3 !important;     /* 정사각 원하면 1/1 */
+  background:#faf9f7 !important;
+  display:flex !important; align-items:center !important; justify-content:center !important;
+  overflow:hidden !important;
+}
+
+/* 텍스트 영역 */
+.rv-card .rv-left{
+  order: 1 !important;
+  padding: 12px 14px !important;
+}
+
+/* 미디어 채우기 (비율 유지) */
+.rv-media-wrap{ width:100% !important; height:100% !important; }
+.rv-media{
+  width:100% !important; height:100% !important;
+  object-fit: cover !important;
+  display:block !important;
+  image-orientation: from-image !important;
+}
+
+@media (max-width: 768px){
+  .rv-grid{
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important; /* 2열 고정 */
+    gap: 16px !important;
+  }
+
+  .rv-card{
+    display: flex !important;
+    flex-direction: column !important;
+    border: 1px solid #e9e9e9 !important;
+    background: #fff !important;
+    overflow: hidden !important;
+  }
+
+  .rv-card .rv-right{
+    width: 100% !important;
+    aspect-ratio: 4 / 3 !important; /* 원하는 비율 */
+    flex: 0 0 auto !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: #faf9f7 !important;
+    overflow: hidden !important;
+  }
+
+  .rv-card .rv-left{
+    flex: 1 1 auto !important;
+    padding: 12px 14px !important;
+  }
+
+  .rv-media-wrap{ width: 100% !important; height: 100% !important; }
+  .rv-media{
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    display: block !important;
+  }
+}
+
+/* 버튼 */
+.rv-carousel{ position:relative; }
+.rv-btn{
+  position:absolute; top:50%; transform:translateY(-50%);
+  width:36px; height:36px; border:1px solid #ddd; border-radius:50%;
+  background:#fff; display:flex; align-items:center; justify-content:center;
+  cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,.08);
+}
+.rv-prev{ left:-12px; }
+.rv-next{ right:-12px; }
+.rv-btn:disabled{ opacity:.4; cursor:default; }
+
+/* 모바일/태블릿: 2열 그리드, 버튼 숨김, 4개만 표시 */
+@media (max-width:1199px){
+  .rv-btn{ display:none; }
+  .rv-viewport{ overflow:visible; }
+  .rv-track{
+    display:grid; gap:16px;
+    grid-template-columns:repeat(2, minmax(0,1fr));
+  }
+  .rv-card:nth-child(n+5){ display:none; } /* 5번부터 숨김 */
+}
+
+/* 데스크탑: 3장 캐러셀 */
+@media (min-width:1200px){
+  .rv-viewport{ overflow:hidden; }
+  .rv-track{ display:flex; gap:16px; transition:transform .35s ease; }
+  .rv-card{ flex:0 0 auto; } /* 너비는 JS에서 계산 */
+}
+
+/* (이미 쓰고있는) 이미지 비율 유지 */
+.rv-right{ aspect-ratio:4/3; overflow:hidden; display:flex; align-items:center; justify-content:center; background:#faf9f7; }
+.rv-media-wrap{ width:100%; height:100%; }
+.rv-media{ width:100%; height:100%; object-fit:cover; display:block; }
+
+
+/* 공통: 미디어 비율 */
+#rvCarousel .rv-right{
+  aspect-ratio:4/3 !important;
+  background:#faf9f7 !important;
+  display:flex !important; align-items:center !important; justify-content:center !important;
+  overflow:hidden !important;
+}
+#rvCarousel .rv-media-wrap{width:100% !important;height:100% !important;}
+#rvCarousel .rv-media{width:100% !important;height:100% !important;object-fit:cover !important;display:block !important;}
+
+/* 데스크탑(>=1200px): 3장 캐러셀 */
+@media (min-width:1200px){
+  #rvCarousel .rv-viewport{position:relative !important; overflow:hidden !important;}
+  #rvCarousel .rv-track{display:flex !important; gap:16px !important; transition:transform .35s ease !important;}
+  #rvCarousel .rv-card{flex:0 0 auto !important; display:flex !important;} /* 가로 레이아웃 유지 */
+
+  /* 좌/우 버튼 (all:unset 무력화) */
+  #rvCarousel .rv-btn{
+    all:revert !important;            /* ← 핵심: 기존 all:unset 무력화 */
+    position:absolute !important; top:50% !important; transform:translateY(-50%) !important;
+    width:56px !important; height:56px !important; font-size:30px !important; line-height:1 !important;
+    background:#fff !important; border:1px solid #dcdcdc !important; border-radius:50% !important;
+    display:flex !important; align-items:center !important; justify-content:center !important;
+    box-shadow:0 6px 16px rgba(0,0,0,.12) !important; z-index:10 !important; cursor:pointer !important;
+  }
+  #rvCarousel .rv-prev{left:8px !important;}
+  #rvCarousel .rv-next{right:8px !important;}
+  #rvCarousel .rv-btn:disabled{opacity:.35 !important; cursor:default !important;}
+}
+
+/* 모바일/태블릿(<1200px): 2열, 버튼 숨김, 4개까지만 노출 */
+@media (max-width:1199px){
+  #rvCarousel .rv-viewport{overflow:visible !important;}
+  #rvCarousel .rv-track{
+    display:grid !important; gap:16px !important;
+    grid-template-columns:repeat(2, minmax(0,1fr)) !important;
+  }
+  #rvCarousel .rv-btn{display:none !important;}
+  #rvCarousel .rv-card:nth-child(n+5){display:none !important;}
+}
+/* 1) 헤더(총별점) ↔ 리뷰영역 간격 늘리기 */
+#reviews-section .rv-header{ margin-bottom: 16px !important; }
+#rvCarousel{ margin-top: 15px !important; }         /* 캐러셀 자체 여백 */
+
+/* 2) 카드 컴팩트 모드 (여백/글자 줄이기) */
+#rvCarousel .rv-left{ padding: 8px 10px !important; gap: 6px !important; }
+#rvCarousel .rv-userline{ font-size: 12px !important; gap: 6px !important; }
+#rvCarousel .rv-content{
+  font-size: 13px !important;
+  -webkit-line-clamp: 3 !important;   /* 내용 줄 수 3줄로 */
+}
+
+/* 3) 썸네일 세로 길이 줄이기(카드 전체가 낮아짐) */
+@media (min-width:1200px){             /* 데스크탑 캐러셀 */
+  #rvCarousel .rv-right{ aspect-ratio: 1 / 1 !important; }  /* 4:3 → 정사각 */
+}
+@media (max-width:1199px){             /* 모바일/태블릿 2열 */
+  #rvCarousel .rv-right{ aspect-ratio: 1 / 1 !important; }
+}
+
+/* 4) 별 아이콘/숫자 살짝 축소 */
+#reviews-section .rv-star{ width: 22px !important; height: 22px !important; }
+#reviews-section .rv-score{ font-size: 28px !important; }
+
+/* 5) (선택) 리뷰 제목 숨기기  ─ EJS에 rv-title 클래스만 달아주세요 */
+#rvCarousel .rv-title{ display:none !important; }
+
+
+
+/* ==== 리뷰 텍스트 왼쪽 정렬 강제 (상위 중앙정렬 영향 차단) ==== */
+#reviews-section .rv-left,
+#reviews-section .rv-userline,
+#reviews-section .rv-content{
+  text-align: left !important;
+  align-items: flex-start !important;   /* rv-left가 flex라면 정렬도 왼쪽 */
+  justify-content: flex-start !important;
+}
+
+
+
+/* ==== 리뷰 카드 높이 강제 축소 (데스크톱만) ==== */
+@media (min-width:1200px){
+  /* 텍스트 박스 높이 제한 */
+  #rvCarousel .rv-left{
+    max-height: 120px !important;   /* 카드 아래 영역을 딱 줄임 */
+    overflow: hidden !important;
+  }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* 퀵뷰 전용 레이아웃 */
+.rv-quick .rv-quick-body{
+  padding:16px;
+}
+.rv-quick .rv-quick-body,
+.rv-quick .rv-q-left,
+.rv-quick .rv-q-right{ box-sizing: border-box; }
+
+.rv-quick .rv-quick-body{
+  display:grid; grid-template-columns: 1.2fr 1fr; gap:20px;
+  height: calc(100% - 54px); overflow:auto;
+}
+.rv-q-main{
+  width:100%; aspect-ratio: 1/1; background:#faf9f7;
+  display:flex; align-items:center; justify-content:center; overflow:hidden;
+  border:1px solid #eee;
+}
+.rv-q-main img{ width:100%; height:100%; object-fit:cover; display:block; }
+
+.rv-q-thumbs{
+  margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;
+}
+.rv-q-thumb{
+  border:1px solid #ddd; padding:0; width:58px; height:58px; border-radius:6px; overflow:hidden;
+}
+.rv-q-thumb.is-active{ outline:2px solid #b38b6d; }
+.rv-q-thumb img{ width:100%; height:100%; object-fit:cover; display:block; }
+
+.rv-q-product{ font-size:16px; margin:0 0 8px; }
+.rv-q-meta{ font-size:14px; display:grid; gap:6px; margin-bottom:10px; }
+.rv-q-stars{ display:flex; gap:4px; align-items:center; }
+.rv-q-content{ font-size:14px; line-height:1.6; white-space:pre-wrap; }
+
+/* 반응형 */
+@media (max-width: 900px){
+  .rv-quick .rv-quick-body{ grid-template-columns: 1fr; }
+}
+
+/* 퀵뷰 모달을 더 작게, 가운데 정렬 + 헤더 위로 올라오게 */
+#rvQuickBg{ z-index: 5000 !important; }
+#rvQuick{
+  z-index: 5001 !important;
+
+  /* 전체 화면 inset을 쓰지 말고 작게 가운데 배치 */
+  position: fixed !important;
+  inset: auto !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+
+  width: min(820px, 92vw) !important;   /* ← 팝업 가로폭 축소 */
+  max-height: 85vh !important;          /* ← 팝업 높이 제한 */
+  border-radius: 12px !important;
+  overflow: hidden !important;
+}
+
+/* 내부 그리드도 좀 더 컴팩트하게 */
+#rvQuick .rv-quick-body{
+  display: grid !important;
+  grid-template-columns: 1.05fr 0.95fr !important;
+  gap: 16px !important;
+  padding: 16px !important;
+  height: calc(100% - 54px) !important;
+  overflow: auto !important;
+}
+
+/* 닫기 버튼/헤더가 위에서 가려지지 않게 */
+#rvQuick .rv-modal-header{
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 1 !important;
+  background: #fff !important;
+}
+
+
+/* 메인 이미지 박스 크기 축소 (정사각, 최대 높이 제한) */
+#rvQuick .rv-q-main{
+  aspect-ratio: 1 / 1 !important;
+  max-height: 360px !important;      /* ← 이미지가 너무 커지지 않도록 */
+  border: 1px solid #eee !important;
+  background: #faf9f7 !important;
+}
+
+/* 이미지 객체 맞춤 */
+#rvQuick #rvQMain{
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  display: block !important;
+}
+
+/* 썸네일을 가운데 정렬 + 가로로 줄맞춤 */
+#rvQuick .rv-q-thumbs{
+  margin-top: 10px !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 8px !important;
+  justify-content: center !important;   /* ← 가운데 정렬 */
+}
+
+#rvQuick .rv-q-thumb{
+  width: 54px !important;
+  height: 54px !important;
+  border: 1px solid #ddd !important;
+  border-radius: 6px !important;
+  overflow: hidden !important;
+  padding: 0 !important;
+}
+
+#rvQuick .rv-q-thumb.is-active{
+  outline: 2px solid #b38b6d !important;
+}
+
+#rvQuick .rv-q-thumb img{
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  display: block !important;
+}
+#rvQuick .rv-q-right{
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;   /* ← 왼쪽 정렬 */
+  text-align: left !important;
+}
+
+#rvQuick .rv-q-product{ margin: 0 0 8px !important; font-size: 16px !important; }
+#rvQuick .rv-q-meta{ display: grid !important; gap: 6px !important; margin-bottom: 10px !important; font-size: 14px !important; }
+#rvQuick .rv-q-stars{ display: flex !important; gap: 4px !important; align-items: center !important; }
+#rvQuick .rv-q-content{ font-size: 14px !important; line-height: 1.6 !important; white-space: pre-wrap !important; }
+@media (max-width: 900px){
+  #rvQuick{ width: 92vw !important; max-height: 86vh !important; }
+  #rvQuick .rv-quick-body{ grid-template-columns: 1fr !important; }
+  #rvQuick .rv-q-main{ max-height: 56vw !important; } /* 화면 비율에 맞춰 더 작게 */
+}
+
+
+
+
+
+
+
+
+
+/* ===== 전체보기 모달을 작은 중앙 팝업으로 ===== */
+#rvModal{                         /* 큰 전체 화면 inset 제거하고 퀵뷰처럼 */
+  position: fixed !important;
+  inset: auto !important;
+  top: 50% !important; left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  width: min(860px, 92vw) !important;   /* 팝업 가로폭 축소 */
+  max-height: 86vh !important;          /* 세로 제한 + 내부 스크롤 */
+  overflow: hidden !important;
+  border-radius: 12px !important;
+  z-index: 4800 !important;
+}
+#rvBackdrop{ z-index: 4790 !important; }
+#rvModal .rv-modal-header{
+  position: sticky !important; top:0 !important; background:#fff !important; z-index:1 !important;
+}
+#rvModal .rv-modal-body{ height: calc(100% - 54px) !important; overflow:auto !important; }
+
+/* 1열 스크롤 + 좌이미지/우텍스트(컴팩트) */
+#rvModal .rv-list{
+  display: grid !important;
+  grid-template-columns: 1fr !important;   /* ★ 1열 */
+  gap: 14px !important;
+}
+#rvModal .rv-item{
+  display: grid !important;
+  grid-template-columns: 220px 1fr !important;   /* 좌 220px 이미지, 우 텍스트 */
+  gap: 12px !important;
+  border: 1px solid #eee !important;
+  padding: 10px !important;
+}
+#rvModal .rv-item .rv-right{
+  aspect-ratio: 1 / 1 !important;
+  max-height: 220px !important;
+  background:#faf9f7 !important;
+  display:flex !important; align-items:center !important; justify-content:center !important;
+  overflow:hidden !important;
+}
+#rvModal .rv-item .rv-left{ padding: 6px 4px !important; }
+#rvModal .rv-item .rv-media-wrap{ width:100% !important; height:100% !important; }
+#rvModal .rv-item .rv-media{ width:100% !important; height:100% !important; object-fit:cover !important; display:block !important; }
+#rvModal .rv-item .rv-star{ width: 18px !important; height: 18px !important; }
+
+/* 좁은 화면에서는 세로 스택 */
+@media (max-width: 600px){
+  #rvModal .rv-item{ grid-template-columns: 1fr !important; }
+  #rvModal .rv-item .rv-right{ max-height: 52vw !important; }
+}
+
+
+
+#rvModal .rv-sort{ display:flex; gap:8px; }
+#rvModal .rv-sort-btn{
+  padding:4px 8px; border:1px solid #ddd; border-radius:6px; font-size:12px; cursor:pointer;
+}
+#rvModal .rv-sort-btn.is-active{ border-color:#b38b6d; color:#b38b6d; font-weight:600; }
+
+
+
+
+
+
+/* === 전체보기 모달: 내부 스크롤 유지 (이전 답변 그대로) === */
+#rvModal{
+  /* 기본은 숨김(초기 진입시 안 보임) */
+  display: none;                                  /* ← 기본 숨김 */
+  position: fixed !important;
+  inset: auto !important;
+  top: 50% !important; left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  width: min(860px, 92vw) !important;
+  max-height: 86vh !important;
+  overflow: hidden !important;
+  border-radius: 12px !important;
+  z-index: 4800 !important;
+}
+
+/* JS가 기존처럼 `style.display='block'`으로 열면,
+   자동으로 flex 레이아웃 적용 (레이아웃 변화 없음) */
+#rvModal[style*="display: block"],
+#rvModal[style*="display:block"]{
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+/* (기존 그대로 유지) 헤더 고정 + 바디 스크롤 */
+#rvModal .rv-modal-header{ position: sticky !important; top:0 !important; background:#fff !important; z-index:1 !important; }
+#rvModal .rv-modal-body{ flex:1 1 auto !important; min-height:0 !important; overflow:auto !important; height:auto !important; }
+
+/* === 리스트 1열 + 아이템 2컬럼(텍스트|이미지) === */
+#rvModal .rv-list{
+  display: grid !important;
+  grid-template-columns: 1fr !important;   /* 1열 목록 */
+  gap: 12px !important;
+}
+
+#rvModal .rv-item{
+  display: grid !important;
+  grid-template-columns: 1fr 260px !important;  /* 왼쪽: 텍스트(유동), 오른쪽: 사진 260px */
+  align-items: start !important;
+  gap: 14px !important;
+  border: 1px solid #eee !important;
+  padding: 12px !important;
+}
+
+/* 왼쪽 텍스트: 여백 줄이고 전체 내용 보이게 */
+#rvModal .rv-item .rv-left{ padding: 0 !important; }
+#rvModal .rv-item .rv-stars{ margin-bottom: 6px !important; }
+#rvModal .rv-item .rv-userline{ margin: 4px 0 8px !important; }
+#rvModal .rv-item .rv-content{
+  -webkit-line-clamp: unset !important;
+  max-height: none !important;
+  white-space: pre-wrap !important;
+  line-height: 1.6 !important;
+  font-size: 14px !important;
+}
+
+/* 오른쪽 사진: 고정폭 컬럼 안에서 정사각(또는 4:3)으로 딱 맞춤 */
+#rvModal .rv-item .rv-right{
+  padding: 0 !important;
+  background: transparent !important;
+}
+#rvModal .rv-item .rv-media-wrap{
+  width: 100% !important;
+  aspect-ratio: 1 / 1 !important;           /* 정사각. 4/3 원하면 4 / 3 로 */
+  background: #faf9f7 !important;
+  border: 1px solid #eee !important;
+  overflow: hidden !important;
+}
+#rvModal .rv-item .rv-media{
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  display: block !important;
+}
+
+/* 모바일에선 세로 스택 */
+@media (max-width: 600px){
+  #rvModal .rv-item{ grid-template-columns: 1fr !important; }
+  #rvModal .rv-item .rv-media-wrap{ max-height: 52vw !important; }
+}
+
+
+
+
+
+/* 모달 공통 – 내부가 반드시 스크롤되도록 */
+#rvModal, #rvQuick{
+  display: none;                 /* 기본 숨김(이미 적용돼 있죠) */
+  max-height: 86svh !important;  /* 모바일 주소창 대응: svh/dvh 사용 */
+  overflow: hidden !important;
+}
+
+#rvModal .rv-modal-body,
+#rvQuick .rv-quick-body{
+  flex: 1 1 auto !important;
+  min-height: 0 !important;                /* ★ 내부 스크롤 활성의 핵심 */
+  overflow: auto !important;               /* ★ 세로 스크롤 */
+  -webkit-overflow-scrolling: touch !important;  /* iOS 부드러운 스크롤 */
+  overscroll-behavior: contain !important; /* 배경 스크롤 방지 */
+}
+
+
+@media (max-width: 900px){
+  #rvModal, #rvQuick{
+    width: 94vw !important;
+    max-height: 90svh !important;   /* 화면 높이 안전치 */
+  }
+
+  /* 이미지 영역이 너무 커서 잘리는 것 방지 */
+  #rvQuick .rv-q-main{
+    max-height: 52svh !important;
+  }
+  #rvModal .rv-item .rv-media-wrap{
+    max-height: 52svh !important;
+  }
+
+  /* 퀵뷰는 1열 스택 유지 */
+  #rvQuick .rv-quick-body{ grid-template-columns: 1fr !important; }
+}
+
+
+
+/* ===== 첨부 없는 리뷰: 전체보기 모달에서 레이아웃 축소 ===== */
+/* 우측 이미지 컬럼 자체를 제거하고, 1열로 전환 */
+#rvModal .rv-item.no-media {
+  grid-template-columns: 1fr !important;   /* 텍스트만 1열 */
+}
+
+/* 우측 비어있는 박스 숨김 */
+#rvModal .rv-item.no-media .rv-right {
+  display: none !important;
+}
+
+/* (선택) no-media일 때 좌측 텍스트 여백만 살짝 조정하고 싶다면 */
+#rvModal .rv-item.no-media .rv-left {
+  padding-right: 0 !important;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</style>
 
 
 

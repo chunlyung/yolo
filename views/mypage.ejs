@@ -30,7 +30,7 @@
                 <div class="order-meta">
                   <p>주문번호:<%= o.id %></p>
                   <span class="order-status"><%= o.status %></span> 
-                  <%= new Date(o.created_at).toLocaleString('ko-KR',{ timeZone:'+09:00'}) %>
+                  <%= new Date(o.created_at).toLocaleString('ko-KR',{ timeZone:'Asia/Seoul'}) %>
                 </div>
                 <span class="order-toggle" data-id="<%= o.id %>">⌄</span>
               </div>
@@ -43,8 +43,31 @@
                 </div>
                 <div class="summary-wrap">
                 <div class="order-summary">
-                 <p>총 결제 <%= o.total_price.toLocaleString() %>원</p>
-                </div>
+  <p>총 결제 <%= o.total_price.toLocaleString() %>원</p>
+<ul class="order-items">
+  <% (o.items || []).forEach(it => { %>
+    <% if (it.has_review) { %>
+      <li class="order-item">
+        <button type="button" class="review-view-btn"
+          data-order-item-id="<%= Number(it.order_item_id) %>"   
+          data-name="<%= it.name %>"
+          data-color="<%= it.color %>"
+          data-thumb="<%= it.thumb %>">내 리뷰 보기</button>
+      </li>
+    <% } else if (o.status === '배송완료') { %>
+      <li class="order-item">
+        <button type="button" class="review-btn"
+          data-order-item-id="<%= Number(it.order_item_id) %>"   
+          data-name="<%= it.name %>"
+          data-color="<%= it.color %>"
+          data-thumb="<%= it.thumb %>">리뷰쓰기</button>
+      </li>
+    <% } %>
+  <% }) %>
+</ul>
+</div>
+</div>
+</div>
 
                <div class="order-details hidden" id="detail-<%= o.id %>">
   <ul>
@@ -120,11 +143,148 @@
         </div>
       </form>
     </section>
+
+
+<!-- 리뷰 퀵뷰(상품상세와 동일 구조) -->
+<div id="rvQuickBg" class="rv-modal-backdrop" style="display:none;"></div>
+<div id="rvQuick" class="rv-modal rv-quick" role="dialog" aria-modal="true" aria-labelledby="rvQuickTitle" style="display:none;">
+  <div class="rv-modal-header">
+    <div class="rv-modal-title" id="rvQuickTitle">REVIEW</div>
+    <button class="rv-close" id="rvQuickClose">X</button>
+  </div>
+  <div class="rv-quick-body">
+    <div class="rv-q-left">
+      <div class="rv-q-main"><img id="rvQMain" alt="리뷰 이미지" /></div>
+      <div class="rv-q-thumbs" id="rvQThumbs"></div>
+    </div>
+    <div class="rv-q-right">
+      <h3 class="rv-q-product" id="rvQProd"></h3>
+      <div class="rv-q-meta">
+        <div><strong>컬러</strong> : <span id="rvQColor"></span></div>
+        <div><strong>작성자</strong> : <span id="rvQUser"></span></div>
+        <div><strong>날짜</strong> : <span id="rvQDate"></span></div>
+        <div class="rv-q-stars" id="rvQStars" aria-label="별점"></div>
+      </div>
+      <div class="rv-q-content" id="rvQText"></div>
+    </div>
+  </div>
+</div>
+
+
+
+
   </main>
 
 
 
 
+
+
+
+<!-- 리뷰쓰기: 배경 -->
+<div id="rwBackdrop" class="rw-backdrop" style="display:none;"></div>
+
+<!-- 리뷰쓰기 모달 -->
+<div id="rwModal" class="rw-modal" role="dialog" aria-modal="true" style="display:none;">
+  <div class="rw-head">
+    <div class="rw-title">YOLO</div>
+    <button type="button" class="rw-close" id="rwClose">X</button>
+  </div>
+
+  <div class="rw-body" id="rwBody">
+    <!-- 작성시 유의사항 바 -->
+    <button type="button" class="rw-notice-bar" id="rwOpenNotice">
+      작성시 유의 사항
+      <span class="rw-arrow">›</span>
+    </button>
+
+    <!-- 상품정보 -->
+    <div class="rw-product">
+      <div class="rw-thumb"><img id="rwThumb" alt="상품 이미지"></div>
+      <div class="rw-pmeta">
+        <div class="rw-pname" id="rwPName"></div>
+        <div class="rw-pcolor">Color: <span id="rwPColor"></span></div>
+      </div>
+    </div>
+
+    <!-- 별점 -->
+    <div class="rw-row">
+      <div class="rw-label">이 상품 어떠셨나요?</div>
+      <div class="rw-stars" id="rwStars" aria-label="별점 선택">
+        <!-- 5개 별 -->
+        <button type="button" data-v="1" class="rw-star">★</button>
+        <button type="button" data-v="2" class="rw-star">★</button>
+        <button type="button" data-v="3" class="rw-star">★</button>
+        <button type="button" data-v="4" class="rw-star">★</button>
+        <button type="button" data-v="5" class="rw-star">★</button>
+      </div>
+      <input type="hidden" id="rwRating" value="0">
+    </div>
+
+    <!-- 내용 -->
+    <div class="rw-row">
+      <label class="rw-label" for="rwText">상품에 대한 후기를 작성해주세요</label>
+      <div class="rw-help">다른 분들이 도움 받을 수 있도록 상품에 대한 의견을 자세히 공유해주세요.</div>
+      <div class="rw-textwrap">
+        <textarea id="rwText" maxlength="500" placeholder="자유롭게 작성해주세요."></textarea>
+        <div class="rw-count"><span id="rwCnt">0</span>/500</div>
+      </div>
+    </div>
+
+    <!-- 업로드 -->
+    <div class="rw-row">
+      <div class="rw-label">사진/동영상 첨부</div>
+      <div class="rw-uploader" id="rwUploader">
+        <input id="rwFiles" type="file" accept="image/*,video/*" multiple hidden>
+        <button class="rw-add" type="button" id="rwAddBtn">＋</button>
+        <div class="rw-limit"><span id="rwFileNum">0</span>/10</div>
+      </div>
+      <div class="rw-previews" id="rwPreviews"></div>
+      <div class="rw-tip">※ 최소 1장 이상 등록해 주세요.(선택)</div>
+    </div>
+
+    <!-- 동의/제출 -->
+    <div class="rw-agree">
+      <label>
+        <input type="checkbox" id="rwAgree">
+        작성시 유의사항을 확인하였습니다. (필수)
+      </label>
+    </div>
+
+    <button type="button" class="rw-submit" id="rwSubmit">등록하기</button>
+  </div>
+</div>
+
+<!-- 작성시 유의사항 모달 -->
+<div id="rwNotice" class="rw-modal rw-notice" role="dialog" aria-modal="true" style="display:none;">
+  <div class="rw-head">
+    <div class="rw-title">작성 시 유의사항</div>
+    <button type="button" class="rw-close" id="rwNoticeClose">X</button>
+  </div>
+  <div class="rw-body rw-notice-body">
+    <ul class="rw-rules">
+      <li>작성하신 후기는 모든 방문객에게 공개됩니다.</li>
+      <p>- 아래와 같은 경우 리뷰가 삭제될 수 있습니다. -</p>
+      <li>(1) 문자/기호 반복 등 무성의한 내용</li>
+      <li>(2) 상품과 무관한 내용</li>
+      <li>(3) 개인정보/광고/비속어 포함</li>
+      <li>(4) 판매 이미지·타인의 사진을 도용한 후기</li>
+    </ul>
+    <button type="button" class="rw-notice-ok" id="rwNoticeOk">확인하였습니다.</button>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+  
 
  <header class="header">
 
@@ -194,7 +354,7 @@
         </li>
 
         <li class="dropMobile">  <!-- 드롭다운 메뉴 항목을 만듬.-->
-        <a class=dropheader href="#">FAQ/QNA
+        <a class="dropheader" href="#">FAQ/QNA
           <span class="arrow">&#709;</span>
         </a><!-- 드롭다운 제목-->
         <ul class="submenu"><!--하위 메뉴들을 감싸는 리스트.-->
@@ -419,19 +579,6 @@ try {
 })
 });
 
-document.querySelector('.logout-btn').addEventListener('click',async()=>{
-  try{
-    const res = await fetch('/logout');
-
-     if (res.redirected){
-       window.location.href = res.url;
-     }
-  } catch(err){
-    alert('로그아웃 실패:'+ err.message);
-  }
-});
-
-
 
 
 
@@ -647,9 +794,41 @@ function makeCard(o){
         <div class="color">color: ${o.color}</div>
         <div class="qty">수량: ${o.qty}</div>
       </div>
-      <div class="order-summary">
-        상품금액 ${o.items_total.toLocaleString()}원<br>
-        총 결제 ${o.total_price.toLocaleString()}원
+            <div class="summary-wrap">
+        <div class="order-summary">
+          상품금액 ${o.items_total.toLocaleString()}원<br>
+          총 결제 ${o.total_price.toLocaleString()}원
+          <ul class="order-items">
+            ${(o.items || []).map(it => {
+              // 서버가 it.has_review, it.order_item_id, it.name, it.color, it.thumb를 내려준다고 가정
+              if (it.has_review) {
+                return `
+                  <li class="order-item">
+                    <button type="button" class="review-view-btn"
+                      data-order-item-id="${it.order_item_id}"
+                      data-name="${it.name}"
+                      data-color="${it.color}"
+                      data-thumb="${it.thumb}">
+                      내 리뷰 보기
+                   </button>
+                  </li>`;
+              }
+              if (o.status === '배송완료') {
+                return `
+                  <li class="order-item">
+                    <button type="button" class="review-btn"
+                      data-order-item-id="${it.order_item_id}"
+                      data-name="${it.name}"
+                      data-color="${it.color}"
+                      data-thumb="${it.thumb}">
+                      리뷰쓰기
+                    </button>
+                  </li>`;
+              }
+              return '';
+            }).join('')}
+          </ul>
+        </div>
       </div>
     </div>
     <div class="order-details hidden" id="detail-${o.id}">
@@ -672,6 +851,7 @@ function makeCard(o){
 
   return el;
 }
+
 
 
 document.addEventListener('click', async e => {
@@ -768,6 +948,308 @@ document.getElementById('withdraw-btn').addEventListener('click', async () => {
 
 
 
+(() => {
+  const backdrop = document.getElementById('rwBackdrop');
+  const modal     = document.getElementById('rwModal');
+  const mBody     = document.getElementById('rwBody');
+  const btnClose  = document.getElementById('rwClose');
+
+  const pThumb  = document.getElementById('rwThumb');
+  const pName   = document.getElementById('rwPName');
+  const pColor  = document.getElementById('rwPColor');
+
+  const starsBox = document.getElementById('rwStars');
+  const ratingEl = document.getElementById('rwRating');
+
+  const text     = document.getElementById('rwText');
+  const cnt      = document.getElementById('rwCnt');
+
+  const addBtn   = document.getElementById('rwAddBtn');
+  const filesInp = document.getElementById('rwFiles');
+  const previews = document.getElementById('rwPreviews');
+  const fileNum  = document.getElementById('rwFileNum');
+
+  const agree    = document.getElementById('rwAgree');
+  const submit   = document.getElementById('rwSubmit');
+
+   let currentOrderItemId = null;
+  let filesArr = []; // {file, url, type}
+
+function openReviewModal(data){
+  console.log('✅ openReviewModal 호출됨:', data);
+  currentOrderItemId = Number(data.orderItemId) || 0; // ★ 버튼의 data-order-item-id에서 온다
+    pThumb.src = data.thumb || '';
+    pName.textContent = data.name || '';
+    pColor.textContent = data.color || '';
+
+    // reset form
+    ratingEl.value = 0;
+    starsBox.querySelectorAll('.rw-star').forEach(s => s.classList.remove('is-on'));
+    text.value = ''; cnt.textContent = '0';
+    agree.checked = false;
+    filesArr.forEach(f => URL.revokeObjectURL(f.url));
+    filesArr = []; previews.innerHTML = ''; fileNum.textContent = '0';
+
+    modal.style.display = 'flex';
+    backdrop.style.display = 'block';
+    document.body.style.overflow = 'hidden';
+    mBody.scrollTop = 0;
+  }
+ window.openReviewModal=openReviewModal;
+
+
+  function close(){
+    modal.style.display = 'none';
+    backdrop.style.display = 'none';
+    document.body.style.overflow = '';
+  }
+  btnClose.addEventListener('click', close);
+  backdrop.addEventListener('click', close);
+  document.addEventListener('keydown', e => { if(e.key === 'Escape') close(); });
+
+  // 별점
+  starsBox.addEventListener('click', e => {
+    const btn = e.target.closest('.rw-star'); if(!btn) return;
+    const v = Number(btn.dataset.v)||0;
+    ratingEl.value = v;
+    starsBox.querySelectorAll('.rw-star').forEach(s => {
+      s.classList.toggle('is-on', Number(s.dataset.v) <= v);
+    });
+  });
+
+  // 글자수
+  text.addEventListener('input', () => cnt.textContent = text.value.length);
+
+  // 업로드
+  addBtn.addEventListener('click', () => filesInp.click());
+  filesInp.addEventListener('change', () => {
+    const incoming = Array.from(filesInp.files || []);
+    if (!incoming.length) return;
+
+    for (let f of incoming){
+      if (filesArr.length >= 10) break;
+      const url  = URL.createObjectURL(f);
+      const type = f.type.startsWith('video') ? 'video' : 'image';
+      filesArr.push({ file: f, url, type });
+    }
+    renderPreviews();
+    filesInp.value = '';
+  });
+
+  function renderPreviews(){
+    previews.innerHTML = '';
+    filesArr.forEach((it, idx) => {
+      const cell = document.createElement('div');
+      cell.className = 'rw-item';
+      cell.innerHTML = `
+        ${it.type === 'video'
+          ? `<video src="${it.url}" muted playsinline></video>`
+          : `<img src="${it.url}" alt="첨부">`
+        }
+        <button class="rw-del" data-idx="${idx}" type="button">✕</button>
+      `;
+      previews.appendChild(cell);
+    });
+    fileNum.textContent = String(filesArr.length);
+  }
+  previews.addEventListener('click', e => {
+    const del = e.target.closest('.rw-del'); if(!del) return;
+    const idx = Number(del.dataset.idx);
+    const it = filesArr[idx];
+    if (it) URL.revokeObjectURL(it.url);
+    filesArr.splice(idx,1);
+    renderPreviews();
+  });
+
+  // 제출
+  submit.addEventListener('click', async () => {
+    const rating = Number(ratingEl.value||0);
+    const content = text.value.trim();
+
+    if (rating < 1){ alert('별점을 선택해주세요.'); return; }
+    if (!content){ alert('후기 내용을 입력해주세요.'); return; }
+    //if (filesArr.length < 1){ alert('사진/동영상을 1개 이상 첨부해주세요.'); return; }//
+    if (!agree.checked){ alert('작성시 유의사항에 동의해 주세요.'); return; }
+
+   const fd = new FormData();
+fd.append('order_item_id', String(currentOrderItemId||0));   // ✅ 서버가 기대하는 키
+fd.append('rating', rating);
+fd.append('content', content);
+filesArr.forEach((f) => fd.append('files', f.file, f.file.name));
+
+const res  = await fetch('/reviews/create', { method:'POST', body: fd, credentials:'include' });
+const data = await res.json();
+
+if (data.success){
+  alert('리뷰가 등록되었습니다.');
+  close();
+
+  // ✅ 버튼을 즉시 “내 리뷰 보기”로 교체
+  const btn = document.querySelector(`.review-btn[data-order-item-id="${currentOrderItemId}"]`);
+  if (btn){ btn.classList.remove('review-btn');
+    btn.classList.add('review-view-btn');
+    btn.textContent = '내 리뷰 보기';
+  }
+    
+} else {
+  alert('등록 실패: ' + (data.message||''));
+}
+  });
+
+
+
+  // ============ 유의사항 모달 ============
+  const notice     = document.getElementById('rwNotice');
+  const noticeOk   = document.getElementById('rwNoticeOk');
+  const noticeOpen = document.getElementById('rwOpenNotice');
+  const noticeClose= document.getElementById('rwNoticeClose');
+
+  function openNotice(){
+    notice.style.display = 'flex';
+    // 배경은 그대로 유지(리뷰모달 위에 뜸)
+  }
+  function closeNotice(){ notice.style.display = 'none'; }
+  noticeOpen.addEventListener('click', openNotice);
+  noticeClose.addEventListener('click', closeNotice);
+  noticeOk.addEventListener('click', () => { agree.checked = true; closeNotice(); });
+
+})();
+
+
+
+(function(){
+  const STAR_FULL  = '<svg viewBox="0 0 24 24" width="20" height="20"><path fill="#b38b6d" d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.7 5.82 22 7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>';
+  const STAR_EMPTY = '<svg viewBox="0 0 24 24" width="20" height="20"><path fill="#b38b6d" opacity=".35" d="M22 9.27l-6.91-1.01L12 2 8.91 8.26 2 9.27l5 4.87L5.82 22 12 18.7 18.18 22 17 14.14l5-4.87z"/></svg>';
+
+  const bg     = document.getElementById('rvQuickBg');
+  const modal  = document.getElementById('rvQuick');
+  const close  = document.getElementById('rvQuickClose');
+  const main   = document.getElementById('rvQMain');
+  const thumbs = document.getElementById('rvQThumbs');
+  const elProd = document.getElementById('rvQProd');
+  const elUser = document.getElementById('rvQUser');
+  const elColor= document.getElementById('rvQColor');
+  const elStars= document.getElementById('rvQStars');
+  const elText = document.getElementById('rvQText');
+  const elDate = document.getElementById('rvQDate');
+  
+
+  function renderStars(n){
+    const rating = Math.max(0, Math.min(5, Number(n)||0));
+    let html = '';
+    for(let i=0;i<rating;i++) html += STAR_FULL;
+    for(let i=rating;i<5;i++) html += STAR_EMPTY;
+    return html;
+  }
+
+  // 전역에서 호출할 수 있게 window에 노출
+  window.openQuick = function(data){
+    const images = (data.images || '').split('|').filter(Boolean);
+
+    // 메인/썸네일
+    main.src = images[0] || '';
+    thumbs.innerHTML = images.map((src,i)=>(
+      `<button type="button" class="rv-q-thumb${i===0?' is-active':''}" data-index="${i}">
+         <img src="${src}" alt="썸네일 ${i+1}">
+       </button>`
+    )).join('');
+    thumbs.querySelectorAll('.rv-q-thumb').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        thumbs.querySelectorAll('.rv-q-thumb').forEach(b=>b.classList.remove('is-active'));
+        btn.classList.add('is-active');
+        main.src = images[Number(btn.dataset.index)||0] || '';
+      });
+    });
+
+    // 정보
+    if (elProd) elProd.textContent = data.product_name || '';
+    elUser.textContent  = data.username || '';
+    elColor.textContent = data.color || '';
+    elStars.innerHTML   = renderStars(data.rating);
+    elText.textContent  = data.content || '';
+    elDate.textContent  = data.date || '';
+
+    // 열기
+    modal.style.display = 'block';
+    bg.style.display    = 'block';
+    document.body.style.overflow = 'hidden';
+  };
+
+  function closeQuick(){
+    modal.style.display = 'none';
+    bg.style.display    = 'none';
+    document.body.style.overflow = '';
+  }
+  close.addEventListener('click', closeQuick);
+  bg.addEventListener('click',  closeQuick);
+  document.addEventListener('keydown', e => { if(e.key==='Escape') closeQuick(); });
+})();
+
+document.addEventListener('click', e => {
+  const btn = e.target.closest('.review-btn');
+  if (!btn) return;
+
+  console.log('클릭된 버튼:', btn);
+  console.log('dataset:', btn.dataset);
+  
+  const orderItemId = Number(btn.dataset.orderItemId || 0);
+  console.log('✅ 최종 orderItemId:', orderItemId);
+
+  // 여기서 fetch 호출 대신 확인만
+  const url = `/reviews/of-order-item/${orderItemId}`;
+  console.log('✅ 호출할 fetch URL:', url);
+
+  e.preventDefault();
+  e.stopPropagation();
+
+  
+
+  // 작성 모달 open 호출 (네가 만든 함수 시그니처에 맞춰 전달)
+  openReviewModal({
+    orderItemId: Number(btn.dataset.orderItemId || 0),
+    name:    btn.dataset.name,
+    color:   btn.dataset.color,
+    thumb:   btn.dataset.thumb
+  });
+});
+// (B) 내 리뷰 보기 → 서버에서 내 리뷰 1개 받아와서 퀵뷰 띄우기
+document.addEventListener('click', async (e) => {
+  const btn = e.target.closest('.review-view-btn');
+  if (!btn) return;
+
+  const orderItemId = Number(btn.dataset.orderItemId || 0);
+  if (!orderItemId) return;
+
+  try {
+    const res  = await fetch(`/reviews/of-order-item/${orderItemId}`, { credentials:'include' });
+    const json = await res.json();
+    if (!json.success) {
+      alert(json.message || '리뷰를 불러올 수 없습니다.');
+      return;
+    }
+    const r = json.review;
+
+    // ✅ mediaS vs media 불일치 수정
+    const medias = r.media || r.medias || [];  
+
+
+window.openQuick({
+  images: (r.media || r.medias || []).join('|'),
+   username: r.user_mask || r.user_login || '',   // ✅ 여기!
+  color: r.color || '',
+  rating: r.rating || 0,
+  content: r.content || '',
+  date: new Date(r.created_at).toISOString().slice(0,10),
+  product_name: r.product_name || ''
+});
+
+  } catch (err){
+    console.error(err);
+    alert('서버 오류');
+  }
+});
+
+
 
 
 </script>
@@ -858,6 +1340,385 @@ document.getElementById('withdraw-btn').addEventListener('click', async () => {
 .btn-tracking:hover {
   background-color: #555;
 }
+
+
+
+
+
+/* ========== 공통 ========== */
+.rw-backdrop{
+  position:fixed; inset:0; background:rgba(0,0,0,.45);
+  z-index:6000;
+}
+.rw-modal{
+  position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
+  width:min(760px, 92vw);
+  max-height:90vh; background:#fff; border-radius:12px;
+  display:flex; flex-direction:column; overflow:hidden;
+  z-index:6001; box-shadow:0 20px 60px rgba(0,0,0,.25);
+  font-family: inherit;
+}
+.rw-head{ height:56px; display:flex; align-items:center; justify-content:space-between;
+  padding:0 18px; border-bottom:1px solid #eee; background:#fff; position:sticky; top:0; z-index:1;
+}
+.rw-title{ font-size:20px; font-weight:700; letter-spacing:.5px; }
+.rw-close{ all:unset; cursor:pointer; font-size:18px; padding:6px 8px; }
+.rw-body{ padding:16px; overflow:auto; }
+
+/* 유의사항 바 */
+.rw-notice-bar{
+  all:unset; width:100%; display:flex; justify-content:space-between; align-items:center;
+  border:1px solid #e5e5e5; border-radius:8px; padding:12px 14px; margin-bottom:14px;
+  cursor:pointer; background:#fafafa; font-size:14px;
+}
+.rw-arrow{ font-size:22px; line-height:1;}
+
+/* 상품정보 */
+.rw-product{ display:grid; grid-template-columns:120px 1fr; gap:12px; margin-bottom:14px;}
+.rw-thumb{ width:120px; aspect-ratio:1/1; background:#faf9f7; border:1px solid #eee; border-radius:6px; overflow:hidden; }
+.rw-thumb img{ width:100%; height:100%; object-fit:cover; display:block; }
+.rw-pmeta{ display:flex; flex-direction:column; justify-content:center; gap:4px; }
+.rw-pname{ font-weight:600; font-size: 15px; }
+.rw-pcolor{ color:#666;font-size: 13px; }
+
+/* 섹션 공통 */
+.rw-row{ margin:14px 0; }
+.rw-label{ font-weight:600; margin-bottom:8px; }
+.rw-help{ color:#666; font-size:13px; margin-bottom:8px; }
+
+/* 별점 */
+.rw-stars{ display:flex; gap:6px; }
+.rw-star{ all:unset; cursor:pointer; font-size:28px; line-height:1; color:#ddd; }
+.rw-star.is-on{ color:#b38b6d; }
+
+/* 텍스트 */
+.rw-textwrap{ position:relative; }
+#rwText{
+  width:100%; min-height:140px; resize:vertical; padding:12px 12px 28px 12px;
+  border:1px solid #ddd; border-radius:8px; font-size:13px; line-height:1.6;
+}
+.rw-count{ position:absolute; right:10px; bottom:8px; font-size:12px; color:#888; }
+
+/* 업로더 */
+.rw-uploader{
+  display:flex; align-items:center; gap:10px; margin-bottom:10px;
+}
+.rw-add{
+  all:unset; width:58px; height:58px; border:1px dashed #bbb; border-radius:8px;
+  display:flex; align-items:center; justify-content:center; font-size:26px; cursor:pointer; background:#fff;
+}
+.rw-limit{ font-size:13px; color:#666; }
+.rw-previews{
+  display:grid; grid-template-columns:repeat(5, 1fr); gap:8px;
+}
+.rw-previews .rw-item{
+  position:relative; width:100%; aspect-ratio:1/1; border:1px solid #eee; border-radius:8px; overflow:hidden; background:#faf9f7;
+}
+.rw-previews img, .rw-previews video{ width:100%; height:100%; object-fit:cover; display:block; }
+.rw-del{
+  position:absolute; top:4px; right:4px; background:rgba(0,0,0,.55);
+  color:#fff; border:0; border-radius:10px; width:20px; height:20px; cursor:pointer; line-height:20px; font-size:12px;
+}
+.rw-tip{ font-size:12px; color:#888; margin-top:6px; }
+
+/* 동의 & 제출 */
+.rw-agree{ margin:16px 0 12px; font-size: 14px;}
+.rw-submit{
+  width:100%; padding:14px 16px; border:0; border-radius:10px;
+  background:#111; color:#fff; font-size:16px; cursor:pointer;
+}
+
+/* 유의사항 모달 내 컨텐츠 */
+.rw-notice-body{ padding:16px; overflow:auto; font-size: 14px; }
+.rw-rules{ margin:0; padding-left:18px; font-size: 14px; }
+.rw-rules li{ margin-bottom:6px; line-height:1.5; font-size: 14px; }
+.rw-rules p{ margin-bottom:10px; line-height:1.5; font-size: 12px; }
+.rw-notice-ok{
+  width:100%; margin-top:16px; padding:12px 14px; border:1px solid #111; background:#111; color:#fff; border-radius:8px; cursor:pointer;
+}
+
+/* 반응형 */
+@media (max-width: 600px){
+  .rw-product{ grid-template-columns:90px 1fr; }
+  .rw-previews{ grid-template-columns:repeat(4, 1fr); }
+}
+
+
+/* 리뷰쓰기 팝업 전체 텍스트 왼쪽 정렬 */
+#rwModal .rw-body,
+#rwModal .rw-body * {
+  text-align: left !important;
+}
+
+/* flex 요소일 경우도 왼쪽 정렬 */
+#rwModal .rw-product,
+#rwModal .rw-pmeta,
+#rwModal .rw-row,
+#rwModal .rw-stars,
+#rwModal .rw-agree {
+  align-items: flex-start !important;
+  justify-content: flex-start !important;
+}
+
+
+/* 등록하기 버튼 텍스트 가운데 정렬 */
+.rw-submit {
+  width: 100%;
+  padding: 14px 16px;
+  border: 0;
+  border-radius: 10px;
+  background: #111;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+
+  display: flex;                /* flexbox로 내부 정렬 */
+  align-items: center;          /* 세로 가운데 */
+  justify-content: center;      /* 가로 가운데 */
+  text-align: center;           /* 혹시 기본 텍스트 정렬 */
+}
+
+
+
+
+
+/* 상품정보: 텍스트가 그리드 안에서 줄어들 수 있게 */
+#rwModal .rw-product { grid-template-columns: 120px 1fr; align-items: center; }
+#rwModal .rw-pmeta   { min-width: 0; }                /* ← 핵심 */
+#rwModal .rw-pname,
+#rwModal .rw-pcolor  {
+  white-space: normal;            /* 줄바꿈 허용 */
+  word-break: break-word;         /* 긴 단어/영문 강제 줄바꿈 */
+  line-height: 1.4;
+}
+
+/* 모바일일 때도 동일하게 적용(이미 가지고 있는 규칙과 함께 동작) */
+@media (max-width: 600px){
+  #rwModal .rw-product { grid-template-columns: 90px 1fr; }
+  #rwModal .rw-thumb   { width: 90px; }               /* 시각적 일치 */
+}
+
+/* 주문 카드 레이아웃 */
+.order-body{
+  display: grid;
+  grid-template-columns: 80px 1fr 160px; /* 썸네일 | 정보 | 합계박스 */
+  gap: 12px;
+  align-items: center;
+}
+
+/* 합계 박스 */
+.order-summary{
+  position: relative;          /* ↓ 절대배치 기준 */
+  padding: 10px 0 48px 0;      /* 버튼 들어갈 바닥 여백 확보 */
+  text-align: right;           /* 금액 문자 오른쪽 정렬(원하시면 left로) */
+  min-height: 80px;            /* 상황에 따라 높이 보정 */
+}
+.order-summary p{ margin: 0; }
+
+/* 리뷰쓰기 버튼: 합계 박스 우하단 고정 */
+.order-summary .review-btn{
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  padding: 8px 12px;
+  border: 1px solid #222;
+  background: #111;
+  color: #fff;
+  border-radius: 6px;
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+}
+/* 리뷰쓰기 버튼: 합계 박스 우하단 고정 */
+.order-summary .review-view-btn{
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  padding: 8px 12px;
+  border: 1px solid #222;
+  background: #111;
+  color: #fff;
+  border-radius: 6px;
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+/* 반응형(모바일에서는 합계 박스를 한 줄 내려 전체 폭 사용) */
+@media (max-width: 600px){
+  .order-body{
+    grid-template-columns: 80px 1fr;  /* 썸네일 | 정보 */
+  }
+  .order-summary{
+    grid-column: 1 / -1;              /* 다음 줄로 내려서 전체 폭 */
+    padding-bottom: 52px;             /* 버튼 자리 조금 더 */
+    text-align: right;
+  }
+}
+
+
+/* 카드 본문: 위쪽 정렬로 안정화 */
+.order-body{
+  display: grid;
+  grid-template-columns: 80px 1fr 160px; /* 썸네일 | 정보 | 합계 */
+  gap: 12px;
+  align-items: start; /* ← 열릴 때 높이 변해도 안 흔들림 */
+}
+
+/* 합계 박스 + 버튼 고정 */
+.summary-wrap{ overflow: visible; }
+
+.order-summary{
+  position: relative;
+  padding: 10px 0 48px;   /* 버튼 자리 */
+  text-align: right;
+  min-height: 80px;
+}
+.order-summary .review-btn{
+  position: absolute;
+  right: 0; bottom: 0;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #222;
+  background: #111; color: #fff;
+  font-size: 13px; line-height: 1;
+}
+
+
+.order-summary .review-view-btn{
+  position: absolute;
+  right: 0; bottom: 0;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #222;
+  background: #111; color: #fff;
+  font-size: 13px; line-height: 1;
+}
+
+
+/* 상세는 카드 아랫줄 전체 폭 */
+.order-details{
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-top: 1px solid #eee;
+  background: #fafafa;
+  border-radius: 8px;
+}
+
+/* 모바일 레이아웃 */
+@media (max-width: 600px){
+  .order-body{
+    grid-template-columns: 80px 1fr;
+  }
+  .summary-wrap{
+    grid-column: 1 / -1;   /* 다음 줄로 */
+  }
+  .order-summary{ padding-bottom: 52px; }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* 배경 */
+#rvQuickBg{
+  position: fixed !important;
+  inset: 0 !important;
+  background: rgba(0,0,0,.5) !important;
+  display: none !important;
+  z-index: 5000 !important;
+}
+
+/* 모달 본체 (상세와 동일 규격) */
+#rvQuick{
+  position: fixed !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  width: min(820px, 92vw) !important;    /* 상세 퀵뷰 폭 */
+  max-height: 85vh !important;           /* 상세 퀵뷰 높이 */
+  background: #fff !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
+  display: none !important;
+  z-index: 5001 !important;
+}
+
+/* JS가 inline으로 display:block 주면 보이도록(핵심) */
+#rvQuick[style*="display:block"],
+#rvQuick[style*="display: block"]{
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+/* 헤더 */
+#rvQuick .rv-modal-header{
+  display:flex !important; align-items:center !important; justify-content:space-between !important;
+  height:54px !important; padding:0 14px !important; border-bottom:1px solid #eee !important;
+  background:#fff !important; position:sticky !important; top:0 !important; z-index:1 !important;
+}
+#rvQuick .rv-modal-title{ font-weight:700 !important; }
+
+/* 본문(좌 이미지 / 우 텍스트) */
+#rvQuick .rv-quick-body{
+  display:grid !important; grid-template-columns: 1.2fr 1fr !important;
+  gap:20px !important; padding:16px !important;
+  height: calc(100% - 54px) !important; overflow:auto !important;
+  box-sizing:border-box !important;
+}
+
+/* 왼쪽 메인 이미지 + 썸네일 */
+#rvQuick .rv-q-main{
+  width:100% !important; aspect-ratio: 1 / 1 !important;
+  background:#faf9f7 !important; border:1px solid #eee !important;
+  display:flex !important; align-items:center !important; justify-content:center !important;
+  overflow:hidden !important;
+}
+#rvQuick #rvQMain{ width:100% !important; height:100% !important; object-fit:cover !important; display:block !important; }
+#rvQuick .rv-q-thumbs{ margin-top:10px !important; display:flex !important; gap:8px !important; flex-wrap:wrap !important; justify-content:center !important; }
+#rvQuick .rv-q-thumb{ width:58px !important; height:58px !important; padding:0 !important; border:1px solid #ddd !important; border-radius:6px !important; overflow:hidden !important; }
+#rvQuick .rv-q-thumb.is-active{ outline:2px solid #b38b6d !important; }
+#rvQuick .rv-q-thumb img{ width:100% !important; height:100% !important; object-fit:cover !important; display:block !important; }
+
+/* 오른쪽 정보 */
+#rvQuick .rv-q-right{ display:flex !important; flex-direction:column !important; align-items:flex-start !important; text-align:left !important; }
+#rvQuick .rv-q-product{ font-size:16px !important; margin:0 0 8px !important; }
+#rvQuick .rv-q-meta{ font-size:14px !important; display:grid !important; gap:6px !important; margin-bottom:10px !important; }
+#rvQuick .rv-q-stars{ display:flex !important; gap:4px !important; align-items:center !important; }
+#rvQuick .rv-q-content{ font-size:14px !important; line-height:1.6 !important; white-space:pre-wrap !important; }
+
+/* 반응형 (상세 동일) */
+@media (max-width: 900px){
+  #rvQuick{ width:92vw !important; max-height:86vh !important; }
+  #rvQuick .rv-quick-body{ grid-template-columns: 1fr !important; }
+  #rvQuick .rv-q-main{ max-height:56vw !important; }
+}
+
+
+#rvQuick .rv-close {
+  all: unset;                   /* 기본 버튼 리셋 */
+  cursor: pointer;
+  font-size: 20px;              /* 글자 크게 */
+  font-weight: 600;
+  line-height: 1;
+  color: #333;                  /* 색상 */
+  padding: 4px;                 /* 클릭 범위 확보 */
+  transition: color .2s;
+}
+#rvQuick .rv-close:hover {
+  color: #b38b6d;               /* 호버시 색상 강조 */
+}
+
+
 </style>
 
 
