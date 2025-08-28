@@ -617,7 +617,7 @@ function recalcSummary(){
     sub += price;
   });
 
-  const shipping = sub >= 70000 ? 0 : 100;
+  const shipping = sub >= 70000 ? 0 : 3000;
   subTotalEl.textContent = sub.toLocaleString() + '원';
   shippingEl.textContent = shipping === 0 ? '무료' : shipping.toLocaleString() +'원';
   totalEl.textContent    = (sub+shipping).toLocaleString()+'원';
@@ -629,7 +629,7 @@ function recalcSummary(){
     
     // 합계(예시: 배송비는 고정 3000원)
     
-    const shipping =  subTotal >= 70000 ? 0 : 100;
+    const shipping =  subTotal >= 70000 ? 0 : 3000;
     subTotalEl.textContent = `${subTotal.toLocaleString()}원`;
     shippingEl.textContent = shipping === 0 ? '무료' :`${shipping.toLocaleString()}원`;
     totalEl.textContent    = `${(subTotal+shipping).toLocaleString()}원`;
@@ -648,7 +648,7 @@ function recalcSummary(){
     sub += price;
   });
 
-  const shipping = sub >= 70000 ? 0 : 100;
+  const shipping = sub >= 70000 ? 0 : 3000;
 
   subTotalEl.textContent = sub.toLocaleString() + '원';
   shippingEl.textContent = shipping === 0 ? '무료' : shipping.toLocaleString() + '원';
@@ -691,7 +691,7 @@ function recalcSummary(){
     return sum + unit * item.quantity;
   }, 0);
 
-  const shipping = total >= 70000 ? 0 : 100;
+  const shipping = total >= 70000 ? 0 : 3000;
   const total_price = total + shipping;
 
   // POST로 구매 페이지로 이동 (세션 또는 서버 처리 전제)
