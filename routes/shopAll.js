@@ -13,6 +13,7 @@ router.get('/', async (req, res) => {
   \`option\`,
       color,
       price,
+      sale_price,
       thumb,
       hover_img_list
     FROM products

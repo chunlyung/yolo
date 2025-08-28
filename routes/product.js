@@ -11,7 +11,7 @@ router.get('/:id', async (req, res) => {
     // 1) 상품
     const [[product]] = await db.query(`
       SELECT
-        id, name, \`option\`, color, price, thumb,
+        id, name, \`option\`, color, price, sale_price, thumb,
         size_info, description_html,
         detail_subtitle, detail_img1, detail_img2, detail_img3, detail_img4,
         detail_img5, detail_img6, detail_img7, detail_img8,
@@ -26,7 +26,7 @@ router.get('/:id', async (req, res) => {
 
     // 2) 옵션(색상/가격/썸네일)
     const [options] = await db.query(
-      `SELECT color, price, thumb, stock
+      `SELECT color, price, sale_price, thumb, stock
        FROM products_option
        WHERE product_id = ?`,
       [id]

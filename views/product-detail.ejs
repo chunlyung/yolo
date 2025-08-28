@@ -34,8 +34,22 @@
       <!-- 우측 상품 정보 -->
       <div class="product-info">
         <h2 class="product-name"><%= product.name %></h2>
-        <p class="price"><%= product.price.toLocaleString() %>원</p>
+        <p class="price">
+  <%
+    const base  = Number(product.price);
+    const sale  = Number(product.sale_price);
+    const isSale = !isNaN(sale) && sale > 0 && sale < base;
+    const off   = isSale ? Math.max(0, Math.round((1 - (sale / base)) * 100)) : 0;
+  %>
 
+  <% if (isSale) { %>
+    <span class="price-original"><%= base.toLocaleString() %>원</span>
+    <span class="price-sale"><%= sale.toLocaleString() %>원</span>
+    <span class="price-off"><%= off %>%</span>
+  <% } else { %>
+    <span class="price-normal"><%= base.toLocaleString() %>원</span>
+  <% } %>
+</p>
         <dl class="size-info">
           <dt>SIZE</dt>
            <% if (product.size_info) { %>
@@ -56,24 +70,31 @@
          </div>
 
         <div class="option-select">
-          <label for="color-select">Color</label>
-          <select id="color-select">
-            <option value ="" selected disabled>선택하세요.</option>
+  <label for="color-select">Color</label>
+  <select id="color-select">
+    <option value="" selected disabled>선택하세요.</option>
 
-            <% options.forEach(o => { %>
-            <option value="<%= o.color %>"data-thumb ="<%= o.thumb  %>" data-price="<%= o.price %>"  data-stock="<%= o.stock %>" <%= o.stock === 0 ? 'disabled' : '' %>
-                  >    
-              <%= o.color %>
-      <% if (o.stock === 0) { %>
-      (품절)
-    <% } else { %>
-      (재고 <%= o.stock %>개)
-    <% } %> - <%= o.price.toLocaleString() %>원
-  </option>
-<% }) %>
-          </select>
-        </div> 
-        
+    <% options.forEach(o => {
+         const __hasSaleOpt = o.sale_price && Number(o.sale_price) < Number(o.price);
+         const __finalOpt   = __hasSaleOpt ? Number(o.sale_price) : Number(o.price);
+    %>
+      <option
+        value="<%= o.color %>"
+        data-thumb ="<%= o.thumb %>"
+        data-price="<%= __finalOpt %>"      
+        data-oprice="<%= o.price %>"        
+        data-sale="<%= o.sale_price || '' %>"
+        data-stock="<%= o.stock %>"
+        <%= o.stock === 0 ? 'disabled' : '' %>
+      >
+        <%= o.color %>
+        <% if (o.stock === 0) { %>(품절)<% } else { %>(재고 <%= o.stock %>개)<% } %>
+        - <%= __finalOpt.toLocaleString() %>원   
+      </option>
+    <% }) %>
+  </select>
+</div>
+
          <hr class="divider-top">
 
          <hr class="divider-option">
@@ -107,7 +128,7 @@
     <input type="hidden" name="price" id="hidden-price" value="<%= product.price %>">
 
     <!-- 수량은 기본 1로 시작, 추후 JS로 조작 가능 -->
-    <input type="hidden" name="quantity" id="hidden-qty" value="1">
+    <input type="hidden" name="quantity" id="hidden-qty" value="0">
 
     <!-- 선택된 옵션 -->
     <input type="hidden" name="color" id="hidden-color" value="">
@@ -1569,6 +1590,41 @@ document.querySelector('.buy-btn').addEventListener('click', async e => {
 
 
 
+(function(){
+  const select      = document.getElementById('color-select');
+  const qtyEl       = document.querySelector('.qty-value');
+  const totalEl     = document.querySelector('.total-value');
+
+  const hidPrice    = document.getElementById('hidden-price');
+  const hidColor    = document.getElementById('hidden-color');
+  const hidThumb    = document.getElementById('hidden-thumb');
+  const hidQty      = document.getElementById('hidden-qty');
+
+  function won(n){ return Number(n || 0).toLocaleString() + '원'; }
+  function recalc(){
+    const price = Number(hidPrice.value || 0);
+    const qty   = Number(hidQty.value   || 1);
+    if (totalEl) totalEl.textContent = won(price * qty);
+    if (qtyEl)   qtyEl.textContent   = qty + '개';
+  }
+
+  if (select){
+    select.addEventListener('change', () => {
+      const opt = select.options[select.selectedIndex];
+      hidPrice.value = opt.dataset.price || '0';     // ✅ 세일가(없으면 정가)
+      hidColor.value = opt.value || '';
+      hidThumb.value = opt.dataset.thumb || '';
+      recalc();
+    });
+  }
+
+  // 최초 렌더 시 합계 표시 한 번 맞춰두기
+  recalc();
+})();
+
+
+
+
 </script>
 
 <style>
@@ -2361,6 +2417,26 @@ document.querySelector('.buy-btn').addEventListener('click', async e => {
 
 
 
+.product-detail .price .price-original{
+  display:block;
+  color:#9aa0a6;
+  text-decoration: line-through;
+  font-size:.92em;
+  margin-bottom:2px;
+}
+.product-detail .price .price-sale{
+  font-weight:600;
+  color:#222;
+}
+.product-detail .price .price-off{
+  margin-left:6px;
+  font-weight:700;
+  color:#c62828;
+}
+.product-detail .price .price-normal{
+  font-weight:600;
+  color:#222;
+}
 
 
 

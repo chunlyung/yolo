@@ -629,7 +629,7 @@ function recalcSummary(){
     
     // 합계(예시: 배송비는 고정 3000원)
     
-    const shipping =  subTotal >= 70000 ? 0 : 3000;
+    const shipping =  subTotal >= 70000 ? 0 : 100;
     subTotalEl.textContent = `${subTotal.toLocaleString()}원`;
     shippingEl.textContent = shipping === 0 ? '무료' :`${shipping.toLocaleString()}원`;
     totalEl.textContent    = `${(subTotal+shipping).toLocaleString()}원`;
@@ -648,7 +648,7 @@ function recalcSummary(){
     sub += price;
   });
 
-  const shipping = sub >= 70000 ? 0 : 3000;
+  const shipping = sub >= 70000 ? 0 : 100;
 
   subTotalEl.textContent = sub.toLocaleString() + '원';
   shippingEl.textContent = shipping === 0 ? '무료' : shipping.toLocaleString() + '원';
