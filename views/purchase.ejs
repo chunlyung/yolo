@@ -95,7 +95,7 @@
           </li>`).join('');
 
         const sub = cart.reduce((s,v)=>s+v.price*v.quantity,0);
-        const ship = sub >= 70000 ? 0 : 100;
+        const ship = sub >= 70000 ? 0 : 3000;
         const disc = 0;
         const total = sub + ship - disc;
         qs('#sum-subtotal').textContent = sub.toLocaleString()+'원';
