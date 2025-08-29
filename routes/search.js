@@ -8,7 +8,7 @@ router.get('/', async (req, res) => {
   const db = await getConnection();
   try {
     const [rows] = await db.query(`
-      SELECT id, name, price, thumb AS image
+      SELECT id, name, price, sale_price, thumb AS image
       FROM products
       WHERE REPLACE(LOWER(name), ' ', '') LIKE ?
     `, [`%${keyword}%`]);

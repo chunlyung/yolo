@@ -557,24 +557,34 @@ fetch('/auth/status')
 
 /* 컨테이너: 줄 높이만 살짝 */
 .product-card .product-price{
-  display: block;          /* 기존이 inline이어도 보통 문제 없음 */
-  line-height: 1.25;
+  display: inline-block;
+  align-items: baseline;
+  line-height: 1.2;
 }
+
+
+
 
 /* 정가(취소선) */
 .product-card .product-price .price-original{
   color:#9aa0a6;
   text-decoration: line-through;
   font-size:.9em;
-  margin-right:6px;
 }
 
 /* 할인가/퍼센트 */
-.product-card .product-price .price-sale{ font-weight:600; color:#222; }
-.product-card .product-price .price-off{ font-weight:700; color:#c62828; margin-left:6px; }
+.product-card .product-price .price-sale{ font-weight:600; color:#222; margin-left: 2px !important; }
+.product-card .product-price .price-off{ font-weight:700; color:#c62828;  margin-left: 2px !important;}
 
 /* 일반가 */
 .product-card .product-price .price-normal{ font-weight:600; color:#222; }
+
+
+
+
+
+
+
 
 </style>
 
