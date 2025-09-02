@@ -49,10 +49,13 @@ router.get('/success', async (req, res) => {
       return res.status(400).send('적립금 잔액 부족');
     }
 
-    // 5) 주문/아이템/적립금 차감 트랜잭션
+    
+    const now = new Date();
+
     await db.beginTransaction();
 
-    const now = new Date();
+
+
     const [orderResult] = await db.execute(
       `INSERT INTO orders (user_id, total_price, postcode, address, address_detail, request_memo, status, created_at, updated_at)
        VALUES (?, ?, ?, ?, ?, ?, '결제완료', ?, ?)`,
