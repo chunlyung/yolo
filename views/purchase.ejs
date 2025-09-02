@@ -38,17 +38,14 @@
     <section class="payment-info">
       <h2 class="section-title">결제 정보</h2>
      
-
-      <!-- 교체 -->
 <div class="points">
   <span>적립금 (보유 적립금 <span id="u-points">0</span>원)</span>
-  <div style="display:flex;gap:8px;align-items:center;margin-top:8px;">
-    <input id="use-points-input" type="number" min="0" step="1"
-           placeholder="사용할 금액" style="max-width:140px;padding:6px 8px;">
+  <div class="points-control">
+    <input id="use-points-input" type="number" inputmode="numeric" min="0" step="1"
+           placeholder="사용할 금액">
     <button type="button" class="btn-outline" id="use-all-points">전액 사용</button>
   </div>
 </div>
-
 
 
       <p class="points-note">보유하신 적립 금액이 1,000원 이상일 때만 사용하실 수 있습니다</p>
@@ -159,22 +156,35 @@ document.addEventListener('DOMContentLoaded', () => {
       const $all   = qs('#use-all-points');     // <- 전액 사용 버튼
 
       if ($input){
-        $input.addEventListener('input', async () => {
-          g.use = clampUsePoints($input.value);
-          $input.value = g.use || ''; // 정규화
-          await recalcAndRender();
-        });
-      }
-      if ($all){
-        $all.addEventListener('click', async () => {
-          const maxUsable = Math.max(0, g.sub + g.ship);
-          let v = Math.min(g.avail, maxUsable);
-          if (v > 0 && v < g.minUse) v = 0;
-          g.use = v;
-          if ($input) $input.value = g.use || '';
-          await recalcAndRender();
-        });
-      }
+  // 입력 중에는: 숫자만 남기고, 보유/최대만 캡. "1000원 이상" 룰은 적용하지 않음
+  $input.addEventListener('input', async () => {
+    const raw = ($input.value || '').replace(/[^\d]/g, '');
+    let v = Math.min(Number(raw || 0), g.avail, Math.max(0, g.sub + g.ship));
+    if (isNaN(v) || v < 0) v = 0;
+    g.use = v;                // 현재 입력값을 그대로 반영
+    $input.value = raw;       // 사용자가 타이핑한 숫자를 유지
+    await recalcAndRender();  // 합계만 갱신 (할인은 g.use 기반으로 표시)
+  });
+
+  // 포커스가 빠질 때(또는 사용자가 입력을 마무리했을 때): 여기서 1000원 룰 강제
+  $input.addEventListener('blur', async () => {
+    g.use = clampUsePoints($input.value);    // ← 여기서만 1000원 미만은 0 처리
+    $input.value = g.use ? String(g.use) : '';
+    await recalcAndRender();
+  });
+}
+
+if ($all){
+  $all.addEventListener('click', async () => {
+    const maxUsable = Math.max(0, g.sub + g.ship);
+    let v = Math.min(g.avail, maxUsable);
+    if (v > 0 && v < g.minUse) v = 0;  // 전액 사용은 바로 룰 적용
+    g.use = v;
+    if ($input) $input.value = g.use ? String(g.use) : '';
+    await recalcAndRender();
+  });
+}
+
 
       // ✅ 토스 위젯 초기화 (최종 금액으로)
       await initTossWidgets(user, cart, g.total);
@@ -195,6 +205,10 @@ async function initTossWidgets(user, cart, total_price) {
 
   document.getElementById("order-btn").addEventListener("click", async () => {
     // 결제 직전 최종 금액 동기화
+    g.use = clampUsePoints(document.getElementById('use-points-input')?.value);
+      
+     document.getElementById('use-points-input').value = g.use ? String(g.use) : '';
+
     await widgets.setAmount({ value: g.total, currency: 'KRW' });
 
     // 주소/메모 + 사용 적립금 서버에 캐시
@@ -235,5 +249,86 @@ async function initTossWidgets(user, cart, total_price) {
 }
 
   </script>
+  <style>
+    .points .points-control{
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.points .points-control input{
+  flex: 1 1 180px;
+  max-width: 220px;
+  padding: 8px 10px;
+  box-sizing: border-box;
+}
+
+.points .points-control .btn-outline{
+  white-space: nowrap;
+  padding: 8px 12px;
+}
+
+@media (max-width: 768px){
+  .points .points-control{
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .points .points-control input,
+  .points .points-control .btn-outline{
+    width: 100%;
+    max-width: none;
+  }
+}
+
+/* 적립금 입력 줄: 데스크톱 기본 */
+.points .points-control{
+  display:flex;
+  gap:8px;
+  align-items:center;
+  margin-top:8px;
+}
+
+/* 입력창: 데스크톱에서 과하지 않게, 컨테이너 기준으로 줄어듦 */
+.points .points-control input{
+  box-sizing: border-box;
+  flex: 0 1 auto;                     /* 내용따라 줄고 필요시 줄어듦 */
+  width: clamp(120px, 28vw, 200px);   /* 최소 120px, 보통 뷰포트의 28%, 최대 200px */
+  padding: 8px 10px;
+  font-size: 12px;                    /* iOS 확대 방지 & 모바일 가독성 */
+  line-height: 1.2;
+}
+
+/* 버튼은 줄바꿈 없이 */
+.points .points-control .btn-outline{
+  white-space: nowrap;
+  padding: 8px 12px;
+}
+
+/* 태블릿 이하는 세로 스택 + 입력창 꽉차게 */
+@media (max-width: 768px){
+  .points .points-control{
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+  }
+  .points .points-control input{
+    width: 100%;
+    max-width: 100%;
+  }
+  .points .points-control .btn-outline{
+    width: 100%;
+  }
+}
+
+/* 아주 작은 화면(폰)에서 높이가 커보이면 살짝 컴팩트하게 */
+@media (max-width: 420px){
+  .points .points-control input{
+    padding: 7px 10px;
+    font-size: 12px;
+  }
+}
+
+  </style>
 </body>
 </html>
