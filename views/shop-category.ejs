@@ -712,6 +712,67 @@ fetch('/auth/status')
 .product-info{
   max-width: 100%;
 }
+
+
+
+/* ========== 모바일 기본: 2열 고정 ========== */
+.product-container{
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* 모바일 2열 유지 */
+  gap: 16px;
+  padding: 0 12px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* 아주 좁은 기기(<=360px)도 2열 유지하되 간격만 줄임 */
+@media (max-width: 360px){
+  .product-container{
+    gap: 12px;
+    padding: 0 8px;
+  }
+}
+
+/* ========== 태블릿 이상부터 유동 그리드로 전환 ========== */
+@media (min-width: 600px){
+  .product-container{
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+    padding: 0 16px;
+  }
+}
+
+@media (min-width: 900px){
+  .product-container{
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    padding: 0 20px;
+  }
+}
+
+@media (min-width: 1200px){
+  .product-container{
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 28px;
+    padding: 0 24px;
+  }
+}
+
+@media (min-width: 1600px){
+  .product-container{
+    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+    max-width: 1600px;
+  }
+}
+
+/* 카드/이미지는 부모폭 꽉 채우기 */
+.product-card{ display:flex; flex-direction:column; min-width:0; width:100%; }
+.img-wrapper{ width:100%; }
+
+/* 혹시 남아있는 고정폭 방지 */
+.product-card,
+.product-card img,
+.product-info{ max-width:100%; }
 </style>
 
 </body>
