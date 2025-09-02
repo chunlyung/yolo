@@ -34,6 +34,19 @@
       <a class="btn" href="/admin/users">목록</a>
       <a class="btn" href="/admin/users/<%= encodeURIComponent(user.userid) %>/edit">수정</a>
     </div>
+
+
+<form action="/admin/points/grant" method="post" style="margin-top:16px;display:grid;gap:8px;max-width:360px">
+  <input type="hidden" name="user_id" value="<%= user.id || process.env.DB_USER|| '' %>">
+  <label>지급 금액
+    <input type="number" name="amount" min="1" step="1" required placeholder="예: 1000">
+  </label>
+  <label>메모
+    <input type="text" name="memo" maxlength="255" placeholder="예: 고객 불편 보상">
+  </label>
+  <button type="submit">적립금 지급</button>
+</form>
+
   </main>
 </body>
 </html>

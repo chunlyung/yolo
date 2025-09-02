@@ -37,10 +37,20 @@
     </section>
     <section class="payment-info">
       <h2 class="section-title">결제 정보</h2>
-      <div class="points">
-        <span>적립금 (보유 적립금 <span id="u-points">0</span>원)</span>
-        <button type="button" class="btn-outline" id="use-all-points">전액 사용</button>
-      </div>
+     
+
+      <!-- 교체 -->
+<div class="points">
+  <span>적립금 (보유 적립금 <span id="u-points">0</span>원)</span>
+  <div style="display:flex;gap:8px;align-items:center;margin-top:8px;">
+    <input id="use-points-input" type="number" min="0" step="1"
+           placeholder="사용할 금액" style="max-width:140px;padding:6px 8px;">
+    <button type="button" class="btn-outline" id="use-all-points">전액 사용</button>
+  </div>
+</div>
+
+
+
       <p class="points-note">보유하신 적립 금액이 1,000원 이상일 때만 사용하실 수 있습니다</p>
       <div class="summary">
         <div class="summary-row"><span>상품 합계</span><strong id="sum-subtotal">0원</strong></div>
@@ -62,6 +72,11 @@
   </div>
 
   <script>
+
+    function qs(sel){ return document.querySelector(sel); }
+function qsa(sel){ return Array.from(document.querySelectorAll(sel)); }
+
+    
   fetch('/auth/status',{credentials:'include'})
     .then(r=>r.json())
     .then(d=>{
@@ -70,91 +85,155 @@
       bn&&(bn.textContent='');
     });
 
-  function qs(sel){return document.querySelector(sel);}
+  // ✅ 전역 상태
+let g = {
+  sub: 0,        // 상품 합계
+  ship: 0,       // 배송비
+  avail: 0,      // 보유 적립금
+  use: 0,        // 사용할 적립금
+  minUse: 1000,  // 최소 사용금액
+  total: 0,      // 최종 결제금액
+  widgets: null  // toss widgets 핸들
+};
 
-  document.addEventListener('DOMContentLoaded', () => {
-    fetch('/purchase/data',{credentials:'include'})
-      .then(r=>r.ok ? r.json() : Promise.reject('장바구니/로그인 정보 없음'))
-      .then(({user,cart}) => {
-        window.cartData = cart;
-        qs('#u-name').textContent = user.name;
-        qs('#u-phone').textContent = user.phone;
-        qs('#u-email').textContent = user.email;
-        qs('#u-fulladdress').textContent = [user.postcode, user.address, user.address_detail].filter(Boolean).join(', ');
-        qs('#u-points').textContent = (user.points || 0).toLocaleString();
+function format(n){ return (n||0).toLocaleString() + '원'; }
 
-        const list = qs('#order-items');
-        list.innerHTML = cart.map(it=>`
-          <li class="product-item">
-            <img class="product-thumb" src="${it.thumb||'/noimg.jpg'}" alt="">
-            <div class="product-info">
-              <p class="product-name">${it.name}</p>
-              <p class="product-option">Color : ${it.color}</p>
-              <p class="product-qty-price"><span>${it.quantity}개</span> / <span>${it.price.toLocaleString()}원</span></p>
-            </div>
-          </li>`).join('');
+// ✅ 사용 적립금 정규화(보유/최대/최소 체크)
+function clampUsePoints(raw){
+  let v = Math.floor(Number(raw||0));
+  if (isNaN(v) || v < 0) v = 0;
+  const maxUsable = Math.max(0, g.sub + g.ship); // 결제가능 상한
+  v = Math.min(v, g.avail, maxUsable);
+  if (v > 0 && v < g.minUse) v = 0; // 1000 미만은 0 처리
+  return v;
+}
 
-        const sub = cart.reduce((s,v)=>s+v.price*v.quantity,0);
-        const ship = sub >= 70000 ? 0 : 3000;
-        const disc = 0;
-        const total = sub + ship - disc;
-        qs('#sum-subtotal').textContent = sub.toLocaleString()+'원';
-        qs('#sum-shipping').textContent = ship===0 ? '무료' : ship.toLocaleString()+'원';
-        qs('#sum-discount').textContent = disc.toLocaleString()+'원';
-        qs('#sum-total').textContent = total.toLocaleString()+'원';
-        qs('#order-btn').textContent = total.toLocaleString()+'원 결제하기';
-
-        initTossWidgets(user, cart, total);
-      })
-      .catch(e => {
-        alert(e);
-        location.href='/cart';
-      });
-  });
-
-  async function initTossWidgets(user, cart, total_price) {
-    const tossPayments = TossPayments("live_gck_Gv6LjeKD8aK11QQXd4MLVwYxAdXy");
-    const widgets = tossPayments.widgets({ customerKey: user.uuid || `user-${user.id}` });
-    await widgets.setAmount({ value: total_price, currency: 'KRW' });
-
-    const paymentMethodWidget = await widgets.renderPaymentMethods({
-      selector: "#payment-method",
-      variantKey: "DEFAULT"
-    });
-
-    await widgets.renderAgreement({
-      selector: "#agreement",
-      variantKey: "DEFAULT"
-    });
-
-    document.getElementById("order-btn").addEventListener("click", async () => {
-      const fullAddr = document.getElementById("u-fulladdress").textContent.split(',').map(s => s.trim());
-      const postcode = fullAddr[0] || "";
-      const address = fullAddr[1] || "";
-      const address_detail = fullAddr[2] || "";
-      const request_memo = document.getElementById("requestMemo").value;
-
-      await fetch('/order/cache-info', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ postcode, address, address_detail, request_memo })
-      });
-
-      const customerName = user.name;
-      let orderNameItems = cart.map(item => `${item.name} (${item.color} x${item.quantity})`);
-      let orderName = orderNameItems.slice(0, 3).join(', ');
-      if (orderNameItems.length > 3) orderName += ` 외 ${orderNameItems.length - 3}건`;
-      if (orderName.length > 100) orderName = orderName.slice(0, 97) + "...";
-
-      await widgets.requestPayment({
-        orderId: "ORDER-" + Date.now(),
-        orderName,
-        customerName,
-        successUrl: "https://yolo2024.com/payment/success",
-        failUrl: "https://yolo2024.com/payment/fail"
-      });
-    });
+// ✅ 합계표/버튼/토스 금액 동기화
+async function recalcAndRender(){
+  g.total = g.sub + g.ship - g.use;
+  document.querySelector('#sum-discount').textContent = format(g.use);
+  document.querySelector('#sum-total').textContent    = format(g.total);
+  document.querySelector('#order-btn').textContent    = format(g.total) + ' 결제하기';
+  if (g.widgets){
+    try { await g.widgets.setAmount({ value: g.total, currency: 'KRW' }); } catch(e){}
   }
+}
+document.addEventListener('DOMContentLoaded', () => {
+  fetch('/purchase/data',{credentials:'include'})
+    .then(r=>r.ok ? r.json() : Promise.reject('장바구니/로그인 정보 없음'))
+    .then(async ({user,cart}) => {
+      window.cartData = cart;
+
+      // 주문자/주소
+      qs('#u-name').textContent  = user.name;
+      qs('#u-phone').textContent = user.phone;
+      qs('#u-email').textContent = user.email;
+      qs('#u-fulladdress').textContent = [user.postcode, user.address, user.address_detail].filter(Boolean).join(', ');
+
+      // ✅ 보유 적립금
+      g.avail = Number(user.points || 0);
+      qs('#u-points').textContent = g.avail.toLocaleString();
+
+      // 상품 리스트
+      const list = qs('#order-items');
+      list.innerHTML = cart.map(it=>`
+        <li class="product-item">
+          <img class="product-thumb" src="${it.thumb||'/noimg.jpg'}" alt="">
+          <div class="product-info">
+            <p class="product-name">${it.name}</p>
+            <p class="product-option">Color : ${it.color}</p>
+            <p class="product-qty-price"><span>${it.quantity}개</span> / <span>${it.price.toLocaleString()}원</span></p>
+          </div>
+        </li>`).join('');
+
+      // 합계 계산
+      g.sub  = cart.reduce((s,v)=>s+v.price*v.quantity,0);
+      g.ship = g.sub >= 70000 ? 0 : 3000;
+      qs('#sum-subtotal').textContent = format(g.sub);
+      qs('#sum-shipping').textContent = (g.ship===0 ? '무료' : format(g.ship));
+      g.use = 0;
+      await recalcAndRender();
+
+      // ✅ 입력창/전액사용 이벤트
+      const $input = qs('#use-points-input');   // <- 적립금 입력창
+      const $all   = qs('#use-all-points');     // <- 전액 사용 버튼
+
+      if ($input){
+        $input.addEventListener('input', async () => {
+          g.use = clampUsePoints($input.value);
+          $input.value = g.use || ''; // 정규화
+          await recalcAndRender();
+        });
+      }
+      if ($all){
+        $all.addEventListener('click', async () => {
+          const maxUsable = Math.max(0, g.sub + g.ship);
+          let v = Math.min(g.avail, maxUsable);
+          if (v > 0 && v < g.minUse) v = 0;
+          g.use = v;
+          if ($input) $input.value = g.use || '';
+          await recalcAndRender();
+        });
+      }
+
+      // ✅ 토스 위젯 초기화 (최종 금액으로)
+      await initTossWidgets(user, cart, g.total);
+    })
+    .catch(e => {
+      alert(e);
+      location.href='/cart';
+    });
+});
+async function initTossWidgets(user, cart, total_price) {
+  const tossPayments = TossPayments("live_gck_Gv6LjeKD8aK11QQXd4MLVwYxAdXy");
+  const widgets = tossPayments.widgets({ customerKey: user.uuid || `user-${user.id}` });
+  g.widgets = widgets; // ✅ 전역에 보관
+
+  await widgets.setAmount({ value: total_price, currency: 'KRW' });
+  await widgets.renderPaymentMethods({ selector: "#payment-method", variantKey: "DEFAULT" });
+  await widgets.renderAgreement({ selector: "#agreement", variantKey: "DEFAULT" });
+
+  document.getElementById("order-btn").addEventListener("click", async () => {
+    // 결제 직전 최종 금액 동기화
+    await widgets.setAmount({ value: g.total, currency: 'KRW' });
+
+    // 주소/메모 + 사용 적립금 서버에 캐시
+    const fullAddr = document.getElementById("u-fulladdress").textContent.split(',').map(s => s.trim());
+    const postcode = fullAddr[0] || "";
+    const address = fullAddr[1] || "";
+    const address_detail = fullAddr[2] || "";
+    const request_memo = document.getElementById("requestMemo").value;
+
+    await fetch('/order/cache-info', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({
+        postcode, address, address_detail, request_memo,
+        used_points: g.use,               // ✅ 사용 적립금
+        original_subtotal: g.sub,
+        shipping_fee: g.ship,
+        payable_total: g.total
+      })
+    });
+
+    // 주문명
+    const customerName = user.name;
+    let orderNameItems = cart.map(item => `${item.name} (${item.color} x${item.quantity})`);
+    let orderName = orderNameItems.slice(0, 3).join(', ');
+    if (orderNameItems.length > 3) orderName += ` 외 ${orderNameItems.length - 3}건`;
+    if (orderName.length > 100) orderName = orderName.slice(0, 97) + "...";
+
+    await widgets.requestPayment({
+      orderId: "ORDER-" + Date.now(),
+      orderName,
+      customerName,
+      successUrl: "https://yolo2024.com/payment/success",
+      failUrl:    "https://yolo2024.com/payment/fail"
+    });
+  });
+}
+
   </script>
 </body>
 </html>

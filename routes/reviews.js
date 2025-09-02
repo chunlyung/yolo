@@ -6,6 +6,8 @@ const fs = require('fs');
 const multer = require('multer');
 const getConnection = require('../db');
 
+const REVIEW_BONUS_TEXT  = 1000;  // 일반 리뷰
+const REVIEW_BONUS_PHOTO = 2000;  // 포토 리뷰
 // ===== 업로드 경로/스토리지 설정 =====
 const UP_BASE = path.join(__dirname, '..', 'public', 'uploads', 'reviews');
 // URL로 노출될 베이스 (express.static으로 /public 서빙하고 있다고 가정)
@@ -129,12 +131,16 @@ if (!ALLOW_STATUSES.includes(String(oi.status))) {
     // 4) review_media INSERT (파일이 있으면)
     const files = req.files || [];
     const mediaUrls = [];
+    let hasPhoto = false;  // ★ 포토 여부
     for (let i=0; i<files.length; i++){
       const f = files[i];
       // 저장된 실제 경로 → 공개 URL
       const relFolder = path.basename(path.dirname(f.path)); // yyyy-mm-dd
       const url = `${PUBLIC_BASE_URL}/${relFolder}/${path.basename(f.path)}`;
       const type = detectMediaType(f.mimetype || f.originalname);
+
+      if (type === 'image') hasPhoto = true;  // ★ 사진 있으면 true 
+
 
       await db.query(
         `INSERT INTO review_media (review_id, media_url, media_type, sort_no)
@@ -144,8 +150,21 @@ if (!ALLOW_STATUSES.includes(String(oi.status))) {
       mediaUrls.push(url);
     }
 
+      // 5) ✅ 리뷰 적립 (같은 트랜잭션)
+    const bonus = hasPhoto ? REVIEW_BONUS_PHOTO : REVIEW_BONUS_TEXT;
+    const memo  = hasPhoto ? '포토 리뷰 적립' : '일반 리뷰 적립';
+
+    await db.query(
+      `INSERT INTO points_ledger (user_id, amount, type, ref_type, ref_id, memo)
+       VALUES (?, ?, '리뷰적립', 'review', ?, ?)`,
+      [userId, bonus, reviewId, memo]
+    );
+
+
     await db.commit();
-    return res.json({ success:true, reviewId, mediaUrls });
+
+    return res.json({ success:true, reviewId, mediaUrls, bonus });
+
   } catch (err){
     console.error('❌ 리뷰 등록 오류:', err);
     try { await db.rollback(); } catch(e){}

@@ -61,14 +61,28 @@ const getConnection = require('../db');
 });*/
 
 
-
 // order.js
 router.post('/cache-info', (req, res) => {
-  const { postcode, address, address_detail, request_memo } = req.body;
-  req.session.checkoutInfo = { postcode, address, address_detail, request_memo };
+  // 프론트에서 보냄: postcode, address, address_detail, request_memo,
+  // used_points, original_subtotal, shipping_fee, payable_total
+  let {
+    postcode = '', address = '', address_detail = '', request_memo = '',
+    used_points = 0, original_subtotal = 0, shipping_fee = 0, payable_total = 0
+  } = req.body;
+
+  // ✅ 서버에서도 한 번 정규화/보정
+  used_points       = Math.max(0, parseInt(used_points || 0, 10));
+  original_subtotal = Math.max(0, parseInt(original_subtotal || 0, 10));
+  shipping_fee      = Math.max(0, parseInt(shipping_fee || 0, 10));
+  payable_total     = Math.max(0, parseInt(payable_total || 0, 10));
+
+  req.session.checkoutInfo = {
+    postcode, address, address_detail, request_memo,
+    used_points, original_subtotal, shipping_fee, payable_total
+  };
+
   res.json({ success: true });
 });
-
 /*// 주문 조회용 JSON
 router.get('/info/:id', async (req, res) => {
   const conn = await getConnection();

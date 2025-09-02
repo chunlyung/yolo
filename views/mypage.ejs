@@ -92,8 +92,54 @@
           <% }) %>
         <% } %>
       </section>
+<!-- ▼ 적립금 내역 -->
+<p2 class="section-title point-title">적립금 내역</p2>
+<section id="point-history" aria-label="적립금 내역">
+  <!-- 상단 요약 바 -->
+  <div class="point-summary-bar" role="status">
+    <span class="point-summary-label">보유 적립금</span>
+    <strong class="point-summary-amt"><%= (typeof point_balance !== 'undefined' ? point_balance : 0).toLocaleString() %>원</strong>
+  </div>
+
+  <!-- 목록 -->
+  <% if (!points || points.length === 0) { %>
+    <p class="point-empty">적립금 내역이 없습니다.</p>
+  <% } else { %>
+    <ul class="point-list" role="list">
+      <% points.forEach(p => { %>
+        <li class="point-card" role="listitem">
+          <div class="point-row">
+            <span class="point-type"><%= p.type %></span>
+            <time class="point-date">
+              <%= new Date(p.created_at).toLocaleString('ko-KR', { timeZone:'Asia/Seoul' }) %>
+            </time>
+          </div>
+
+          <div class="point-row">
+            <span class="point-memo">
+              <%= p.memo || (p.ref_type ? `${p.ref_type}${p.ref_id ? ' #'+p.ref_id : ''}` : '-') %>
+            </span>
+            <span class="point-amt plus"><%= Number(p.amount).toLocaleString() %>원</span>
+          </div>
+        </li>
+      <% }) %>
+    </ul>
+  <% } %>
+</section>
+
+
+
+
+
+
     </section>
 
+
+
+
+
+
+    
     <!-- 오른쪽 회원 정보 -->
     <section class="mypage-right">
       <div class="profile-header">
@@ -233,7 +279,7 @@
 
     <!-- 업로드 -->
     <div class="rw-row">
-      <div class="rw-label">사진/동영상 첨부</div>
+      <div class="rw-label">사진/동영상 첨부 [일반리뷰:+1000p / 포토리뷰:+2000p 지급]</div>
       <div class="rw-uploader" id="rwUploader">
         <input id="rwFiles" type="file" accept="image/*,video/*" multiple hidden>
         <button class="rw-add" type="button" id="rwAddBtn">＋</button>
@@ -1716,6 +1762,76 @@ window.openQuick({
 }
 #rvQuick .rv-close:hover {
   color: #b38b6d;               /* 호버시 색상 강조 */
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ========== 적립금 내역 (point-history) ========== */
+.point-title { margin-top: 80px; display:block; }
+
+#point-history {
+  width: 100%;
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.point-summary-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 18px;
+  background: white;
+  box-shadow: 0 1px 4px rgba(0,0,0,.03);
+}
+
+.point-summary-label { color:#666; font-size: 0.7em;}
+.point-summary-amt   { font-size: 0.7em; }
+
+.point-empty { color:#777; font-size: 21px; padding: 6px 2px; }
+
+/* 리스트는 ‘주문 카드’ 톤과 동일한 카드 느낌 */
+.point-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.point-card {
+  border: 1px solid #e6e6e6;
+  background: #fff;
+  padding: 14px 16px;
+  box-shadow: 0 1px 4px rgba(0,0,0,.04);
+}
+
+.point-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 10px;
+}
+
+.point-type { font-weight: 600; color:#333;font-size: 14px; text-align: left; }
+.point-date { color:#888; font-size: 14px; }
+.point-memo { color:#555;font-size: 14px; text-align: left; }
+.point-amt  { font-weight: 700; }
+.point-amt.plus  { color:black;font-size: 14px; }  /* 적립(+) 색상 */
+
+@media (max-width: 768px) {
+  .point-summary-bar { padding: 12px 14px; }
+  .point-card        { padding: 12px 14px; }
+  .point-date        { font-size: 13px; }
 }
 
 

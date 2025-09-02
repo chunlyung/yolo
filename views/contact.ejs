@@ -173,10 +173,16 @@
 
            
            <div id="login-menu">
-            <a class="auth" href="/login">Logln</a>
-            </div>
-            
-            <a class="auth"  href="cart">Cart</a>
+  <a class="auth" href="/login">Login</a>
+</div>
+
+<% if (!user) { %>
+  <!-- 로그인 안 했을 때만 Join 보이기 -->
+  <a class="auth join-link" href="/signup">Join</a>
+<% } %>
+
+<a class="auth" href="/cart">Cart</a>
+
             
         </div>
           
@@ -561,6 +567,58 @@ document.getElementById('searchCloseBtn').addEventListener('click', () => {
   text-decoration: none !important;
   font-size: 30px !important;
 }
+
+
+
+
+  /* 헤더의 Join 링크에만 말풍선 표시 */
+.header .nav-right .join-link{
+  position: relative;          /* 말풍선 기준점 */
+}
+
+/* 말풍선 바디 */
+.header .nav-right .join-link::after{
+  content: "+1,000P";
+  position: absolute;
+  left: 50%;
+  top: calc(100% + 6px);       /* 링크 아래로 6px 떨어뜨림 */
+  transform: translateX(-50%);
+  background: gray;        /* 말풍선 색 */
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+  padding: 6px 10px;
+  border-radius: 12px;
+  white-space: nowrap;         /* 줄바꿈 방지 */
+  pointer-events: none;        /* 클릭은 링크에만 */
+}
+
+/* 말풍선 꼬리 */
+.header .nav-right .join-link::before{
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  transform: translateX(-50%);
+  border-width: 6px 6px 0 6px;           /* 삼각형 */
+  border-style: solid;
+  border-color: #5f6c85 transparent transparent transparent;
+}
+
+/* (선택) 모바일에선 숨기고 싶으면 */
+@media (max-width: 768px){
+  .header .nav-right .join-link::before,
+  .header .nav-right .join-link::after{
+    display: none;
+  }
+}
+
+
+.nav-center{
+  margin-left: 50px;
+}
+
 </style>
      </body>  
 

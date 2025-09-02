@@ -43,6 +43,12 @@ app.set('views',
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
+app.use((req, res, next) => {
+  // 여러분이 쓰는 세션 키로 맞춰주세요 ↓
+  const u = req.session.user || null;
+  res.locals.user = u;     // 모든 템플릿에서 user로 접근 가능
+  next();
+});
 
 
 const loginRouter = require('./routes/server');
@@ -84,55 +90,58 @@ app.use('/reviews', reviewsRouter);
 
 
 app.get('/about-as',(req,res)=> {
-  res.render('about-as');
+  res.render('about-as', { user: req.session.user });
 });
 
 app.get('/store',(req,res)=> {
-  res.render('store');
+  res.render('store', { user: req.session.user });
 });
 
 app.get('/contact',(req,res)=> {
-  res.render('contact');
+  res.render('contact', { user: req.session.user });
 });
 
 app.get('/notice',(req,res)=> {
-  res.render('notice');
+  res.render('notice', { user: req.session.user });
 });
 
 app.get('/login',(req,res)=> {
-  res.render('login');
+  res.render('login', { user: req.session.user });
 });
 app.get('/question',(req,res)=> {
-  res.render('question');
+  res.render('question', { user: req.session.user });
 });
 app.get('/QNA',(req,res)=> {
-  res.render('QNA');
+  res.render('QNA', { user: req.session.user });
 });
 
 
 app.get('/signup',(req,res)=> {
-  res.render('signup');
+  res.render('signup', { user: req.session.user });
 });
 
 app.get('/policy',(req,res)=> {
-  res.render('policy');
+  res.render('policy', { user: req.session.user });
 });
 
 app.get('/privacy',(req,res)=> {
-  res.render('privacy');
+  res.render('privacy', { user: req.session.user });
 });
 app.get('/notice-detail',(req,res)=>{
-  res.render('notice-detail');
+  res.render('notice-detail', { user: req.session.user });
 });
 app.get('/faq-detail',(req,res)=>{
-  res.render('faq-detail');
+  res.render('faq-detail', { user: req.session.user });
 });
 
-
-app.get('/',(req,res)=>{
-  res.render('index');
+// 예시: 메인 페이지 라우터
+app.get("/", (req, res) => {
+  res.render("index", { user: req.session.user });
 });
 
+app.get("/shop-all", (req, res) => {
+  res.render("/shop-all", { user: req.session.user });
+});
 
 
 app.use(express.static(path.join(__dirname,'public')));

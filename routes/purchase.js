@@ -3,6 +3,7 @@ const express = require('express');
 const router = express.Router();
 const path = require('path');
 const axios = require("axios");
+  const getConnection = require('../db');           // ← 없으면 상단 import
 
 router.post('/purchase', async (req, res) => {
   const { cart, total_price } = req.body;
@@ -33,21 +34,27 @@ router.get('/', (req, res) => {
   res.render('purchase',{user,cart});
 
 });
-
-// 2) 구매페이지용 데이터 API (user + cart)
-router.get('/data', (req, res) => {
-    console.log('세션정보',req.session);
+// 2) 구매페이지용 데이터 API (user + cart + points)
+router.get('/data', async (req, res) => {
   const user = req.session.user;
   const cart = req.session.cart;
 
   if (!user) return res.status(401).json({ error: '로그인 필요' });
   if (!cart || cart.length === 0) return res.status(400).json({ error: '장바구니 비어 있음' });
 
-  res.json({ user, cart });
-  
+  try {
+    const db = await getConnection();
+    const [[bal]] = await db.query(
+      'SELECT COALESCE(SUM(amount),0) AS balance FROM points_ledger WHERE user_id=?',
+      [user.id]
+    );
+    const userWithPoints = { ...user, points: bal.balance || 0 }; // ✅ points 추가
+    res.json({ user: userWithPoints, cart });
+  } catch (e) {
+    console.error('purchase/data error:', e);
+    res.status(500).json({ error: '서버 오류' });
+  }
 });
-
-
 
 
 

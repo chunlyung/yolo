@@ -75,13 +75,34 @@ router.get('/', async (req, res) => {
       ...o,
       items: byOrder.get(Number(o.id)) || []
     }));
+    // 6) ✅ 적립금: 잔액 + 최근 내역
+const [[bal]] = await db.query(
+  'SELECT COALESCE(SUM(amount),0) AS balance FROM points_ledger WHERE user_id=?',
+  [userId]
+);
+const [points] = await db.query(
+  `SELECT id, amount, type, ref_type, ref_id, memo, created_at
+     FROM points_ledger
+    WHERE user_id=?
+    ORDER BY created_at DESC
+    LIMIT 50`,
+  [userId]
+);
 
-    // 6) 렌더 (딱 1번만!)
-    res.render('mypage', { user, orders: ordersWithItems });
+// 7) 렌더
+return res.render('mypage', {
+  user,
+  orders: ordersWithItems,
+  points,
+  point_balance: bal?.balance ?? 0
+});
+
+
   } catch (err) {
     console.error('mypage 에러:', err);
     res.status(500).send('서버 오류');
   }
+
 });
 
 

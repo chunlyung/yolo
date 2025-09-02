@@ -59,7 +59,7 @@ router.get('/users/:userid', async (req, res) => {
   const { userid }  = req.params;
 
   const [[user]] = await db.query(
-    `SELECT userid, email, name, fullPhone, created_at, last_login, is_active
+    `SELECT id, userid, email, name, fullPhone, created_at, last_login, is_active
        FROM yolos
       WHERE userid = ? AND is_admin = 0`,
     [userid]
@@ -380,5 +380,39 @@ router.get('/products/:id', async (req, res) => {
     res.status(500).send('서버 오류');
   }
 });
+
+
+
+// 지급 적립
+router.post('/points/grant', requireAdmin, async (req, res) => {
+  const { user_id, amount, memo } = req.body;
+  if (!user_id || !amount) return res.status(400).json({ ok:false, message:'user_id/amount 필수' });
+
+  const db = await getConn();
+  await db.query(
+    `INSERT INTO points_ledger (user_id, amount, type, ref_type, ref_id, memo)
+     VALUES (?, ?, '관리자지급적립', 'admin', NULL, ?)`,
+    [Number(user_id), Number(amount), memo || '관리자 지급 적립']
+  );
+  res.json({ ok:true });
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 module.exports = router;
 
