@@ -1567,8 +1567,8 @@ window.openQuick({
   right: 0;
   bottom: 0;
   padding: 8px 12px;
-  border: 1px solid #222;
-  background: #111;
+  border: 1px solid rgb(29, 27, 27);
+  background: rgb(29, 27, 27);
   color: #fff;
   border-radius: 6px;
   font-size: 13px;
@@ -1581,8 +1581,8 @@ window.openQuick({
   right: 0;
   bottom: 0;
   padding: 8px 12px;
-  border: 1px solid #222;
-  background: #111;
+  border: 1px solid rgb(29, 27, 27);
+  background: rgb(29, 27, 27);
   color: #fff;
   border-radius: 6px;
   font-size: 13px;
@@ -1625,8 +1625,8 @@ window.openQuick({
   right: 0; bottom: 0;
   padding: 8px 12px;
   border-radius: 6px;
-  border: 1px solid #222;
-  background: #111; color: #fff;
+  border: 1px solid rgb(29, 27, 27);
+  background:rgb(29, 27, 27); color: #fff;
   font-size: 13px; line-height: 1;
 }
 
@@ -1636,8 +1636,8 @@ window.openQuick({
   right: 0; bottom: 0;
   padding: 8px 12px;
   border-radius: 6px;
-  border: 1px solid #222;
-  background: #111; color: #fff;
+  border: 1px solid ;
+  background: rgb(29, 27, 27); color: #fff;
   font-size: 13px; line-height: 1;
 }
 
@@ -1835,6 +1835,92 @@ window.openQuick({
 }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* 공통: 리뷰쓰기 버튼 */
+.review-btn {
+  position: relative; /* 말꼬리 위치 기준 */
+  display: inline-block;
+  z-index: 1;
+}
+
+/* 기본: 노트북 이상 (오른쪽 위 대각선) */
+.review-btn::after {
+  content: "+2000p !";
+  position: absolute;
+  top: 0;
+  right: 0;
+  transform: translate(55%, -55%);
+  background: rgba(245, 147, 1, 0.89);          /* 배경색 (버튼 색상에 맞게 조정 가능) */
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  padding: 6px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+  box-shadow: 0 2px 6px rgba(0,0,0,.12);
+  z-index: 2;
+}
+
+.review-btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 10px;
+  height: 10px;
+  background: rgba(245, 147, 1, 0.89);
+  transform: translate(15%, -15%) rotate(45deg);
+  border-radius: 2px;
+  z-index: 1;
+  box-shadow: 0 2px 6px rgba(0,0,0,.12);
+}
+
+/* 모바일 (768px 이하): 버튼 위쪽 중앙 */
+@media (max-width: 768px) {
+  .review-btn::after {
+    top: 0;
+    right: 50%;
+    transform: translate(50%, -120%); /* 버튼 위 중앙 */
+    font-size: 11px;
+    padding: 5px 8px;
+  }
+  .review-btn::before {
+    top: 0;
+    right: 50%;
+    transform: translate(50%, -50%) rotate(45deg); /* 꼬리가 위쪽 중앙 */
+    width: 8px;
+    height: 8px;
+  }
+}
 </style>
 
 

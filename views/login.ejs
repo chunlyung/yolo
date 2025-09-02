@@ -33,7 +33,7 @@
     
 <a href="./signup" class="signup-link">
   회원가입하기
-  <span class="signup-badge">+1,000P</span>
+  <span class="signup-badge"></span>
 </a>
   </form>
 </main>
@@ -571,6 +571,86 @@ document.getElementById('searchCloseBtn').addEventListener('click', () => {
 .nav-center{
   margin-left: 50px;
 }
+
+
+
+
+
+
+
+
+
+
+
+/* 회원가입하기 버튼: 레이아웃/색상은 기존 것 그대로 사용 */
+.signup-link{
+  position: relative;          /* 말풍선 포지셔닝 기준 */
+  display: inline-block;       /* 인라인이면 절대배치 기준이 애매해서 */
+  /* 기존에 쓰던 padding/색상/배경 등은 그대로 두세요(여기서 재정의 안 함) */
+}
+
+/* ▶ 말풍선 본체: 버튼 오른쪽 위 */
+.signup-link::after{
+  content: "+1,000P";
+  position: absolute;
+  top: 0;                       /* 기준점: 버튼 우상단 */
+  right: 0;
+  transform: translate(55%, -55%);  /* 버튼 밖으로 살짝 띄우기 */
+  background:rgb(87, 86, 86) ;      /* 버튼 배경색을 그대로 사용 (버튼 색 안 바뀜) */
+  color: #fff;                  /* 글자색 */
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 1;
+  padding: 6px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+  box-shadow: 0 2px 6px rgba(0,0,0,.12);
+  z-index: 1;                   /* 버튼보다 위 */
+}
+
+/* ▶ 꼬리(다이아몬드 모양) */
+.signup-link::before{
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 10px; height: 10px;
+  background: rgb(87, 86, 86);      /* 본체와 같은 배경색 */
+  transform: translate(15%, -15%) rotate(45deg); /* 대각선 방향 꼬리 */
+  border-radius: 2px;
+  z-index: 0;
+  box-shadow: 0 2px 6px rgba(0,0,0,.12);
+}
+
+/* 반응형: 화면이 좁아지면 배지 크기/위치 살짝 줄이기 */
+@media (max-width: 768px){
+  .signup-link::after{
+    font-size: 11px;
+    padding: 5px 8px;
+    transform: translate(50%, -50%);
+  }
+  .signup-link::before{
+    width: 8px; height: 8px;
+    transform: translate(18%, -18%) rotate(45deg);
+  }
+}
+
+/* 아주 작은 화면에선 배지 숨기고 싶으면 (선택) */
+/*
+@media (max-width: 420px){
+  .signup-link::before,
+  .signup-link::after{ display:none; }
+}
+*/
+
+
+
+
+
+
+
+
+
 
 
 </style>

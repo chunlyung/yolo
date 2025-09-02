@@ -635,7 +635,46 @@ fetch('/auth/status')
   margin-left: 85px !important;
 }
 
+/* ① 목록 컨테이너: 반응형 그리드 */
+.product-container{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* 카드 최소 280px, 남으면 늘림 */
+  gap: 28px;                         /* 카드 사이 간격 */
+  max-width: 1400px;                 /* 큰 화면에서 줄 길이 제한 (원하면 1200~1600 사이로 조정) */
+  margin: 0 auto;                    /* 가운데 정렬 */
+  padding: 0 24px;                   /* 좌우 여백 */
+}
 
+/* ② 카드 자체는 폭을 꽉 채우도록 */
+.product-card{
+  display: flex;
+  flex-direction: column;
+  min-width: 0;                      /* 그리드 안에서 내용 때문에 넘치지 않게 */
+  width: 100%;
+}
+
+/* ③ 이미지 박스는 이미 비율 유지 중이라 그대로 두되, 부모 폭에 맞추기 */
+.img-wrapper{ width: 100%; }
+
+/* ④ 해상도 커질 때 카드 최소폭을 단계적으로 늘리기(선택) */
+@media (min-width: 1200px){
+  .product-container{
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  }
+}
+@media (min-width: 1600px){
+  .product-container{
+    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+    max-width: 1600px;               /* 아주 큰 화면에서 한 줄에 더 많이 */
+  }
+}
+
+/* ⑤ 혹시 기존에 고정 폭이 있었다면 반드시 제거/무효화 */
+.product-card,
+.product-card img,
+.product-info{
+  max-width: 100%;
+}
 </style>
 
 </body>
