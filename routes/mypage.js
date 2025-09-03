@@ -81,13 +81,20 @@ const [[bal]] = await db.query(
   [userId]
 );
 const [points] = await db.query(
-  `SELECT id, amount, type, ref_type, ref_id, memo, created_at
-     FROM points_ledger
+   `SELECT
+       id,
+       amount,
+       type,
+       ref_type,
+       ref_id,
+       memo,
+       DATE_FORMAT(CONVERT_TZ(created_at, '+00:00', '+09:00'), '%Y-%m-%d %H:%i') AS created_at_text
+    FROM points_ledger
     WHERE user_id=?
     ORDER BY created_at DESC
     LIMIT 50`,
-  [userId]
-);
+   [userId]
+ );
 
 // 7) 렌더
 return res.render('mypage', {

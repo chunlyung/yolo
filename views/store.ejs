@@ -218,7 +218,6 @@
              <a href="/privacy" style="text-decoration: none; color:inherit;">
             개인정보처리방침</a>&nbsp; 
             
-            <!-- ✅ 사업자정보 확인 팝업 링크 -->
     <a href="https://www.ftc.go.kr/bizCommPop.do?wrkr_no=7023001816"
     onclick="window.open(this.href, 'bizInfo', 'width=800,height=700'); return false;"
     style="text-decoration: none; color: inherit;">사업자정보확인</a>&nbsp;
@@ -272,19 +271,17 @@
 if(isOpen) {
      openBtn.classList.add('hidden');
      closeBtn.classList.remove('hidden');
-     icons.classList.add('hidden'); // toggle시 오른쪽 상단메뉴 제거
+     icons.classList.add('hidden'); 
 
    document.body.classList.add('no-scroll');
      document.documentElement.classList.add('no-scroll');
     }
-     //html 태그도 막기
      else{
  openBtn.classList.remove('hidden');
  closeBtn.classList.add('hidden');
-   icons.classList.remove('hidden'); // toggle시 오른쪽 상단메뉴 삽입
+   icons.classList.remove('hidden'); 
     document.body.classList.remove('no-scroll');
     document.documentElement.classList.remove('no-scroll');
-     // 토글 나갈시 다시 세로 스크롤 생김
   }
 
  }
@@ -293,23 +290,19 @@ if(isOpen) {
 
  function toggleSearch(event) {
  
-     if(event)event.preventDefault();  //submit 동작을 방지
-
+     if(event)event.preventDefault(); 
 
 
    const input = document.querySelector('.search-input');
     const authLinks = document.querySelectorAll('.auth');
-    // querySelectorAll()은  NodeList(배열 비슷한 객체)를 반환하니까 ,
-    // classList.toggle()은 직접 쓸 수 없음 
-    // forEach 나 for문으로 (반복문으로) 처리해야 함. 
  
 
   input.classList.toggle('active'); 
-  input.focus(); // 돋보기를 누르면 커서 깜빡임
+  input.focus(); 
       
      authLinks.forEach(el => {
            
-      el.classList.toggle('hidden'); //각각에 hidden 토글 적용
+      el.classList.toggle('hidden'); 
 
      });
  }
@@ -317,29 +310,26 @@ if(isOpen) {
 
 
 
-/* --- (dropheader, toggleMenu 등 기존 코드 그대로) --- */
 
-/* ✅ 두 번째로 선언해 버렸던 toggleSearch() 삭제 후 아래 하나만 남깁니다 */
 function toggleSearch(e){
-  if(e) e.preventDefault();          // form submit 방지
+  if(e) e.preventDefault();          
 
   const input      = document.getElementById('searchInput');
   const authLinks  = document.querySelectorAll('.auth');
 
-  // 입력창 열고/닫기
+ 
   input.classList.toggle('show');
 
-  // Login / Cart 토글
   authLinks.forEach(a => a.classList.toggle('hidden'));
 
   if (input.classList.contains('show')) {
     input.focus();
   } else {
-    input.value = '';                // 닫힐 때 내용 비우기(선택)
+    input.value = '';                
   }
 }
 
-/* Enter 키로 검색 페이지 이동 */
+
 document.getElementById('searchInput').addEventListener('keydown', e => {
   if (e.key === 'Enter'){
     const keyword = e.target.value.trim();
@@ -369,7 +359,6 @@ document.getElementById('searchInputOverlay').addEventListener('keydown', e => {
 });
 
 
-// 모바일 메뉴 검색창: Enter로 검색 페이지 이동
 document.getElementById('search-mobile').addEventListener('keydown', e => {
   if (e.key === 'Enter') {
     const keyword = e.target.value.trim();
@@ -389,7 +378,7 @@ document.getElementById('search-mobile').addEventListener('keydown', e => {
 
 document.getElementById('searchCloseBtn').addEventListener('click', () => {
   const overlay = document.getElementById('mobileSearchOverlay');
-  overlay.classList.remove('active'); // 또는 .classList.remove('active') → 네 CSS 기준에 맞춰
+  overlay.classList.remove('active'); 
   document.getElementById('searchInputOverlay').value = '';
 });
 
@@ -403,9 +392,6 @@ document.getElementById('searchCloseBtn').addEventListener('click', () => {
 
 
 
-/* --- 로그인 유지 fetch 부분 그대로 --- */
-
-//로그인유지
 
     fetch('/auth/status')
     .then(res => res.json())

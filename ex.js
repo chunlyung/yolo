@@ -4,22 +4,21 @@ const mysql = require('mysql');
 const app = express();
 const port = 3000;
 
-// DB 연결
+
 const db = mysql.createConnection({
   host: 'localhost',
   user: 'root',
-  password: '111111', // 너가 쓰는 비번
-  database: 'yolo'    // 사용할 DB 이름
+  password: '111111', 
+  database: 'yolo'    
 });
 db.connect();
 
-// 미들웨어
+
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// 정적 파일 제공 (signup.html 접근용)
 app.use(express.static(__dirname));
 
-// 회원가입 처리
+
 app.post('/example', (req, res) => {
   const { username, password } = req.body;
 
@@ -29,7 +28,7 @@ app.post('/example', (req, res) => {
       console.error('DB 저장 오류:', err);
       return res.send('회원가입 실패. 이미 있는 아이디일 수 있어.');
     }
-    res.send('회원가입 성공!'); // 또는 리다이렉트
+    res.send('회원가입 성공!'); 
   });
 });
 

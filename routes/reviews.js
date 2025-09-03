@@ -3,6 +3,8 @@ const express = require('express');
 const router = express.Router();
 const path = require('path');
 const fs = require('fs');
+const fsp = require('fs/promises');
+const sharp = require('sharp');
 const multer = require('multer');
 const getConnection = require('../db');
 
@@ -35,13 +37,17 @@ const storage = multer.diskStorage({
   }
 });
 const upload = multer({
-  storage,
-  limits: { files:10, fileSize: 30*1024*1024 },
-  fileFilter: (req, file, cb) => {
-    const ok = /^(image|video)\//.test(file.mimetype);
-    cb(ok ? null : new Error('이미지/동영상만 업로드 가능합니다.'), ok);
-  }
-});
+   storage,
+   limits: { files: 10, fileSize: 30 * 1024 * 1024 },
+   fileFilter: (req, file, cb) => {
+     const mime = String(file.mimetype || '').toLowerCase();
+     const isImg = mime.startsWith('image/');
+     const isMp4 = mime === 'video/mp4'; // MP4만 허용
+     const ok = isImg || isMp4;
+     cb(ok ? null : new Error('이미지는 모든 형식, 동영상은 MP4만 업로드 가능합니다.'), ok);
+   }
+ });
+
 
 
 // ===== 유틸 =====
@@ -132,23 +138,54 @@ if (!ALLOW_STATUSES.includes(String(oi.status))) {
     const files = req.files || [];
     const mediaUrls = [];
     let hasPhoto = false;  // ★ 포토 여부
-    for (let i=0; i<files.length; i++){
-      const f = files[i];
-      // 저장된 실제 경로 → 공개 URL
-      const relFolder = path.basename(path.dirname(f.path)); // yyyy-mm-dd
-      const url = `${PUBLIC_BASE_URL}/${relFolder}/${path.basename(f.path)}`;
-      const type = detectMediaType(f.mimetype || f.originalname);
 
-      if (type === 'image') hasPhoto = true;  // ★ 사진 있으면 true 
+     for (let i = 0; i < files.length; i++) {
+    const f = files[i];
+    const relFolder = path.basename(path.dirname(f.path)); // yyyy-mm-dd
+    const origName  = path.basename(f.path);              // 원본 파일명 (확장자 포함)
+    const extLower  = path.extname(origName).toLowerCase();
+    const baseName  = path.basename(origName, extLower);  // 확장자 제외
+    const absDir    = path.dirname(f.path);
 
+    let type = detectMediaType(f.mimetype || f.originalname);
+    let finalUrl;
 
-      await db.query(
-        `INSERT INTO review_media (review_id, media_url, media_type, sort_no)
-         VALUES (?, ?, ?, ?)`,
-        [reviewId, url, type, i+1]
-      );
-      mediaUrls.push(url);
+    if (type === 'image') {
+      hasPhoto = true;
+      // ★ 어떤 이미지 포맷이 들어와도 JPG로 강제 변환
+      const jpgName = `${baseName}.jpg`;
+      const jpgPath = path.join(absDir, jpgName);
+
+      try {
+        await sharp(f.path)
+          .rotate() // EXIF 방향 교정
+          .jpeg({ quality: 85, mozjpeg: true })
+          .toFile(jpgPath);
+
+        // 원본(heic/webp/png 등) 제거
+        try { await fsp.unlink(f.path); } catch (e) {}
+
+        finalUrl = `${PUBLIC_BASE_URL}/${relFolder}/${jpgName}`;
+      } catch (e) {
+        // 만약 서버 sharp가 heic 코덱 미포함 등으로 실패하면, 원본 그대로 사용 (최후 폴백)
+        console.error('sharp 변환 실패, 원본 사용:', e);
+        finalUrl = `${PUBLIC_BASE_URL}/${relFolder}/${origName}`;
+      }
+    } else if (type === 'video') {
+      // 동영상은 우선 원본 그대로 저장 (권장: MP4만 허용하도록 아래 fileFilter 조정)
+      finalUrl = `${PUBLIC_BASE_URL}/${relFolder}/${origName}`;
+    } else {
+      // 알 수 없는 타입이면 건너뜀
+      continue;
     }
+
+    await db.query(
+      `INSERT INTO review_media (review_id, media_url, media_type, sort_no)
+       VALUES (?, ?, ?, ?)`,
+      [reviewId, finalUrl, type, i + 1]
+    );
+    mediaUrls.push(finalUrl);
+  }
 
       // 5) ✅ 리뷰 적립 (같은 트랜잭션)
     const bonus = hasPhoto ? REVIEW_BONUS_PHOTO : REVIEW_BONUS_TEXT;

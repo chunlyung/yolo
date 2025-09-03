@@ -110,9 +110,7 @@
         <li class="point-card" role="listitem">
           <div class="point-row">
             <span class="point-type"><%= p.type %></span>
-            <time class="point-date">
-              <%= new Date(p.created_at).toLocaleString('ko-KR', { timeZone:'Asia/Seoul' }) %>
-            </time>
+            <time class="point-date"><%= p.created_at_text %></time>
           </div>
 
           <div class="point-row">

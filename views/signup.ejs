@@ -381,20 +381,20 @@ function toggleSearch(e){
   const input      = document.getElementById('searchInput');
   const authLinks  = document.querySelectorAll('.auth');
 
-  // 입력창 열고/닫기
+  
   input.classList.toggle('show');
 
-  // Login / Cart 토글
+  
   authLinks.forEach(a => a.classList.toggle('hidden'));
 
   if (input.classList.contains('show')) {
     input.focus();
   } else {
-    input.value = '';                // 닫힐 때 내용 비우기(선택)
+    input.value = '';                
   }
 }
 
-/* Enter 키로 검색 페이지 이동 */
+
 document.getElementById('searchInput').addEventListener('keydown', e => {
   if (e.key === 'Enter'){
     const keyword = e.target.value.trim();
@@ -424,7 +424,6 @@ document.getElementById('searchInputOverlay').addEventListener('keydown', e => {
 });
 
 
-// 모바일 메뉴 검색창: Enter로 검색 페이지 이동
 document.getElementById('search-mobile').addEventListener('keydown', e => {
   if (e.key === 'Enter') {
     const keyword = e.target.value.trim();
@@ -456,22 +455,22 @@ document.getElementById('searchCloseBtn').addEventListener('click', () => {
    const layer = document.getElementById('daum-postcode-layer');
      const width=500;
      const height = 400;
-     const borderWidth = 2; // iframe 테두리 고려 
+     const borderWidth = 2; 
    
     new daum.Postcode( {
-      oncomplete: function(data){ // 주소 정보 입력
+      oncomplete: function(data){ 
 
          document.getElementById('postcode').value = data.zonecode;
         document.getElementById('address').value = data.roadAddress;
          document.getElementById('address_detail').focus();
-                 layer.style.display = 'none'; //검색 완료 시 iframe 닫기
+                 layer.style.display = 'none'; 
       },
       width:'100%', 
       heiight : '100%',
       maxSuggestItems:5
-    }).embed(layer);// 핵심 : iframe 방식으로 삽입
+    }).embed(layer);
 
-    layer.style.display = 'block'; //iframe열기
+    layer.style.display = 'block'; 
      layer.style.width= width + 'px';
       layer.style.height = height + 'px';
        layer.style.border = borderWidth + 'px solid #888';
@@ -531,7 +530,6 @@ document.getElementById('searchCloseBtn').addEventListener('click', () => {
     });
 
 
-// ✅ 모두 동의 → 전체 항목 체크/해제
   const agreeAll = document.getElementById('agreeAll');
   const agreeItems = document.querySelectorAll('.agree-item');
 
@@ -539,7 +537,6 @@ document.getElementById('searchCloseBtn').addEventListener('click', () => {
     agreeItems.forEach(item => item.checked = this.checked);
   });
 
-  // ✅ 개별 항목 중 하나라도 체크 해제 시 → agreeAll도 해제
   agreeItems.forEach(item => {
     item.addEventListener('change', function () {
       agreeAll.checked = [...agreeItems].every(i => i.checked);
