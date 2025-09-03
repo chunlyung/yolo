@@ -4,9 +4,6 @@ const router = express.Router();
 const path = require('path');
 const fs = require('fs');
 const fsp = require('fs/promises');
-const ffmpeg = require('fluent-ffmpeg');
-const ffmpegPath = require('ffmpeg-static');
-ffmpeg.setFfmpegPath(ffmpegPath);
 const sharp = require('sharp');
 const multer = require('multer');
 const getConnection = require('../db');
@@ -44,10 +41,9 @@ const upload = multer({
    limits: { files: 10, fileSize: 30 * 1024 * 1024 },
    fileFilter: (req, file, cb) => {
      const mime = String(file.mimetype || '').toLowerCase();
-const isImg = mime.startsWith('image/');
- // 컨테이너는 뭐가 와도 ffmpeg로 mp4로 만들 거라면 video/* 전체 허용도 가능
- const isVid = mime.startsWith('video/');
- const ok = isImg || isVid;
+     const isImg = mime.startsWith('image/');
+     const isMp4 = mime === 'video/mp4'; // MP4만 허용
+     const ok = isImg || isMp4;
      cb(ok ? null : new Error('이미지는 모든 형식, 동영상은 MP4만 업로드 가능합니다.'), ok);
    }
  });
@@ -144,64 +140,52 @@ if (!ALLOW_STATUSES.includes(String(oi.status))) {
     let hasPhoto = false;  // ★ 포토 여부
 
      for (let i = 0; i < files.length; i++) {
-  const f = files[i];
-  const relFolder = path.basename(path.dirname(f.path)); // yyyy-mm-dd
-  const origName  = path.basename(f.path);
-  const extLower  = path.extname(origName).toLowerCase();
-  const baseName  = path.basename(origName, extLower);
-  const absDir    = path.dirname(f.path);
+    const f = files[i];
+    const relFolder = path.basename(path.dirname(f.path)); // yyyy-mm-dd
+    const origName  = path.basename(f.path);              // 원본 파일명 (확장자 포함)
+    const extLower  = path.extname(origName).toLowerCase();
+    const baseName  = path.basename(origName, extLower);  // 확장자 제외
+    const absDir    = path.dirname(f.path);
 
-  let type = detectMediaType(f.mimetype || f.originalname);
-  let finalUrl;
+    let type = detectMediaType(f.mimetype || f.originalname);
+    let finalUrl;
 
-  if (type === 'image') {
-    hasPhoto = true;
-    // 🔁 이미지 → JPG로 강제
-    const jpgName = `${baseName}.jpg`;
-    const jpgPath = path.join(absDir, jpgName);
-    try {
-      await sharp(f.path).rotate().jpeg({ quality: 85, mozjpeg: true }).toFile(jpgPath);
-      try { await fsp.unlink(f.path); } catch(e){}
-      finalUrl = `${PUBLIC_BASE_URL}/${relFolder}/${jpgName}`;
-    } catch (e) {
-      console.error('sharp 변환 실패, 원본 사용:', e);
+    if (type === 'image') {
+      hasPhoto = true;
+      // ★ 어떤 이미지 포맷이 들어와도 JPG로 강제 변환
+      const jpgName = `${baseName}.jpg`;
+      const jpgPath = path.join(absDir, jpgName);
+
+      try {
+        await sharp(f.path)
+          .rotate() // EXIF 방향 교정
+          .jpeg({ quality: 85, mozjpeg: true })
+          .toFile(jpgPath);
+
+        // 원본(heic/webp/png 등) 제거
+        try { await fsp.unlink(f.path); } catch (e) {}
+
+        finalUrl = `${PUBLIC_BASE_URL}/${relFolder}/${jpgName}`;
+      } catch (e) {
+        // 만약 서버 sharp가 heic 코덱 미포함 등으로 실패하면, 원본 그대로 사용 (최후 폴백)
+        console.error('sharp 변환 실패, 원본 사용:', e);
+        finalUrl = `${PUBLIC_BASE_URL}/${relFolder}/${origName}`;
+      }
+    } else if (type === 'video') {
+      // 동영상은 우선 원본 그대로 저장 (권장: MP4만 허용하도록 아래 fileFilter 조정)
       finalUrl = `${PUBLIC_BASE_URL}/${relFolder}/${origName}`;
+    } else {
+      // 알 수 없는 타입이면 건너뜀
+      continue;
     }
-  } else if (type === 'video') {
-    // 🔁 동영상 → mp4(H.264 video + AAC audio)로 강제
-    const mp4Name = `${baseName}.mp4`;
-    const mp4Path = path.join(absDir, mp4Name);
 
-    // 이미 mp4더라도 코덱이 HEVC일 수 있으니 항상 변환
-    await new Promise((resolve, reject) => {
-      ffmpeg(f.path)
-        .videoCodec('libx264')         // H.264
-        .audioCodec('aac')             // AAC
-        .format('mp4')
-        .outputOptions([
-          '-movflags +faststart',      // 스트리밍/모바일 재생 개선
-          '-preset veryfast',          // 인코딩 속도/용량 타협
-          '-crf 23'                    // 화질(낮을수록 고화질)
-        ])
-        .on('end', resolve)
-        .on('error', reject)
-        .save(mp4Path);
-    });
-
-    try { await fsp.unlink(f.path); } catch(e){} // 원본 삭제
-    finalUrl = `${PUBLIC_BASE_URL}/${relFolder}/${mp4Name}`;
-  } else {
-    continue;
+    await db.query(
+      `INSERT INTO review_media (review_id, media_url, media_type, sort_no)
+       VALUES (?, ?, ?, ?)`,
+      [reviewId, finalUrl, type, i + 1]
+    );
+    mediaUrls.push(finalUrl);
   }
-
-  await db.query(
-    `INSERT INTO review_media (review_id, media_url, media_type, sort_no)
-     VALUES (?, ?, ?, ?)`,
-    [reviewId, finalUrl, type, i + 1]
-  );
-  mediaUrls.push(finalUrl);
-}
-
 
       // 5) ✅ 리뷰 적립 (같은 트랜잭션)
     const bonus = hasPhoto ? REVIEW_BONUS_PHOTO : REVIEW_BONUS_TEXT;
