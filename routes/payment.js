@@ -3,14 +3,12 @@ const router = express.Router();
 const axios = require("axios");
 const getConnection = require("../db");
 
-// payment.js (또는 이 파일의 결제 콜백 라우터)
 router.get('/success', async (req, res) => {
   const { paymentKey, orderId, amount } = req.query;
   const db = await getConnection();
   const secretKey = 'live_gsk_EP59LybZ8B9gG7AW0O7br6GYo7pR';
 
   try {
-    // 1) 토스 결제 승인
     const result = await axios.post(
       'https://api.tosspayments.com/v1/payments/confirm',
       { paymentKey, orderId, amount: parseInt(amount, 10) },
@@ -23,7 +21,6 @@ router.get('/success', async (req, res) => {
     );
     const payment = result.data;
 
-    // 2) 세션 확인
     const user = req.session.user;
     const cart = req.session.cart;
     const info = req.session.checkoutInfo || {};
@@ -31,14 +28,12 @@ router.get('/success', async (req, res) => {
       return res.status(400).send('장바구니 없음 또는 로그인 필요');
     }
 
-    // 3) 금액 일치 여부 체크 (토스 금액 vs 우리가 계산한 금액)
     const payable = parseInt(info.payable_total || 0, 10);
     if (payable !== parseInt(payment.totalAmount, 10)) {
       console.error('금액 불일치:', payable, payment.totalAmount);
       return res.status(400).send('결제 금액 불일치');
     }
 
-    // 4) 적립금 잔액 확인
     const [[bal]] = await db.query(
       'SELECT COALESCE(SUM(amount),0) AS balance FROM points_ledger WHERE user_id=?',
       [user.id]
@@ -71,7 +66,6 @@ router.get('/success', async (req, res) => {
       );
     }
 
-    // ✅ 6) 적립금 사용 차감 (음수)
     if (usePts > 0) {
       await db.query(
         `INSERT INTO points_ledger (user_id, amount, type, ref_type, ref_id, memo)
@@ -82,11 +76,9 @@ router.get('/success', async (req, res) => {
 
     await db.commit();
 
-    // 7) 세션 정리
     req.session.cart = null;
     req.session.checkoutInfo = null;
 
-    // 8) 주문완료 페이지로
     res.redirect(`/order/success?orderId=${dbOrderId}`);
   } catch (err) {
     await db.rollback?.();

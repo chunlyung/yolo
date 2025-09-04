@@ -17,7 +17,7 @@ const nodemailer = require('nodemailer');
 app.use(session({
   secret: '232300',
   resave: false,
-  saveUninitialized: false , // 빈 세션 저장 안함 
+  saveUninitialized: false , 
   store: new MySQLStore({
     host:process.env.DB_HOST,
     port:process.env.DB_PORT,
@@ -29,7 +29,7 @@ app.use(session({
   cookie: {
     httpOnly:true,
     secureL:false,
-     maxAge: 1000 * 60 * 60 * 5// 5시간 유지
+     maxAge: 1000 * 60 * 60 * 5
   }
  
 }));
@@ -44,9 +44,8 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 app.use((req, res, next) => {
-  // 여러분이 쓰는 세션 키로 맞춰주세요 ↓
   const u = req.session.user || null;
-  res.locals.user = u;     // 모든 템플릿에서 user로 접근 가능
+  res.locals.user = u;     
   next();
 });
 
@@ -134,7 +133,7 @@ app.get('/faq-detail',(req,res)=>{
   res.render('faq-detail', { user: req.session.user });
 });
 
-// 예시: 메인 페이지 라우터
+
 app.get("/", (req, res) => {
   res.render("index", { user: req.session.user });
 });
