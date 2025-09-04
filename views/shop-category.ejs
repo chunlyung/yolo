@@ -31,7 +31,12 @@
 </div>
     
     <div class="product-info">
-    <p class="product-title"><%= p.name %>(<%= p.color %>)</p>
+    <p class="product-title">
+  <%= p.name %>(<%= p.color %>)
+  <% if (p.is_new == 1) { %>
+    <span class="badge badge-new">New</span>
+  <% } %>
+</p>
      <span class="product-price">
   <%
     const base  = Number(p.price);
@@ -776,11 +781,53 @@ fetch('/auth/status')
 
 
 
+
+
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 0;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.6;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.badge-new {
+  background: white;   /* 연한 파랑 */
+  color: #2563EB;         /* 진한 파랑 텍스트 */
+  border: 1px solid #2563EB; 
+}
+
+
 @media (max-width: 768px) {
   .head{
    transform: translateX(-1.5em);
   }
+
+  
+.badge {
+  display: inline-block;
+  padding: 1px 4px;
+  border-radius: 0;
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 1.6;
+  vertical-align: middle;
+  white-space: nowrap;
 }
+
+.badge-new {
+  background: white;   /* 연한 파랑 */
+  color: #2563EB;         /* 진한 파랑 텍스트 */
+  border: 1px solid #2563EB; 
+}
+}
+
+
+
+
 </style>
 
 </body>

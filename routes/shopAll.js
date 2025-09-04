@@ -15,6 +15,7 @@ router.get('/', async (req, res) => {
       price,
       sale_price,
       thumb,
+      is_new,
       hover_img_list
     FROM products
     ORDER BY id DESC
