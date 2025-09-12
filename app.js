@@ -145,6 +145,9 @@ app.get("/shop-all", (req, res) => {
 
 app.use(express.static(path.join(__dirname,'public')));
 
+app.get('/favicon.ico', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'favicon.ico'));
+});
 
 console.log('서버 라우터들 정상 등록 완료');
 
