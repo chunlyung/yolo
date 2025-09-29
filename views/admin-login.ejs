@@ -1,28 +1,136 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en" >
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
   <title>관리자 로그인</title>
-  <link rel="stylesheet" href="/css/admin.css" />
+  <link rel="stylesheet" href="./style.css">
 </head>
-<body class="admin-login">
-  <h1>Admin Login</h1>
+<body>
+<div class="login-box">
+  <h2>Login</h2>
 
-  <% if (error) { %>
+  <!-- 필요 시 EJS 에러메시지 -->
+  <% if (typeof error !== 'undefined' && error) { %>
     <p class="error"><%= error %></p>
   <% } %>
 
-  <form method="post" action="/admin/login">
-    <label>E-Mail
-      <input name="email" type="email" required />
-    </label>
+  <!-- ✅ 기능 동일: 서버로 제출 -->
+  <form method="post" action="/admin/login" autocomplete="on">
+    <div class="user-box">
+      <input type="email" name="email" required />
+      <label>E-mail</label>
+    </div>
 
-    <label>Password
-      <input name="password" type="password" required />
-    </label>
+    <div class="user-box">
+      <!-- ✅ name 오타 수정: password -->
+      <input type="password" name="password" required />
+      <label>Password</label>
+    </div>
 
-    <button type="submit">로그인</button>
+    <!-- ✅ 스타일은 유지하고, 클릭 시 폼 제출 -->
+    <a href="#"
+       onclick="this.closest('form').requestSubmit(); return false;"
+       aria-label="로그인">
+      <span></span><span></span><span></span><span></span>
+      Login
+    </a>
+
+    <!-- ✅ 엔터키 제출/접근성 대비용 숨김 submit 버튼 -->
+    <button type="submit" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;">Submit</button>
   </form>
+</div>
+
+<script>
+  // ✅ 구형 브라우저용 requestSubmit 폴리필
+  (function(){
+    if (!HTMLFormElement.prototype.requestSubmit) {
+      HTMLFormElement.prototype.requestSubmit = function (submitter) {
+        if (submitter) return submitter.click();
+        const tmp = document.createElement('button');
+        tmp.type = 'submit';
+        tmp.hidden = true;
+        this.appendChild(tmp);
+        tmp.click();
+        this.removeChild(tmp);
+      };
+    }
+  })();
+</script>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Diphylleia&family=Gowun+Batang&family=Nanum+Brush+Script&family=Nanum+Myeongjo&display=swap');
+
+  html { height: 100%; }
+  body {
+    margin:0; padding:0; font-family: sans-serif;
+    background: linear-gradient(#57606f, #2f3542);
+  }
+
+  .login-box {
+    position: absolute; top: 50%; left: 50%; width: 400px; padding: 40px;
+    transform: translate(-50%, -50%);
+    background: rgba(0,0,0,.7); box-sizing: border-box;
+    box-shadow: 0 15px 25px rgba(0,0,0,.6); border-radius: 10px;
+  }
+
+  .login-box h2 { margin: 0 0 30px; padding: 0; color: #fff; text-align: center; }
+
+  .user-box { position: relative; }
+  .user-box input {
+    width: 100%; padding: 10px 0; font-size: 16px; color: #fff; margin-bottom: 30px;
+    border: none; border-bottom: 1px solid #fff; outline: none; background: transparent;
+  }
+  .user-box label {
+    position: absolute; top:0; left: 0; padding: 10px 0; font-size: 16px; color: #fff;
+    pointer-events: none; transition: .5s;
+  }
+  .user-box input:focus ~ label,
+  .user-box input:valid ~ label {
+    top: -20px; left: 0; color: #03e9f4; font-size: 12px;
+  }
+
+  /* 에러 메시지(선택): 레이아웃 영향 최소화 */
+  .error{
+    margin: -10px 0 20px; padding: 8px 10px; border-radius: 8px;
+    background: rgba(255,64,64,.15); border: 1px solid rgba(255,64,64,.35);
+    color:#ffd5d5; font-size:12px;
+  }
+
+  .login-box form a {
+    position: relative; display: inline-block; padding: 10px 20px; color: #03e9f4;
+    font-size: 16px; text-decoration: none; text-transform: uppercase; overflow: hidden;
+    transition: .5s; margin-top: 40px; letter-spacing: 4px
+  }
+  .login-box a:hover {
+    background: #03e9f4; color: #fff; border-radius: 5px;
+    box-shadow: 0 0 5px #03e9f4, 0 0 25px #03e9f4, 0 0 50px #03e9f4, 0 0 100px #03e9f4;
+  }
+  .login-box a span { position: absolute; display: block; }
+  .login-box a span:nth-child(1) {
+    top: 0; left: -100%; width: 100%; height: 2px;
+    background: linear-gradient(90deg, transparent, #03e9f4);
+    animation: btn-anim1 1s linear infinite;
+  }
+  @keyframes btn-anim1 { 0%{left:-100%;} 50%,100%{left:100%;} }
+  .login-box a span:nth-child(2) {
+    top: -100%; right: 0; width: 2px; height: 100%;
+    background: linear-gradient(180deg, transparent, #03e9f4);
+    animation: btn-anim2 1s linear infinite; animation-delay: .25s
+  }
+  @keyframes btn-anim2 { 0%{top:-100%;} 50%,100%{top:100%;} }
+  .login-box a span:nth-child(3) {
+    bottom: 0; right: -100%; width: 100%; height: 2px;
+    background: linear-gradient(270deg, transparent, #03e9f4);
+    animation: btn-anim3 1s linear infinite; animation-delay: .5s
+  }
+  @keyframes btn-anim3 { 0%{right:-100%;} 50%,100%{right:100%;} }
+  .login-box a span:nth-child(4) {
+    bottom: -100%; left: 0; width: 2px; height: 100%;
+    background: linear-gradient(360deg, transparent, #03e9f4);
+    animation: btn-anim4 1s linear infinite; animation-delay: .75s
+  }
+  @keyframes btn-anim4 { 0%{bottom:-100%;} 50%,100%{bottom:100%;} }
+</style>
 </body>
 </html>
