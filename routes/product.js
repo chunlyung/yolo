@@ -14,7 +14,8 @@ router.get('/:id', async (req, res) => {
         id, name, \`option\`, color, price, sale_price, thumb, is_new,
         size_info, description_html,
         detail_subtitle, detail_img1, detail_img2, detail_img3, detail_img4,
-        detail_img5, detail_img6, detail_img7, detail_img8,
+        detail_img5, detail_img6, detail_img7, detail_img8,  detail_img9,  detail_img10,  detail_img11,
+   detail_img12,  detail_img13,  detail_img14,  detail_img15,
         hover_img1, hover_img2, hover_img_list,
         color_title1, color_img1, color_desc1,
         color_title2, color_img2, color_desc2
